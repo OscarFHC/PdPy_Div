@@ -155,9 +155,9 @@ q0q0 <- Dat %>%
     labs(x = "Bacteria q0 diversity (richness)", y = "Heterotrophic nanoflagellate q0 diversity (richness)") + 
     stat_fit_glance(aes(label = paste("P-value = ", signif(..p.value.., digits = 4), sep = "")), 
                     method = 'lm', method.args = list(formula = y ~ x),
-                    label.x= "right", label.y = 0.15, size = 4) + 
+                    label.x= "right", label.y = 0.85, size = 4) + 
     stat_poly_eq(formula = y ~ x,#, label = paste(..rr.label..)
-                 label.x.npc = "right", label.y.npc = 0.35, parse = TRUE, size = 4)
+                 label.x.npc = "right", label.y.npc = 0.75, parse = TRUE, size = 4)
 
 q1q0 <- Dat %>%
   group_by(Season) %>%
@@ -170,9 +170,9 @@ q1q0 <- Dat %>%
     labs(x = "Bacteria q1 diversity (Shannon)", y = "Heterotrophic nanoflagellate q0 diversity (richness)") + 
     stat_fit_glance(aes(label = paste("P-value = ", signif(..p.value.., digits = 4), sep = "")), 
                     method = 'lm', method.args = list(formula = y ~ x),
-                    label.x= "right", label.y = 0.15, size = 4) + 
+                    label.x= "right", label.y = 0.85, size = 4) + 
     stat_poly_eq(formula = y ~ x,#, label = paste(..rr.label..)
-                 label.x.npc = "right", label.y.npc = 0.35, parse = TRUE, size = 4)
+                 label.x.npc = "right", label.y.npc = 0.75, parse = TRUE, size = 4)
 q2q0 <- Dat %>%
   group_by(Season) %>%
   mutate(lm_pval = ifelse(summary(lm(q0_obs_HNF_inext ~ q2_obs_Bac_inext))$coefficients[2,4] < 0.05, 0, 1)) %>% 
@@ -184,9 +184,9 @@ q2q0 <- Dat %>%
     labs(x = "Bacteria q2 diversity (inverse Simpson)", y = "Heterotrophic nanoflagellate q0 diversity (richness)") + 
     stat_fit_glance(aes(label = paste("P-value = ", signif(..p.value.., digits = 4), sep = "")), 
                     method = 'lm', method.args = list(formula = y ~ x),
-                    label.x= "right", label.y = 0.15, size = 4) + 
+                    label.x= "right", label.y = 0.85, size = 4) + 
     stat_poly_eq(formula = y ~ x,#, label = paste(..rr.label..)
-                 label.x.npc = "right", label.y.npc = 0.35, parse = TRUE, size = 4)
+                 label.x.npc = "right", label.y.npc = 0.75, parse = TRUE, size = 4)
 plot_grid(q0q0, q1q0, q2q0, nrow = 1)
 
 ggpairs(Dat, columns = c("q0_obs_HNF_inext", "q1_obs_HNF_inext", "q2_obs_HNF_inext", 
