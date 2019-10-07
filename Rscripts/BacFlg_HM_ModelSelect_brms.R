@@ -9,6 +9,29 @@ if (!require(vegan)) {
   library(vegan)
 }else{library(vegan)}
 
+if (!require(parallel)) {
+  install.packages("vegan", dependencies=TRUE, repos = 'http://cran.us.r-project.org')
+  library(parallel)
+}else{library(parallel)}
+
+if (!require(SpadeR)) {
+  install.packages("SpadeR", dependencies=TRUE, repos = 'http://cran.us.r-project.org')
+  library(SpadeR)
+}else{library(SpadeR)}
+
+if (!require(iNEXT)) {
+  install.packages("iNEXT", dependencies=TRUE, repos = 'http://cran.us.r-project.org')
+  library(iNEXT)
+}else{library(iNEXT)}
+
+# install.packages("iNEXT")
+# 
+# ## install the latest version from github
+# install.packages('devtools')
+# library(devtools)
+# install_github('JohnsonHsieh/iNEXT')
+# library(iNEXT)
+
 if (!require(lavaan)) {
   install.packages("lavaan", dependencies=TRUE, repos = 'http://cran.us.r-project.org')
   library(lavaan)
@@ -86,9 +109,165 @@ if (!require(ggpmisc)) {
 }else{library(ggpmisc)}
 ######## Loading necessary libraries ########################################################################################
 
-##### Reading data from Github ##############################################################################################
-Dat.raw <- read.table(file = "D:/Research/PdPy_Div/BacFlg.csv", sep = ",", header = TRUE, stringsAsFactors = FALSE, fill = TRUE)
-##### Reading data from Github ##############################################################################################
+##### Reading data ##############################################################################################
+Dat.raw <- read.table(file = "D:/Research/PdPy_Div/data/16s_OTUtab.csv", 
+                      sep = ",", header = TRUE, stringsAsFactors = FALSE, fill = TRUE)
+##### Reading data ##############################################################################################
+
+##### function for null Beta diversity ##########################################################################
+### function using for loop which is much slower #####
+# BDiv_null_func <- function(nsim, method, data){
+#   
+#   Dat <- data[, !(colnames(data) %in% c("CrSt"))]
+#   #Dat <- Dat.raw[, !(colnames(Dat.raw) %in% c("CrSt", "size"))]
+#   B_perm <- c()
+#   Dat.perm <- Dat
+#   for (i in 1:nsim){
+#     for (j in 1:nrow(Dat)){
+#       Dat.perm[j,] <- Dat[j, sample(c(1:ncol(Dat)), ncol(Dat))]
+#     }
+#     B_perm <- cbind(B_perm, colMeans(as.matrix(vegdist(Dat.perm, method = method, upper = TRUE))))
+#   }
+#   
+#   null_mean <- c()
+#   null_lo <- c()
+#   null_hi <- c()
+#   
+#   for (i in 1:nrow(B_perm)){
+#     null_mean <- c(null_mean, mean(B_perm[i,]))
+#     null_lo <- c(null_lo, sort(B_perm[i,])[nsim*0.025])
+#     null_hi <- c(null_hi, sort(B_perm[i,])[nsim*0.975])
+#   }
+#   null <- list(null_mean = null_mean, null_lo = null_lo, null_hi = null_hi)
+#   null
+# }
+# Bac_BDiv_null <- BDiv_null_func(nsim = 20, method = "chao", data = Dat.raw)
+### function using for loop which is much slower #####
+
+### function using parallel calculation which is faster #####
+numCores <- detectCores()
+numCores
+
+cl <- makeCluster(numCores)
+
+clusterEvalQ(cl, {
+  library(vegan)
+  library(tidyverse)
+  library(ggplot2)
+  library(stringr)
+  Dat.raw <- read.table(file = "D:/Research/PdPy_Div/data/16s_OTUtab.csv", 
+                        sep = ",", header = TRUE, stringsAsFactors = FALSE, fill = TRUE)
+  Dat <- Dat.raw[,-1]
+})
+
+BDiv_null_fun <- function(x){
+  Dat.perm <- Dat.raw
+  for (j in 1:nrow(Dat)){
+    Dat.perm[j, -1] <- as.numeric(Dat[j, sample(1:ncol(Dat), ncol(Dat), replace = FALSE)])
+  }
+  
+  pairD <- c()
+  pair <- Dat.perm %>% mutate(CrSt.Y = CrSt) %>% expand(CrSt, CrSt.Y) 
+  for (i in 1:nrow(pair)){
+    com1 <- which(Dat.raw$CrSt == pair$CrSt[i])
+    com2 <- which(Dat.raw$CrSt == pair$CrSt.Y[i])
+    comU <- as.numeric(which(Dat.raw[com1, -1] + Dat.raw[com2, -1] != 0))
+    pairD <- c(dist, vegdist(Dat[c(com1, com2), comU], method = "chao"))
+  }
+  pairD
+}  
+
+nsim.list <- sapply(1:1, list)
+#ini <- Sys.time()
+test <- parLapply(cl, nsim.list, BDiv_null_fun)
+stopCluster(cl)
+Bac_BDiv_null <- data.frame(matrix(unlist(test), ncol = length(test), byrow = FALSE)) %>%
+  mutate(null_mean = mean(c(X1, X100)))
+colnames(Bac_BDiv_null) <- Dat.raw[, 1]
+
+
+
+pairU <- function(x, y){
+  U <- as.numeric(which(colSums(Dat.raw[c(x, y), -1]) > 0))
+  vegdist(Dat[c(x, y), U], method = "chao")
+}
+
+pairD <- Dat.raw %>% mutate(CrSt.Y = CrSt) %>% expand(CrSt, CrSt.Y) 
+for (i in 1:nrow(pairD)){
+  com1 <- which(Dat.raw$CrSt == pairD$CrSt[i])
+  com2 <- which(Dat.raw$CrSt == pairD$CrSt.Y[i])
+  comU <- as.numeric(which(Dat.raw[com1, -1] + Dat.raw[com2, -1] != 0))
+  pairD$dist[i] <- vegdist(Dat[c(com1, com2), comU], method = "chao")
+}
+
+
+
+
+### function using parallel calculation which is faster #####
+##### function for null Beta diversity ##########################################################################
+Dat.num <- t(as.matrix(Dat.raw[,-1])) # making the data into OUT (row) by site (col) format
+colnames(Dat.num) <- Dat.raw[, 1]
+#iNEXT(Dat.num[which(rowSums(Dat.num) != 0), ], q = 0, datatype = "abundance")
+
+Bac_A <- iNEXT(Dat.num[which(rowSums(Dat.num) != 0), ], 
+               q = 0, datatype = "abundance", size = max(colSums(Dat.num)) + 100000)$AsyEst
+
+Bac_Div <-  Bac_A %>% select(Site, Diversity, Estimator) %>% spread(Diversity, Estimator) %>%
+  rename(SR = "Species richness", Shannon = "Shannon diversity", Simpson = "Simpson diversity") %>%
+  mutate(Beta_chao = colMeans(as.matrix(vegdist(Dat.raw[, !(colnames(Dat.raw) %in% c("CrSt"))], 
+                                                method = "chao", upper = TRUE))),
+         Beta_chao_null_mean <- Bac_BDiv_null$null_mean,
+         Beta_chao_null_lo <- Bac_BDiv_null$null_lo,
+         Beta_chao_null_hi <- Bac_BDiv_null$null_hi)
+Bac_ADivSE <-  Bac_A %>% select(Site, Diversity, s.e.) %>% spread(Diversity, s.e.)
+
+
+
+
+
+
+
+Dat.list <- list()
+for(i in 1:nrow(Dat.raw)){
+  Dat.list[[i]] <- sort(as.numeric(Dat.raw[i, -c(1, which(Dat.raw[i,] == 0))]), decreasing = TRUE)
+}
+names(Dat.list) <- Dat.raw[, 1]
+
+head(Dat.num)
+str(Dat.num)
+
+
+
+
+str(Dat.raw[,-1])
+for(i in 1:nrow(Dat.raw)){
+  iNEXT(sort(as.numeric(Dat.raw[i, -c(1)]), decreasing = TRUE),
+        q = 0, datatype = "abundance", size = max(rowSums(Dat.raw[,-1])))
+}
+
+i=34# is not working when q=0 and I have no idea what is the problem
+
+
+Bac_A <- iNEXT(Dat.list, q = 0, datatype = "abundance", size = max(rowSums(Dat.raw[,-1])))$AsyEst
+Bac_BDiv_null <- BDiv_null_func(nsim = 5000, method = "chao", data = Dat.raw)
+
+Bac_Div <-  Bac_A %>% select(Site, Diversity, Estimator) %>% spread(Diversity, Estimator) %>%
+  rename(SR = "Species richness", Shannon = "Shannon diversity", Simpson = "Simpson diversity") %>%
+  mutate(Beta_chao = colMeans(as.matrix(vegdist(Dat.raw[, !(colnames(Dat.raw) %in% c("CrSt"))], 
+                                                method = "chao", upper = TRUE))),
+         Beta_chao_null_mean <- Bac_BDiv_null$null_mean,
+         Beta_chao_null_lo <- Bac_BDiv_null$null_lo,
+         Beta_chao_null_hi <- Bac_BDiv_null$null_hi)
+Bac_ADivSE <-  Bac_A %>% select(Site, Diversity, s.e.) %>% spread(Diversity, s.e.)
+
+Bac_Div %>% ggplot() + 
+  geom_point(aes(x = SR, y = Beta_jac))
+
+
+
+
+
+
 Dat <- Dat.raw %>%
   drop_na() %>%
   select("SampleID.Bac.", "Cruise", "Station", "Year", "Month", "Season", 

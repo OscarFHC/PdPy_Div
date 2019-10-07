@@ -1,0 +1,16 @@
+16s_OTU_taxaname：taxa name of each bacteria OTU (OTU is represented as code, e.g. seqX)
+16s_OTUtab：station by bacteria OTU table
+16s_seqtab：bacteria OTU as sequence by station table
+
+18s_OTU_taxaname：taxa name of each flagellate OTU (OTU is represented as code, e.g. seqX)
+18s_OTUtab：station by all flagellate OTU table
+18s_taxa and OTU：all flagellate taxa name and OTU by station table
+
+HNF_OTUtab：station by heterotrophic nanoflagellate (HNF) OTU table
+HNF_seqtab：station by heterotrophic nanoflagellate (HNF) sequence table
+
+BacFlg_Biom_Envi：biomass and environmental variables of each station
+
+
+
+
