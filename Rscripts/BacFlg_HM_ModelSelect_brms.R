@@ -264,7 +264,7 @@ BDiv_null = function(x){
 
 nsim.list <- sapply(1:5, list)
 ini <- Sys.time()
-test <- parLapply(cl, nsim.list, BDiv_null_test)
+test <- parLapply(cl, nsim.list, BDiv_null)
 Sys.time() - ini
 
 stopCluster(cl)
