@@ -144,7 +144,7 @@ Dat.raw <- read.table(file = "D:/Research/PdPy_Div/data/16s_OTUtab.csv",
 # Bac_BDiv_null <- BDiv_null_func(nsim = 20, method = "chao", data = Dat.raw)
 ### function using for loop which is much slower #####
 
-### function using parallel calculation which is faster #####
+##### calculating null Beta distribution with parallel computation #####
 numCores <- detectCores()
 numCores
 
@@ -157,19 +157,16 @@ clusterEvalQ(cl, {
   library(stringr)
   Dat.raw <- read.table(file = "D:/Research/PdPy_Div/data/16s_OTUtab.csv", 
                         sep = ",", header = TRUE, stringsAsFactors = FALSE, fill = TRUE)
-  
-  unique(rowSums(ceiling(Dat/max(Dat))))
-  Dat <- Dat.raw[,-1]
 })
 
-raup_crick = function(spXsite, 
-                      plot_names_in_col1 = TRUE, 
-                      classic_metric = FALSE, 
-                      split_ties = TRUE, 
-                      reps = 99, 
-                      set_all_species_equal = FALSE, 
-                      as.distance.matrix = TRUE, 
-                      report_similarity = FALSE){
+BDiv_null = function(x){
+  spXsite = Dat.raw
+  plot_names_in_col1 = TRUE
+  classic_metric = FALSE
+  split_ties = TRUE
+  set_all_species_equal = FALSE 
+  as.distance.matrix = TRUE 
+  report_similarity = FALSE
   
   ## expects a species by site matrix for spXsite, with row names for plots, or optionally plots named in column 1.  
   ## By default calculates a modification of the Raup-Crick metric (standardizing the metric to range from -1 to 1 instead of 0 to 1). 
@@ -223,7 +220,6 @@ raup_crick = function(spXsite,
   
   alpha_table <- data.frame(c(NA), c(NA))
   names(alpha_table) <- c("smaller_alpha", "bigger_alpha")
-  col_count <- 1
   
   ## null_array will hold the actual null distribution values.  
   ## Each element of the array corresponds to a null distribution for each combination of alpha values.  
@@ -232,144 +228,68 @@ raup_crick = function(spXsite,
   ## That row number is used to identify the element of null_array that contains the correct null distribution for that combination of alpha levels. 
   
   
-  null_array<-list()
+  null_array <- c()
   
   ##looping over each combination of alpha levels:
-  
+  ##build a null distribution of the number of shared species for a pair of alpha values:
+
   for(a1 in 1:length(alpha_levels)){
     for(a2 in a1:length(alpha_levels)){
+      ##two empty null communities of size gamma:
+      com1<-rep(0,gamma)
+      com2<-rep(0,gamma)
       
-      ##build a null distribution of the number of shared species for a pair of alpha values:
-      null_shared_spp<-NULL
-      for(i in 1:reps){
-        
-        ##two empty null communities of size gamma:
-        com1<-rep(0,gamma)
-        com2<-rep(0,gamma)
-        
-        row.names(spXsite) == names(alpha_levels[a1])
-        
-        ##add alpha1 number of species to com1, weighting by species occurrence frequencies:
-        com1_index <- which(row.names(spXsite) == names(alpha_levels[a1])) #order(apply(spXsite_p, MARGIN = 1, FUN = sum))[a1]
-        com1[sample(1:gamma, alpha_levels[a1], replace = FALSE, prob = occur)] <- 
-          as.numeric(spXsite[com1_index, which(spXsite[com1_index, ] != 0)])
-        ##same for com2:
-        com2_index <- which(row.names(spXsite) == names(alpha_levels[a2]))#order(apply(spXsite_p, MARGIN = 1, FUN = sum))[a2]
-        com2[sample(1:gamma, alpha_levels[a2], replace=FALSE, prob=occur)] <- 
-          as.numeric(spXsite[com2_index, which(spXsite[com2_index,] != 0)])
-        
-        comU <- as.numeric(which(com1 + com2 != 0))
-        ##how many species are shared in common?
-        null_shared_spp[i] <- vegdist(rbind(com1, com2)[,comU], method = "chao")
-        #null_shared_spp[i]<-sum((com1+com2)>1)
-        
-      }
+      row.names(spXsite) == names(alpha_levels[a1])
+      
+      ##add alpha1 number of species to com1, weighting by species occurrence frequencies:
+      com1_index <- which(row.names(spXsite) == names(alpha_levels[a1])) #order(apply(spXsite_p, MARGIN = 1, FUN = sum))[a1]
+      com1[sample(1:gamma, alpha_levels[a1], replace = FALSE, prob = occur)] <- 
+        as.numeric(spXsite[com1_index, which(spXsite[com1_index, ] != 0)])
+      ##same for com2:
+      com2_index <- which(row.names(spXsite) == names(alpha_levels[a2]))#order(apply(spXsite_p, MARGIN = 1, FUN = sum))[a2]
+      com2[sample(1:gamma, alpha_levels[a2], replace=FALSE, prob=occur)] <- 
+        as.numeric(spXsite[com2_index, which(spXsite[com2_index,] != 0)])
+      
+      comU <- as.numeric(which(com1 + com2 != 0))
+      ##how many species are shared in common?
+      null_shared_spp <- vegdist(rbind(com1, com2)[,comU], method = "chao")
+      #null_shared_spp[i]<-sum((com1+com2)>1)
       
       ##store null distribution, record values for alpha 1 and 2 in the alpha_table to help find the correct null distribution later:
-      null_array[[col_count]] <- null_shared_spp
-      
-      alpha_table[col_count, which(names(alpha_table) == "smaller_alpha")] <- names(alpha_levels[a1])
-      alpha_table[col_count, which(names(alpha_table) == "bigger_alpha")] <- names( alpha_levels[a2])
-      
-      #increment the counter for the columns of the alpha table/ elements of the null array
-      col_count <- col_count + 1
-    }
-    
-  }
-  
-  ##create a new column with both alpha levels to match on:
-  alpha_table$matching <- paste(alpha_table[,1], alpha_table[,2], sep = "_")
-  
-  
-  #####################
-  ##do the test:
-  
-  
-  
-  ##build a site by site matrix for the results, with the names of the sites in the row and col names:
-  results <- matrix(data = NA, nrow = n_sites, ncol = n_sites, dimnames = list(row.names(spXsite), row.names(spXsite)))
-  
-  
-  ##for each pair of sites (duplicates effort now to make a full matrix instead of a half one- but this part should be minimal time as compared to the null model building)
-  for(i in 1:n_sites){
-    for(j in 1:n_sites){
-      
-      ##how many species are shared between the two sites:
-      comU <- as.numeric(which(spXsite[i, ] + spXsite[j, ] != 0))
-      n_shared_obs <- vegdist(rbind(as.numeric(spXsite[i, ]), as.numeric(spXsite[j, ]))[, comU], method = "chao")
-      #sum((spXsite[i, ] + spXsite[j,])>1)
-      
-      null_index <- ifelse(paste(row.names(spXsite[i,]), row.names(spXsite[j,]), sep = "_") %in% alpha_table$matching,
-                           which(alpha_table$matching == paste(row.names(spXsite[i,]), row.names(spXsite[j,]), sep = "_")),
-                           which(alpha_table$matching == paste(row.names(spXsite[j,]), row.names(spXsite[i,]), sep = "_")))
-      
-      ##how many null observations is the observed value tied with?
-      num_exact_matching_in_null <- sum(null_array[[null_index]] == n_shared_obs)
-      
-      ##how many null values are bigger than the observed value?
-      num_greater_in_null <- sum(null_array[[null_index]] > n_shared_obs)
-      
-      rc <- (num_greater_in_null)/reps
-      
-      if(split_ties){
-        rc <- ((num_greater_in_null + (num_exact_matching_in_null)/2)/reps)
-      }
-      
-      if(!classic_metric){
-        ##our modification of raup crick standardizes the metric to range from -1 to 1 instead of 0 to 1
-        rc <- (rc - 0.5) * 2
-      }
-      
-      ## at this point rc represents an index of dissimilarity- multiply by -1 to convert to a similarity as specified in the original 1979 Raup Crick paper
-      if(report_similarity & !classic_metric){
-        rc <- rc * -1
-      }
-      
-      ## the switch to similarity is done differently if the original 0 to 1 range of the metric is used:
-      if(report_similarity & classic_metric){
-        rc <- 1 - rc
-      }
-      
-      ##store the metric in the results matrix:
-      results[i,j] <- round(rc, digits = 2)
-      
+      null_array <- c(null_array, null_shared_spp)
     }
   }
-  
-  if(as.distance.matrix){
-    results <- as.dist(results)
-  }	
-  
-  return(results)
+  null_array
 }
 
-BDiv_null_fun <- function(x){
-  Dat.perm <- Dat
-  occur <- colSums(Dat.raw[, -1])
-  
-  for (j in 1:nrow(Dat)){
-    pick <- sample(1:ncol(Dat), length(which(Dat[j,] != 0)), replace = FALSE, prob = occur)
-    Dat.perm[j, pick] <- Dat[j, which(Dat[j,] != 0)]
-    #Dat.perm[j, -1] <- as.numeric(Dat[j, sample(1:ncol(Dat), ncol(Dat), replace = FALSE)])
-  }
-  
-  pairD <- c()
-  pair <- Dat.perm %>% mutate(CrSt.Y = CrSt) %>% expand(CrSt, CrSt.Y) 
-  for (i in 1:nrow(pair)){
-    com1 <- which(Dat.raw$CrSt == pair$CrSt[i])
-    com2 <- which(Dat.raw$CrSt == pair$CrSt.Y[i])
-    comU <- as.numeric(which(Dat.raw[com1, -1] + Dat.raw[com2, -1] != 0))
-    pairD <- c(dist, vegdist(Dat[c(com1, com2), comU], method = "chao"))
-  }
-  pairD
-}  
-
-
-nsim.list <- sapply(1:1, list)
+nsim.list <- sapply(1:5, list)
 ini <- Sys.time()
-test <- parLapply(cl, nsim.list, BDiv_null_fun)
+test <- parLapply(cl, nsim.list, BDiv_null_test)
 Sys.time() - ini
+
 stopCluster(cl)
+##### calculating null Beta distribution with parallel computation #####
+
+##### creating index table for null Beta distribution #####
+spXsite_p <- ceiling(spXsite/max(spXsite))
+alpha_levels <- sort(apply(spXsite_p, MARGIN = 1, FUN = sum))
+alpha_table <- data.frame(c(NA), c(NA))
+names(alpha_table) <- c("smaller_alpha", "bigger_alpha")
+col_count <- 1
+for(a1 in 1:length(alpha_levels)){
+  for(a2 in a1:length(alpha_levels)){
+    alpha_table[col_count, which(names(alpha_table) == "smaller_alpha")] <- names(alpha_levels[a1])
+    alpha_table[col_count, which(names(alpha_table) == "bigger_alpha")] <- names( alpha_levels[a2])
+    col_count <- col_count + 1
+  }
+}
+alpha_table$matching <- paste(alpha_table[,1], alpha_table[,2], sep = "_")
+##### creating index table for null Beta distribution #####
+
+
+
+
+
 Bac_BDiv_null <- data.frame(matrix(unlist(test), ncol = length(test), byrow = FALSE)) %>%
   mutate(null_mean = mean(c(X1, X100)))
 colnames(Bac_BDiv_null) <- Dat.raw[, 1]

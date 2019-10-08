@@ -1,11 +1,11 @@
-raup_crick = function(spXsite, 
-                      plot_names_in_col1 = TRUE, 
-                      classic_metric = FALSE, 
-                      split_ties = TRUE, 
-                      reps = 99, 
-                      set_all_species_equal = FALSE, 
-                      as.distance.matrix = TRUE, 
-                      report_similarity = FALSE){
+BDiv_null_test = function(spXsite, 
+                          plot_names_in_col1 = TRUE, 
+                          classic_metric = FALSE, 
+                          split_ties = TRUE, 
+                          reps = 99, 
+                          set_all_species_equal = FALSE, 
+                          as.distance.matrix = TRUE, 
+                          report_similarity = FALSE){
   
   ## expects a species by site matrix for spXsite, with row names for plots, or optionally plots named in column 1.  
   ## By default calculates a modification of the Raup-Crick metric (standardizing the metric to range from -1 to 1 instead of 0 to 1). 
@@ -123,8 +123,8 @@ raup_crick = function(spXsite,
   
   
   ##build a site by site matrix for the results, with the names of the sites in the row and col names:
-  results <- matrix(data = NA, nrow = n_sites, ncol = n_sites, dimnames = list(row.names(spXsite), row.names(spXsite)))
-  
+  pct_less <- matrix(data = NA, nrow = n_sites, ncol = n_sites, dimnames = list(row.names(spXsite), row.names(spXsite)))
+  dist_obs <- matrix(data = NA, nrow = n_sites, ncol = n_sites, dimnames = list(row.names(spXsite), row.names(spXsite)))
   
   ##for each pair of sites (duplicates effort now to make a full matrix instead of a half one- but this part should be minimal time as compared to the null model building)
   for(i in 1:n_sites){
@@ -143,7 +143,7 @@ raup_crick = function(spXsite,
       num_exact_matching_in_null <- sum(null_array[[null_index]] == n_shared_obs)
       
       ##how many null values are bigger than the observed value?
-      num_greater_in_null <- sum(null_array[[null_index]] > n_shared_obs)
+      num_greater_in_null <- sum(null_array[[null_index]] < n_shared_obs)
       
       rc <- (num_greater_in_null)/reps
       
@@ -167,30 +167,31 @@ raup_crick = function(spXsite,
       }
       
       ##store the metric in the results matrix:
-      results[i,j] <- round(rc, digits = 2)
+      pct_less[i,j] <- rc
+      dist_obs[i,j] <- n_shared_obs
       
     }
   }
   
   if(as.distance.matrix){
-    results <- as.dist(results)
+    pct_less <- as.dist(pct_less)
   }	
   
-  return(results)
+  return(list(dist_obs = dist_obs, pct_less = pct_less))
 }
 
 spXsite <- read.table(file = "D:/Research/PdPy_Div/data/16s_OTUtab.csv", 
                       sep = ",", header = TRUE, stringsAsFactors = FALSE, fill = TRUE)
 
 ini <- Sys.time()
-raup_crick(spXsite = spXsite, 
-           plot_names_in_col1 = TRUE, 
-           classic_metric = FALSE, 
-           split_ties = TRUE, 
-           reps = 99, 
-           set_all_species_equal = FALSE, 
-           as.distance.matrix = FALSE, 
-           report_similarity = FALSE)
+BDiv_null_test(spXsite = spXsite, 
+               plot_names_in_col1 = TRUE, 
+               classic_metric = TRUE, 
+               split_ties = TRUE, 
+               reps = 1, 
+               set_all_species_equal = FALSE, 
+               as.distance.matrix = FALSE, 
+               report_similarity = FALSE)
 Sys.time() - ini
 
 
