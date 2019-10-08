@@ -159,7 +159,7 @@ clusterEvalQ(cl, {
                         sep = ",", header = TRUE, stringsAsFactors = FALSE, fill = TRUE)
 })
 
-BDiv_null = function(x){
+BDiv_null_fun = function(x){
   spXsite = Dat.raw
   plot_names_in_col1 = TRUE
   classic_metric = FALSE
@@ -264,13 +264,17 @@ BDiv_null = function(x){
 
 nsim.list <- sapply(1:5, list)
 ini <- Sys.time()
-test <- parLapply(cl, nsim.list, BDiv_null)
+test <- parLapply(cl, nsim.list, BDiv_null_fun)
 Sys.time() - ini
 
 stopCluster(cl)
+
 ##### calculating null Beta distribution with parallel computation #####
 
 ##### creating index table for null Beta distribution #####
+spXsite <- Dat.raw
+row.names(spXsite) <- spXsite[,1]
+spXsite <- spXsite[,-1]
 spXsite_p <- ceiling(spXsite/max(spXsite))
 alpha_levels <- sort(apply(spXsite_p, MARGIN = 1, FUN = sum))
 alpha_table <- data.frame(c(NA), c(NA))
@@ -285,6 +289,8 @@ for(a1 in 1:length(alpha_levels)){
 }
 alpha_table$matching <- paste(alpha_table[,1], alpha_table[,2], sep = "_")
 ##### creating index table for null Beta distribution #####
+
+BDiv_null <- matrix(unlist(test), nrow = nrow(alpha_table), byrow = FALSE)
 
 
 
@@ -308,6 +314,7 @@ for (i in 1:nrow(pairD)){
   comU <- as.numeric(which(Dat.raw[com1, -1] + Dat.raw[com2, -1] != 0))
   pairD$dist[i] <- vegdist(Dat[c(com1, com2), comU], method = "chao")
 }
+
 
 
 
