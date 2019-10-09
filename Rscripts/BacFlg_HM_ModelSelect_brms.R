@@ -262,7 +262,7 @@ BDiv_null_fun = function(x){
   null_array
 }
 
-nsim.list <- sapply(1:5, list)
+nsim.list <- sapply(1:1000, list)
 ini <- Sys.time()
 test <- parLapply(cl, nsim.list, BDiv_null_fun)
 Sys.time() - ini
@@ -277,44 +277,57 @@ row.names(spXsite) <- spXsite[,1]
 spXsite <- spXsite[,-1]
 spXsite_p <- ceiling(spXsite/max(spXsite))
 alpha_levels <- sort(apply(spXsite_p, MARGIN = 1, FUN = sum))
-alpha_table <- data.frame(c(NA), c(NA))
-names(alpha_table) <- c("smaller_alpha", "bigger_alpha")
+alpha_table <- data.frame(c(NA), c(NA), c(NA), c(NA))
+names(alpha_table) <- c("smaller_alpha", "bigger_alpha", "matching", "BDiv_obs")
 col_count <- 1
 for(a1 in 1:length(alpha_levels)){
   for(a2 in a1:length(alpha_levels)){
     alpha_table[col_count, which(names(alpha_table) == "smaller_alpha")] <- names(alpha_levels[a1])
     alpha_table[col_count, which(names(alpha_table) == "bigger_alpha")] <- names( alpha_levels[a2])
+    
+    com1_index <- which(row.names(spXsite) == names(alpha_levels[a1]))
+    com1 <- as.numeric(spXsite[com1_index, ])
+    
+    com2_index <- which(row.names(spXsite) == names(alpha_levels[a2]))
+    com2 <- as.numeric(spXsite[com2_index, ])
+    
+    comU <- as.numeric(which(com1 + com2 != 0))
+    alpha_table[col_count, "BDiv_obs"] <- vegdist(rbind(com1, com2)[,comU], method = "chao")
     col_count <- col_count + 1
   }
 }
 alpha_table$matching <- paste(alpha_table[,1], alpha_table[,2], sep = "_")
+
+for(a1 in 1:length(alpha_levels)){
+  for(a2 in a1:length(alpha_levels)){
+    ##two empty null communities of size gamma:
+    com1<-rep(0,gamma)
+    com2<-rep(0,gamma)
+    
+    row.names(spXsite) == names(alpha_levels[a1])
+    
+    ##add alpha1 number of species to com1, weighting by species occurrence frequencies:
+    com1_index <- which(row.names(spXsite) == names(alpha_levels[a1])) #order(apply(spXsite_p, MARGIN = 1, FUN = sum))[a1]
+    com1[sample(1:gamma, alpha_levels[a1], replace = FALSE, prob = occur)] <- 
+      as.numeric(spXsite[com1_index, which(spXsite[com1_index, ] != 0)])
+    ##same for com2:
+    com2_index <- which(row.names(spXsite) == names(alpha_levels[a2]))#order(apply(spXsite_p, MARGIN = 1, FUN = sum))[a2]
+    com2[sample(1:gamma, alpha_levels[a2], replace=FALSE, prob=occur)] <- 
+      as.numeric(spXsite[com2_index, which(spXsite[com2_index,] != 0)])
+    
+    comU <- as.numeric(which(com1 + com2 != 0))
+    ##how many species are shared in common?
+    null_shared_spp <- vegdist(rbind(com1, com2)[,comU], method = "chao")
+    #null_shared_spp[i]<-sum((com1+com2)>1)
+    
+    ##store null distribution, record values for alpha 1 and 2 in the alpha_table to help find the correct null distribution later:
+    null_array <- c(null_array, null_shared_spp)
+  }
+}
 ##### creating index table for null Beta distribution #####
 
-BDiv_null <- matrix(unlist(test), nrow = nrow(alpha_table), byrow = FALSE)
-
-
-
-
-
 Bac_BDiv_null <- data.frame(matrix(unlist(test), ncol = length(test), byrow = FALSE)) %>%
-  mutate(null_mean = mean(c(X1, X100)))
-colnames(Bac_BDiv_null) <- Dat.raw[, 1]
-
-
-
-pairU <- function(x, y){
-  U <- as.numeric(which(colSums(Dat.raw[c(x, y), -1]) > 0))
-  vegdist(Dat[c(x, y), U], method = "chao")
-}
-
-pairD <- Dat.raw %>% mutate(CrSt.Y = CrSt) %>% expand(CrSt, CrSt.Y) 
-for (i in 1:nrow(pairD)){
-  com1 <- which(Dat.raw$CrSt == pairD$CrSt[i])
-  com2 <- which(Dat.raw$CrSt == pairD$CrSt.Y[i])
-  comU <- as.numeric(which(Dat.raw[com1, -1] + Dat.raw[com2, -1] != 0))
-  pairD$dist[i] <- vegdist(Dat[c(com1, com2), comU], method = "chao")
-}
-
+  cbind(alpha_table)
 
 
 
