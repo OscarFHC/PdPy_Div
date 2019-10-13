@@ -297,37 +297,11 @@ for(a1 in 1:length(alpha_levels)){
   }
 }
 alpha_table$matching <- paste(alpha_table[,1], alpha_table[,2], sep = "_")
-
-for(a1 in 1:length(alpha_levels)){
-  for(a2 in a1:length(alpha_levels)){
-    ##two empty null communities of size gamma:
-    com1<-rep(0,gamma)
-    com2<-rep(0,gamma)
-    
-    row.names(spXsite) == names(alpha_levels[a1])
-    
-    ##add alpha1 number of species to com1, weighting by species occurrence frequencies:
-    com1_index <- which(row.names(spXsite) == names(alpha_levels[a1])) #order(apply(spXsite_p, MARGIN = 1, FUN = sum))[a1]
-    com1[sample(1:gamma, alpha_levels[a1], replace = FALSE, prob = occur)] <- 
-      as.numeric(spXsite[com1_index, which(spXsite[com1_index, ] != 0)])
-    ##same for com2:
-    com2_index <- which(row.names(spXsite) == names(alpha_levels[a2]))#order(apply(spXsite_p, MARGIN = 1, FUN = sum))[a2]
-    com2[sample(1:gamma, alpha_levels[a2], replace=FALSE, prob=occur)] <- 
-      as.numeric(spXsite[com2_index, which(spXsite[com2_index,] != 0)])
-    
-    comU <- as.numeric(which(com1 + com2 != 0))
-    ##how many species are shared in common?
-    null_shared_spp <- vegdist(rbind(com1, com2)[,comU], method = "chao")
-    #null_shared_spp[i]<-sum((com1+com2)>1)
-    
-    ##store null distribution, record values for alpha 1 and 2 in the alpha_table to help find the correct null distribution later:
-    null_array <- c(null_array, null_shared_spp)
-  }
-}
 ##### creating index table for null Beta distribution #####
 
 Bac_BDiv_null <- data.frame(matrix(unlist(test), ncol = length(test), byrow = FALSE)) %>%
   cbind(alpha_table)
+write.table(Bac_BDiv_null, file = "D:/Research/PdPy_Div/Bac_BDiv_null.csv", sep = ",", col.names = TRUE, row.names = FALSE)
 
 
 
