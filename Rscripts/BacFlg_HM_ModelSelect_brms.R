@@ -9,6 +9,16 @@ if (!require(vegan)) {
   library(vegan)
 }else{library(vegan)}
 
+if (!require(picante)) {
+  install.packages("picante", dependencies=TRUE, repos = 'http://cran.us.r-project.org')
+  library(picante)
+}else{library(picante)}
+
+if (!require(ape)) {
+  install.packages("ape", dependencies=TRUE, repos = 'http://cran.us.r-project.org')
+  library(ape)
+}else{library(ape)}
+
 if (!require(parallel)) {
   install.packages("vegan", dependencies=TRUE, repos = 'http://cran.us.r-project.org')
   library(parallel)

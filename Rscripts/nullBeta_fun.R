@@ -195,7 +195,25 @@ BDiv_null_test(spXsite = spXsite,
 Sys.time() - ini
 
 
+Bac_phylo<- read.tree(file = "D:/Research/PdPy_Div/data/treeNJ_16s.tree")
+Bac_comm <- t(read.table(file = "D:/Research/PdPy_Div/data/16s_seqtab.csv", sep = ",", 
+                         header = TRUE, row.names = 1, stringsAsFactors = FALSE, fill = TRUE))
+Bac_comm[1:5, 1:3]
 
+plot(Bac_tree, show.tip.label = FALSE)
+str(Bac_tree)
+data(phylocom)
+str(phylocom$phylo)
+
+pd(Bac_comm, Bac_phylo)
+
+phydist <- cophenetic(Bac_phylo)
+ses.mpd.result <- ses.mpd(Bac_comm, phydist, null.model = "taxa.labels",
+                          abundance.weighted = FALSE, runs = 99)
+
+
+is.rooted(Bac_tree)
+Bac_tree$tip.label
 
 
 
