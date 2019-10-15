@@ -198,7 +198,7 @@ Sys.time() - ini
 Bac_phylo<- read.tree(file = "D:/Research/PdPy_Div/data/treeNJ_16s.tree")
 Bac_comm <- t(read.table(file = "D:/Research/PdPy_Div/data/16s_seqtab.csv", sep = ",", 
                          header = TRUE, row.names = 1, stringsAsFactors = FALSE, fill = TRUE))
-Bac_comm[1:5, 1:3]
+Bac_comm[1:2, 1:2]
 
 plot(phylocom$phylo)
 str(Bac_comm)
@@ -207,7 +207,7 @@ cophenetic(phylocom$phylo)
 
 ?decostand
 
-pd(phylocom$sample, phylocom$phylo, include.root = TRUE)
+pd(phylocom$sample[1,], phylocom$phylo, include.root = TRUE)
 pd(Bac_comm, Bac_phylo)
 unifrac(Bac_comm, Bac_phylo)
 
@@ -216,16 +216,22 @@ phyvcv <- vcv(Bac_phylo)
 ses.mpd.result <- ses.mpd(Bac_comm[1:5], phydist, null.model = "taxa.labels",
                           abundance.weighted = FALSE, runs = 99)
 
+samp <- read.table(file = "C:/Users/user/Downloads/beta.example.sample.txt", sep = "\t", row.names = 1, header = TRUE)
+phylo <- read.tree(file = "C:/Users/user/Downloads/beta.example.phylo.txt")
 
+plot(phylo)
+pd(as.matrix(samp[1,]), phylo)
+unifrac(samp, phylo)
+pd(as.matrix(phylocom$sample[1,]), phylocom$phylo, include.root = TRUE)
 
-is.rooted(Bac_tree)
-Bac_tree$tip.label
+pd(Bac_comm, Bac_phylo)
 
+Bac_phylo$edge
+Bac_phylo$edge.length
 
-
-
-
-
+node <- matrix(NA, nrow = length(Bac_phylo$edge.length), ncol = 6)
+node[,1:2] <- Bac_phylo$edge
+node[,3] <- Bac_phylo$edge.length
 
 
 

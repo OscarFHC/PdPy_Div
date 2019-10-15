@@ -34,6 +34,16 @@ if (!require(iNEXT)) {
   library(iNEXT)
 }else{library(iNEXT)}
 
+if (!require(picante)) {
+  install.packages("picante", dependencies=TRUE, repos = 'http://cran.us.r-project.org')
+  library(picante)
+}else{library(picante)}
+
+if (!require(geiger)) {
+  install.packages("geiger", dependencies=TRUE, repos = 'http://cran.us.r-project.org')
+  library(geiger)
+}else{library(geiger)}
+
 # install.packages("iNEXT")
 # 
 # ## install the latest version from github
