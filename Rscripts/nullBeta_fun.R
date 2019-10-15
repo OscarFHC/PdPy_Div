@@ -198,6 +198,7 @@ Sys.time() - ini
 Bac_phylo<- read.tree(file = "D:/Research/PdPy_Div/data/treeNJ_16s.tree")
 Bac_comm <- t(read.table(file = "D:/Research/PdPy_Div/data/16s_seqtab.csv", sep = ",", 
                          header = TRUE, row.names = 1, stringsAsFactors = FALSE, fill = TRUE))
+Bac_ra_comm <- Bac_comm / rowSums(Bac_comm)
 Bac_comm[1:2, 1:2]
 
 plot(phylocom$phylo)
@@ -213,11 +214,12 @@ unifrac(Bac_comm, Bac_phylo)
 
 phydist <- cophenetic(Bac_phylo)
 phyvcv <- vcv(Bac_phylo)
-ses.mpd.result <- ses.mpd(Bac_comm[1:5], phydist, null.model = "taxa.labels",
+ses.mpd.result <- ses.mpd(Bac_comm, phydist, null.model = "taxa.labels",
                           abundance.weighted = FALSE, runs = 99)
 
-samp <- read.table(file = "C:/Users/user/Downloads/beta.example.sample.txt", sep = "\t", row.names = 1, header = TRUE)
-phylo <- read.tree(file = "C:/Users/user/Downloads/beta.example.phylo.txt")
+samp <- read.table(file = "C:/Users/Oscar/Downloads/beta.example.sample.txt", sep = "\t", row.names = 1, header = TRUE)
+ra.samp <- samp / rowSums(samp)
+phylo <- read.tree(file = "C:/Users/Oscar/Downloads/beta.example.phylo.txt")
 
 plot(phylo)
 pd(as.matrix(samp[1,]), phylo)
@@ -233,5 +235,14 @@ node <- matrix(NA, nrow = length(Bac_phylo$edge.length), ncol = 6)
 node[,1:2] <- Bac_phylo$edge
 node[,3] <- Bac_phylo$edge.length
 
+for(i in 1:dim(node)[1]){
+  leave.node <- tips(Bac_phylo, node[i, 2])  
+  node[i, 4] <- sum(Bac_ra_comm[1, leave.node])
+  node[i, 5] <- sum(Bac_ra_comm[2, leave.node])
+  node[i, 6] <- node[i, 3] * (abs(node[i, 4] - node[i, 5]))
+}
+head(node)
+sum(node[, 6])
 
+GUniFrac(Bac_comm, Bac_phylo)
 

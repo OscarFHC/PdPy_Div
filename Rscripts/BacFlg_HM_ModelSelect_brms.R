@@ -9,11 +9,6 @@ if (!require(vegan)) {
   library(vegan)
 }else{library(vegan)}
 
-if (!require(picante)) {
-  install.packages("picante", dependencies=TRUE, repos = 'http://cran.us.r-project.org')
-  library(picante)
-}else{library(picante)}
-
 if (!require(ape)) {
   install.packages("ape", dependencies=TRUE, repos = 'http://cran.us.r-project.org')
   library(ape)
@@ -43,6 +38,11 @@ if (!require(geiger)) {
   install.packages("geiger", dependencies=TRUE, repos = 'http://cran.us.r-project.org')
   library(geiger)
 }else{library(geiger)}
+
+if (!require(GUniFrac)) {
+  install.packages("GUniFrac", dependencies=TRUE, repos = 'http://cran.us.r-project.org')
+  library(GUniFrac)
+}else{library(GUniFrac)}
 
 # install.packages("iNEXT")
 # 
