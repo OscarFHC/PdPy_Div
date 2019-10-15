@@ -199,23 +199,25 @@ Bac_phylo<- read.tree(file = "D:/Research/PdPy_Div/data/treeNJ_16s.tree")
 Bac_comm <- t(read.table(file = "D:/Research/PdPy_Div/data/16s_seqtab.csv", sep = ",", 
                          header = TRUE, row.names = 1, stringsAsFactors = FALSE, fill = TRUE))
 Bac_ra_comm <- Bac_comm / rowSums(Bac_comm)
-Bac_comm[1:2, 1:2]
 
-plot(phylocom$phylo)
+pd(Bac_comm, root(Bac_phylo, 1, resolve.root = TRUE))[,1]
+UniFrac <- GUniFrac(Bac_comm, root(Bac_phylo, 1, resolve.root = TRUE), alpha = c(0, 1))
+#UniFrac[, , 1]
+
+str(UniFrac$unifracs)
+
+
+#plot(Bac_phylo)
 str(Bac_comm)
 data(phylocom)
 cophenetic(phylocom$phylo)
-
-?decostand
-
-pd(phylocom$sample[1,], phylocom$phylo, include.root = TRUE)
-pd(Bac_comm, Bac_phylo)
-unifrac(Bac_comm, Bac_phylo)
 
 phydist <- cophenetic(Bac_phylo)
 phyvcv <- vcv(Bac_phylo)
 ses.mpd.result <- ses.mpd(Bac_comm, phydist, null.model = "taxa.labels",
                           abundance.weighted = FALSE, runs = 99)
+
+
 
 samp <- read.table(file = "C:/Users/Oscar/Downloads/beta.example.sample.txt", sep = "\t", row.names = 1, header = TRUE)
 ra.samp <- samp / rowSums(samp)
@@ -244,5 +246,15 @@ for(i in 1:dim(node)[1]){
 head(node)
 sum(node[, 6])
 
-GUniFrac(Bac_comm, Bac_phylo)
+Bac_phylo_rt <- root(Bac_phylo, 1)
+GUniFrac(Bac_comm, root(Bac_phylo, 2, resolve.root = TRUE))
+
+data(bird.orders)
+plot(bird.orders)
+plot(root(bird.orders, 3, resolve.root = TRUE))
+plot(root(bird.orders, 1:5))
+tr <- root(bird.orders, 1)
+plot(drop.tip(tr, 1))
+is.rooted(drop.tip(tr, 1))
+
 
