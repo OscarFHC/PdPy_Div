@@ -200,16 +200,22 @@ Bac_comm <- t(read.table(file = "D:/Research/PdPy_Div/data/16s_seqtab.csv", sep 
                          header = TRUE, row.names = 1, stringsAsFactors = FALSE, fill = TRUE))
 Bac_comm[1:5, 1:3]
 
-plot(Bac_tree, show.tip.label = FALSE)
-str(Bac_tree)
+plot(phylocom$phylo)
+str(Bac_comm)
 data(phylocom)
-str(phylocom$phylo)
+cophenetic(phylocom$phylo)
 
+?decostand
+
+pd(phylocom$sample, phylocom$phylo, include.root = TRUE)
 pd(Bac_comm, Bac_phylo)
+unifrac(Bac_comm, Bac_phylo)
 
 phydist <- cophenetic(Bac_phylo)
-ses.mpd.result <- ses.mpd(Bac_comm, phydist, null.model = "taxa.labels",
+phyvcv <- vcv(Bac_phylo)
+ses.mpd.result <- ses.mpd(Bac_comm[1:5], phydist, null.model = "taxa.labels",
                           abundance.weighted = FALSE, runs = 99)
+
 
 
 is.rooted(Bac_tree)
