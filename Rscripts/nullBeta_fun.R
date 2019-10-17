@@ -200,7 +200,9 @@ Bac_comm <- t(read.table(file = "D:/Research/PdPy_Div/data/16s_seqtab.csv", sep 
                          header = TRUE, row.names = 1, stringsAsFactors = FALSE, fill = TRUE))
 Bac_ra_comm <- Bac_comm / rowSums(Bac_comm)
 
-pd(Bac_comm, root(Bac_phylo, 1, resolve.root = TRUE))[,1]
+pd(Bac_comm, root(Bac_phylo, 1, resolve.root = TRUE))
+pd(randomizeMatrix(Bac_comm, null.model = "richness"), root(Bac_phylo, 1, resolve.root = TRUE))
+pd(Bac_comm, tipShuffle(root(Bac_phylo, 1, resolve.root = TRUE)))
 UniFrac <- GUniFrac(Bac_comm, root(Bac_phylo, 1, resolve.root = TRUE), alpha = c(0, 1))
 phyloSor <- phylosor(Bac_comm, root(Bac_phylo, 1, resolve.root = TRUE))
 #UniFrac[, , 1]
@@ -211,6 +213,20 @@ ses.mpd.result <- ses.mpd(Bac_comm, phydist, null.model = "taxa.labels",
 
 
 
-samp <- read.table(file = "C:/Users/user/Downloads/beta.example.sample.txt", sep = "\t", row.names = 1, header = TRUE)
+samp <- read.table(file = "C:/Users/Oscar/Downloads/beta.example.sample.txt", sep = "\t", row.names = 1, header = TRUE)
 ra.samp <- samp / rowSums(samp)
-phylo <- read.tree(file = "C:/Users/user/Downloads/beta.example.phylo.txt")
+phylo <- read.tree(file = "C:/Users/Oscar/Downloads/beta.example.phylo.txt")
+
+
+colSums(randomizeMatrix(samp, null.model = "richness"))
+colSums(samp)
+
+
+ori <- pd(Bac_comm, root(Bac_phylo, 1, resolve.root = TRUE))[,1]
+perm_comm <- pd(randomizeMatrix(Bac_comm, null.model = "independentswap"), root(Bac_phylo, 1, resolve.root = TRUE))[1,1]
+perm_phylo <- pd(Bac_comm, tipShuffle(root(Bac_phylo, 1, resolve.root = TRUE)))[,1]
+
+hist(replicate(1000, pd(randomizeMatrix(Bac_comm, null.model = "independentswap"), root(Bac_phylo, 1, resolve.root = TRUE))[1,1]))
+hist(replicate(1000, pd(Bac_comm, tipShuffle(root(Bac_phylo, 1, resolve.root = TRUE)))[1,1]))
+ori - perm_phylo
+
