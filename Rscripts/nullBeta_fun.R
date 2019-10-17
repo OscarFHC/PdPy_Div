@@ -202,16 +202,8 @@ Bac_ra_comm <- Bac_comm / rowSums(Bac_comm)
 
 pd(Bac_comm, root(Bac_phylo, 1, resolve.root = TRUE))[,1]
 UniFrac <- GUniFrac(Bac_comm, root(Bac_phylo, 1, resolve.root = TRUE), alpha = c(0, 1))
+phyloSor <- phylosor(Bac_comm, root(Bac_phylo, 1, resolve.root = TRUE))
 #UniFrac[, , 1]
-
-str(UniFrac$unifracs)
-
-
-#plot(Bac_phylo)
-str(Bac_comm)
-data(phylocom)
-cophenetic(phylocom$phylo)
-
 phydist <- cophenetic(Bac_phylo)
 phyvcv <- vcv(Bac_phylo)
 ses.mpd.result <- ses.mpd(Bac_comm, phydist, null.model = "taxa.labels",
@@ -219,42 +211,6 @@ ses.mpd.result <- ses.mpd(Bac_comm, phydist, null.model = "taxa.labels",
 
 
 
-samp <- read.table(file = "C:/Users/Oscar/Downloads/beta.example.sample.txt", sep = "\t", row.names = 1, header = TRUE)
+samp <- read.table(file = "C:/Users/user/Downloads/beta.example.sample.txt", sep = "\t", row.names = 1, header = TRUE)
 ra.samp <- samp / rowSums(samp)
-phylo <- read.tree(file = "C:/Users/Oscar/Downloads/beta.example.phylo.txt")
-
-plot(phylo)
-pd(as.matrix(samp[1,]), phylo)
-unifrac(samp, phylo)
-pd(as.matrix(phylocom$sample[1,]), phylocom$phylo, include.root = TRUE)
-
-pd(Bac_comm, Bac_phylo)
-
-Bac_phylo$edge
-Bac_phylo$edge.length
-
-node <- matrix(NA, nrow = length(Bac_phylo$edge.length), ncol = 6)
-node[,1:2] <- Bac_phylo$edge
-node[,3] <- Bac_phylo$edge.length
-
-for(i in 1:dim(node)[1]){
-  leave.node <- tips(Bac_phylo, node[i, 2])  
-  node[i, 4] <- sum(Bac_ra_comm[1, leave.node])
-  node[i, 5] <- sum(Bac_ra_comm[2, leave.node])
-  node[i, 6] <- node[i, 3] * (abs(node[i, 4] - node[i, 5]))
-}
-head(node)
-sum(node[, 6])
-
-Bac_phylo_rt <- root(Bac_phylo, 1)
-GUniFrac(Bac_comm, root(Bac_phylo, 2, resolve.root = TRUE))
-
-data(bird.orders)
-plot(bird.orders)
-plot(root(bird.orders, 3, resolve.root = TRUE))
-plot(root(bird.orders, 1:5))
-tr <- root(bird.orders, 1)
-plot(drop.tip(tr, 1))
-is.rooted(drop.tip(tr, 1))
-
-
+phylo <- read.tree(file = "C:/Users/user/Downloads/beta.example.phylo.txt")
