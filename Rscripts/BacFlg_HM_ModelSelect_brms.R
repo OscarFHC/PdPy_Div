@@ -44,6 +44,21 @@ if (!require(GUniFrac)) {
   library(GUniFrac)
 }else{library(GUniFrac)}
 
+if (!require(phytools)) {
+  install.packages("phytools", dependencies=TRUE, repos = 'http://cran.us.r-project.org')
+  library(phytools)
+}else{library(phytools)}
+
+if (!require(ecodist)) {
+  install.packages("ecodist", dependencies=TRUE, repos = 'http://cran.us.r-project.org')
+  library(ecodist)
+}else{library(ecodist)}
+
+if (!require(ade4)) {
+  install.packages("ade4", dependencies=TRUE, repos = 'http://cran.us.r-project.org')
+  library(ade4)
+}else{library(ade4)}
+
 # install.packages("iNEXT")
 # 
 # ## install the latest version from github

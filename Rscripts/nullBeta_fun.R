@@ -196,6 +196,7 @@ Sys.time() - ini
 
 
 Bac_phylo<- read.tree(file = "D:/Research/PdPy_Div/data/treeNJ_16s.tree")
+Bac_phylog <- newick2phylog(write.tree(Bac_phylo))
 Bac_comm <- t(read.table(file = "D:/Research/PdPy_Div/data/16s_seqtab.csv", sep = ",", 
                          header = TRUE, row.names = 1, stringsAsFactors = FALSE, fill = TRUE))
 Bac_ra_comm <- Bac_comm / rowSums(Bac_comm)
@@ -213,20 +214,59 @@ ses.mpd.result <- ses.mpd(Bac_comm, phydist, null.model = "taxa.labels",
 
 
 
-samp <- read.table(file = "C:/Users/Oscar/Downloads/beta.example.sample.txt", sep = "\t", row.names = 1, header = TRUE)
+samp <- read.table(file = "C:/Users/user/Downloads/beta.example.sample.txt", sep = "\t", row.names = 1, header = TRUE)
 ra.samp <- samp / rowSums(samp)
-phylo <- read.tree(file = "C:/Users/Oscar/Downloads/beta.example.phylo.txt")
+phylo <- read.tree(file = "C:/Users/user/Downloads/beta.example.phylo.txt")
 
 
 colSums(randomizeMatrix(samp, null.model = "richness"))
 colSums(samp)
 
 
-ori <- pd(Bac_comm, root(Bac_phylo, 1, resolve.root = TRUE))[,1]
+ori <- pd(Bac_comm, root(Bac_phylo, 1, resolve.root = TRUE))[1,1]
 perm_comm <- pd(randomizeMatrix(Bac_comm, null.model = "independentswap"), root(Bac_phylo, 1, resolve.root = TRUE))[1,1]
 perm_phylo <- pd(Bac_comm, tipShuffle(root(Bac_phylo, 1, resolve.root = TRUE)))[,1]
 
+par(mfrow = c(1, 2))
 hist(replicate(1000, pd(randomizeMatrix(Bac_comm, null.model = "independentswap"), root(Bac_phylo, 1, resolve.root = TRUE))[1,1]))
 hist(replicate(1000, pd(Bac_comm, tipShuffle(root(Bac_phylo, 1, resolve.root = TRUE)))[1,1]))
 ori - perm_phylo
 
+samp <- read.table(file = "C:/Users/user/Downloads/beta.example.sample.txt", sep = "\t", row.names = 1, header = TRUE)
+my.xys <- read.table(file = "C:/Users/user/Downloads/xy.data.txt", sep = "\t", row.names = 1, header = TRUE)
+trait <- read.table(file = "C:/Users/user/Downloads/comparative.traits.txt", sep = "\t", row.names = 1, header = TRUE)
+my.env <- read.table(file = "C:/Users/user/Downloads/env.data.txt", sep = "\t", row.names = 1, header = TRUE)
+phylo <- read.tree(file = "C:/Users/user/Downloads/comparative.phylo.txt")
+my.phylog <- newick2phylog(write.tree(phylo))
+
+COA.samp <- dudi.coa(samp, scan = FALSE, nf = dim(samp)[2] - 1)
+PCA.xy <- dudi.pca(my.xys, COA.samp$lw, scan = FALSE, nf = dim(my.xys)[1] - 1)
+
+stand.val <- apply(my.env, MARGIN = 2, max) - apply(my.env, MARGIN = 2, min)
+stand.env <- sweep(my.env, MARGIN = 2, stand.val, "/")
+PCA.env <- dudi.pca(stand.env, COA.samp$lw, scale = FALSE, scan = FALSE, nf = dim(stand.env)[2])
+PCO.traits <- dudi.pco(dist(trait, method = "euclidean"), row.w = COA.samp$cw, full = TRUE)
+PCO.phylo <- dudi.pco(as.dist(cophenetic(phylo)[names(samp), names(samp)]), row.w = COA.samp$cw, full = TRUE)
+
+source(file = "C:/Users/user/Downloads/Pavoine.app5.txt")
+install.packages("adiv")
+library(adiv)
+rlq.output <- rlqESLTP(PCA.env, PCA.xy, COA.samp, PCO.traits, PCO.phylo, scan = FALSE, nf = 2)
+
+rlq_out <- rlqESLTP(dudiE = PCA.env, dudiS = PCA.xy, dudiL = COA.samp, dudiT = NULL, dudiP = PCO.phylo, scan = FALSE, nf = 5)
+
+
+plot(phylo)
+phylosig(phylo, trait[phylo$tip.label, 1], method = "K", test = TRUE, nsim = 1000)
+phylosig(phylo, trait[phylo$tip.label, 1], method = "lambda", test = TRUE)
+
+FD <- dist(mpd(samp, as.matrix(dist(trait, method = "euclidean"))))
+phylo_mpd <- dist(mpd(samp, cophenetic(phylo)))
+MRM(FD ~ phylo_mpd)
+summary(lm(FD ~ phylo_mpd))
+
+
+A <- matrix(c(1, 0, 0, 1, 1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1), 10, 2, byrow = TRUE)
+B <- matrix(c(0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0), 10, 2, byrow = TRUE)
+C <- matrix(c(1, 0, 0, 1), 2, 2, byrow = TRUE)
+C %*% t(A) %*% B
