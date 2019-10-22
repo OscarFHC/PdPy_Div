@@ -270,3 +270,11 @@ A <- matrix(c(1, 0, 0, 1, 1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1), 10, 2
 B <- matrix(c(0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0), 10, 2, byrow = TRUE)
 C <- matrix(c(1, 0, 0, 1), 2, 2, byrow = TRUE)
 C %*% t(A) %*% B
+
+
+
+
+Flg_phylo<- read.tree(file = "D:/Research/PdPy_Div/data/treeNJ_16s.tree")
+Flg_comm <- t(read.table(file = "D:/Research/PdPy_Div/data/18s_seqtab.csv", sep = ",", 
+                         header = TRUE, row.names = 1, stringsAsFactors = FALSE, fill = TRUE))
+Bac_ra_comm <- Bac_comm / rowSums(Bac_comm)
