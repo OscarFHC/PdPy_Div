@@ -275,6 +275,6 @@ C %*% t(A) %*% B
 
 
 Flg_phylo<- read.tree(file = "D:/Research/PdPy_Div/data/treeNJ_16s.tree")
-Flg_comm <- t(read.table(file = "D:/Research/PdPy_Div/data/18s_seqtab.csv", sep = ",", 
-                         header = TRUE, row.names = 1, stringsAsFactors = FALSE, fill = TRUE))
+Flg_comm <- read.table(file = "D:/Research/PdPy_Div/data/18s_seqtab.csv", sep = ",", 
+                       header = TRUE, row.names = 1, stringsAsFactors = FALSE, fill = TRUE)
 Bac_ra_comm <- Bac_comm / rowSums(Bac_comm)
