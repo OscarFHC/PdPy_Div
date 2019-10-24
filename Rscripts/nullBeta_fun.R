@@ -232,15 +232,22 @@ hist(replicate(1000, pd(randomizeMatrix(Bac_comm, null.model = "independentswap"
 hist(replicate(1000, pd(Bac_comm, tipShuffle(root(Bac_phylo, 1, resolve.root = TRUE)))[1,1]))
 ori - perm_phylo
 
-samp <- read.table(file = "C:/Users/user/Downloads/beta.example.sample.txt", sep = "\t", row.names = 1, header = TRUE)
-my.xys <- read.table(file = "C:/Users/user/Downloads/xy.data.txt", sep = "\t", row.names = 1, header = TRUE)
-trait <- read.table(file = "C:/Users/user/Downloads/comparative.traits.txt", sep = "\t", row.names = 1, header = TRUE)
-my.env <- read.table(file = "C:/Users/user/Downloads/env.data.txt", sep = "\t", row.names = 1, header = TRUE)
-phylo <- read.tree(file = "C:/Users/user/Downloads/comparative.phylo.txt")
+samp <- read.table(file = "C:/Users/Oscar/Downloads/beta.example.sample.txt", sep = "\t", row.names = 1, header = TRUE)
+my.xys <- read.table(file = "C:/Users/Oscar/Downloads/xy.data.txt", sep = "\t", row.names = 1, header = TRUE)
+trait <- read.table(file = "C:/Users/Oscar/Downloads/comparative.traits.txt", sep = "\t", row.names = 1, header = TRUE)
+my.env <- read.table(file = "C:/Users/Oscar/Downloads/env.data.txt", sep = "\t", row.names = 1, header = TRUE)
+phylo <- read.tree(file = "C:/Users/Oscar/Downloads/comparative.phylo.txt")
 my.phylog <- newick2phylog(write.tree(phylo))
 
-mant <- mantel.correlog(vegdist(trait, method = "euclidean"), cophenetic(phylo))
+ses.mntd(samp, cophenetic(phylo))
+comdistnt.shuffle <- function(community, phylo){
+  as.matrix(comdistnt(community, cophenetic(tipShuffle(phylo)), abundance.weighted = TRUE))
+}
+null <- abind(as.matrix(comdistnt(samp, cophenetic(phylo))), 
+              replicate(999, comdistnt.shuffle(samp, phylo)))
 
+ses <- (null[,,1] - apply(null[,,-1], c(1, 2), mean)) / apply(null[,,-1], c(1, 2), sd)
+rank <- array(dim = dim(null), t(apply(apply(null, c(1, 2), rank), 3, t)))
 
 COA.samp <- dudi.coa(samp, scan = FALSE, nf = dim(samp)[2] - 1)
 PCA.xy <- dudi.pca(my.xys, COA.samp$lw, scan = FALSE, nf = dim(my.xys)[1] - 1)
