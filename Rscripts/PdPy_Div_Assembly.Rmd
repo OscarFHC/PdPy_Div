@@ -181,6 +181,152 @@ Vars <- read.table(file = "D:/Research/PdPy_Div/data/sECS_Vars.csv", sep = ",",
                          header = TRUE, stringsAsFactors = FALSE, fill = TRUE)
 ```
 
+# Phylogenetic turnover / deterministic vs stochastic processes
+
+```{r, Bacteria phylogenetic turnover}
+numCores <- detectCores()
+numCores
+
+cl <- makeCluster(numCores)
+
+clusterEvalQ(cl, {
+  library(vegan)
+  library(tidyverse)
+  library(picante)
+  Bac_comm <- as.data.frame(t(read.table(file = "D:/Research/PdPy_Div/data/16s_seqtab.csv", sep = ",", 
+                                       header = TRUE, row.names = 1, stringsAsFactors = FALSE, fill = TRUE)))
+  Bac_phylo<- read.tree(file = "D:/Research/PdPy_Div/data/treeNJ_16s.tree")
+
+})
+
+BacPhylo_null_func <- function(x){
+  #set up parameters and data
+  community = Bac_comm
+  phylo = Bac_phylo
+  # performing comdistnt to calculate MNTD
+  as.matrix(comdistnt(community, cophenetic(tipShuffle(phylo)), abundance.weighted = TRUE))
+}
+
+nsim.list <- sapply(1:999, list)
+test <- parLapply(cl, nsim.list, BacPhylo_null_func)
+test[[1000]] <- as.matrix(comdistnt(Bac_comm, cophenetic(Bac_phylo), abundance.weighted = TRUE))
+
+BacPhylo_null <- data.frame(matrix(unlist(test), ncol = length(test), byrow = FALSE)) %>%
+  cbind(expand.grid(row.names(Bac_comm), row.names(Bac_comm))) %>%
+  rename(obs = X1000)
+write.table(BacOTU_null, file = "D:/Research/PdPy_Div/Results/Bac_MNTD_null.csv", 
+            sep = ",", col.names = TRUE, row.names = FALSE)
+stopCluster(cl)
+```
+
+```{r, Nanoflagellate phylogenetic turnover}
+numCores <- detectCores()
+numCores
+
+cl <- makeCluster(numCores)
+
+clusterEvalQ(cl, {
+  library(vegan)
+  library(tidyverse)
+  library(picante)
+  NF_comm <- as.data.frame(t(read.table(file = "D:/Research/PdPy_Div/data/18s_seqtab.csv", sep = ",", 
+                                      header = TRUE, row.names = 1, stringsAsFactors = FALSE, fill = TRUE)))
+  NF_phylo<- read.tree(file = "D:/Research/PdPy_Div/data/treeNJ_18s.tree")
+})
+
+NFPhylo_null_func <- function(x){
+  # set up parameters and data
+  community = NF_comm
+  phylo = NF_phylo
+  # performing comdistnt to calculate MNTD
+  as.matrix(comdistnt(community, cophenetic(tipShuffle(phylo)), abundance.weighted = TRUE))
+}
+
+nsim.list <- sapply(1:999, list)
+test <- parLapply(cl, nsim.list, NFPhylo_null_func)
+test[[1000]] <- as.matrix(comdistnt(NF_comm, cophenetic(NF_phylo), abundance.weighted = TRUE))
+
+NFPhylo_null <- data.frame(matrix(unlist(test), ncol = length(test), byrow = FALSE)) %>%
+  cbind(expand.grid(row.names(NF_comm), row.names(NF_comm))) %>%
+  rename(obs = X1000)
+# write.table(NFOTU_null, file = "D:/Research/PdPy_Div/Results/NF_MNTD_null.csv", 
+#             sep = ",", col.names = TRUE, row.names = FALSE)
+stopCluster(cl)
+```
+
+# OTU turnover / Dispersal limitation vs homogeneous dispersal
+
+```{r, Bacteria OTU turnover}
+numCores <- detectCores()
+numCores
+
+cl <- makeCluster(numCores)
+
+clusterEvalQ(cl, {
+  library(vegan)
+  library(tidyverse)
+  library(picante)
+  Bac_comm <- as.data.frame(t(read.table(file = "D:/Research/PdPy_Div/data/16s_seqtab.csv", sep = ",", 
+                                       header = TRUE, row.names = 1, stringsAsFactors = FALSE, fill = TRUE)))
+})
+
+BacOTU_null_func <- function(x){
+  # set up parameters and data
+  community = Bac_comm
+  n.mod = "independentswap"
+  method = "chao"
+  # performing comdistnt to calculate MNTD
+  as.matrix(vegdist(randomizeMatrix(community, null.model = n.mod), method = method))
+}
+
+nsim.list <- sapply(1:999, list)
+test <- parLapply(cl, nsim.list, BacOTU_null_func)
+test[[1000]] <- as.matrix(vegdist(Bac_comm, null.model = "independentswap", method = "chao"))
+
+BacOTU_null <- data.frame(matrix(unlist(test), ncol = length(test), byrow = FALSE)) %>%
+  cbind(expand.grid(row.names(Bac_comm), row.names(Bac_comm))) %>%
+  rename(obs = X1000)
+# write.table(BacOTU_null, file = "D:/Research/PdPy_Div/Results/Bac_chao_null.csv", 
+#             sep = ",", col.names = TRUE, row.names = FALSE)
+stopCluster(cl)
+```
+
+```{r, Nanoflagellate OTU turnover}
+numCores <- detectCores()
+numCores
+
+cl <- makeCluster(numCores)
+
+clusterEvalQ(cl, {
+  library(vegan)
+  library(tidyverse)
+  library(picante)
+  NF_comm <- as.data.frame(t(read.table(file = "D:/Research/PdPy_Div/data/18s_seqtab.csv", sep = ",", 
+                                        header = TRUE, row.names = 1, stringsAsFactors = FALSE, fill = TRUE)))
+})
+
+NFOTU_null_func <- function(x){
+  # set up parameters and data
+  community = NF_comm
+  n.mod = "independentswap"
+  method = "chao"
+  # performing comdistnt to calculate MNTD
+  as.matrix(vegdist(randomizeMatrix(community, null.model = n.mod), method = method))
+}
+
+nsim.list <- sapply(1:999, list)
+test <- parLapply(cl, nsim.list, NFOTU_null_func)
+test[[1000]] <- as.matrix(vegdist(NF_comm, null.model = "independentswap", method = "chao"))
+
+NFOTU_null <- data.frame(matrix(unlist(test), ncol = length(test), byrow = FALSE)) %>%
+  cbind(expand.grid(row.names(NF_comm), row.names(NF_comm))) %>%
+  rename(obs = X1000)
+write.table(NFOTU_null, file = "D:/Research/PdPy_Div/Results/NF_chao_null.csv", 
+            sep = ",", col.names = TRUE, row.names = FALSE)
+stopCluster(cl)
+```
+
+
 # Phylogenetic signal
 
 ```{r, Bacteria phylogenetic signal, eval = FALSE}
@@ -230,152 +376,6 @@ NF_PhySig <- mantel.correlog(NF_Niche_Dist, NF_Phylo_Dist, n.class = 50)
 plot(NF_PhySig)
 ggsave(plot(NF_PhySig), file = "D:/Research/PdPy_Div/Results/NF_PhySig_fig.pdf", dpi = 600) 
 ```
-
-# Phylogenetic turnover / deterministic vs stochastic processes
-
-```{r, Bacteria phylogenetic turnover}
-numCores <- detectCores()
-numCores
-
-cl <- makeCluster(numCores)
-
-clusterEvalQ(cl, {
-  library(vegan)
-  library(tidyverse)
-  library(picante)
-  Bac_comm <- as.data.frame(t(read.table(file = "D:/Research/PdPy_Div/data/16s_seqtab.csv", sep = ",", 
-                                       header = TRUE, row.names = 1, stringsAsFactors = FALSE, fill = TRUE)))
-  Bac_phylo<- read.tree(file = "D:/Research/PdPy_Div/data/treeNJ_16s.tree")
-
-})
-
-BacPhylo_null_func <- function(x){
-  #set up parameters and data
-  community = Bac_comm
-  phylo = Bac_phylo
-  n.mod = "independentswap"
-  method = "chao"
-  # performing comdistnt to calculate MNTD
-  as.matrix(comdistnt(community, cophenetic(tipShuffle(phylo)), abundance.weighted = TRUE))
-}
-
-nsim.list <- sapply(1:999, list)
-test <- parLapply(cl, nsim.list, BacPhylo_null_func)
-test[[1000]] <- as.matrix(comdistnt(Bac_comm, cophenetic(Bac_phylo), abundance.weighted = TRUE))
-
-BacPhylo_null <- data.frame(matrix(unlist(test), ncol = length(test), byrow = FALSE)) %>%
-  cbind(expand.grid(row.names(Bac_comm), row.names(Bac_comm))) %>%
-  rename(obs = X1000)
-# write.table(BacOTU_null, file = "D:/Research/PdPy_Div/Results/Bac_MNTD_null.csv", 
-#             sep = ",", col.names = TRUE, row.names = FALSE)
-stopCluster(cl)
-```
-
-```{r, Nanoflagellate phylogenetic turnover}
-numCores <- detectCores()
-numCores
-
-cl <- makeCluster(numCores)
-
-clusterEvalQ(cl, {
-  library(vegan)
-  library(tidyverse)
-  library(picante)
-  NF_comm <- as.data.frame(t(read.table(file = "D:/Research/PdPy_Div/data/18s_seqtab.csv", sep = ",", 
-                                      header = TRUE, row.names = 1, stringsAsFactors = FALSE, fill = TRUE)))
-  NF_phylo<- read.tree(file = "D:/Research/PdPy_Div/data/treeNJ_18s.tree")
-})
-
-NFPhylo_null_func <- function(x){
-  #set up parameters and data
-  community = NF_comm
-  phylo = NF_phylo
-  n.mod = "independentswap"
-  method = "chao"
-  # performing comdistnt to calculate MNTD
-  as.matrix(comdistnt(community, cophenetic(tipShuffle(phylo)), abundance.weighted = TRUE))
-}
-
-nsim.list <- sapply(1:999, list)
-test <- parLapply(cl, nsim.list, NFPhylo_null_func)
-test[[1000]] <- as.matrix(comdistnt(NF_comm, cophenetic(NF_phylo), abundance.weighted = TRUE))
-
-NFPhylo_null <- data.frame(matrix(unlist(test), ncol = length(test), byrow = FALSE)) %>%
-  cbind(expand.grid(row.names(NF_comm), row.names(NF_comm))) %>%
-  rename(obs = X1000)
-# write.table(BacOTU_null, file = "D:/Research/PdPy_Div/Results/Bac_MNTD_null.csv", 
-#             sep = ",", col.names = TRUE, row.names = FALSE)
-stopCluster(cl)
-```
-
-# OTU turnover / Dispersal limitation vs homogeneous dispersal
-
-```{r, Bacteria OTU turnover}
-numCores <- detectCores()
-numCores
-
-cl <- makeCluster(numCores)
-
-clusterEvalQ(cl, {
-  library(vegan)
-  library(tidyverse)
-  library(picante)
-  Bac_comm <- as.data.frame(t(read.table(file = "D:/Research/PdPy_Div/data/16s_seqtab.csv", sep = ",", 
-                                       header = TRUE, row.names = 1, stringsAsFactors = FALSE, fill = TRUE)))
-})
-
-BacOTU_null_func <- function(x){
-  community = Bac_comm
-  n.mod = "independentswap"
-  method = "chao"
-  as.matrix(vegdist(randomizeMatrix(community, null.model = n.mod), method = method))
-}
-
-nsim.list <- sapply(1:999, list)
-test <- parLapply(cl, nsim.list, BacOTU_null_func)
-test[[1000]] <- as.matrix(vegdist(Bac_comm, null.model = "independentswap", method = "chao"))
-
-BacOTU_null <- data.frame(matrix(unlist(test), ncol = length(test), byrow = FALSE)) %>%
-  cbind(expand.grid(row.names(Bac_comm), row.names(Bac_comm))) %>%
-  rename(obs = X1000)
-# write.table(BacOTU_null, file = "D:/Research/PdPy_Div/Results/Bac_chao_null.csv", 
-#             sep = ",", col.names = TRUE, row.names = FALSE)
-stopCluster(cl)
-```
-
-```{r, Nanoflagellate OTU turnover}
-numCores <- detectCores()
-numCores
-
-cl <- makeCluster(numCores)
-
-clusterEvalQ(cl, {
-  library(vegan)
-  library(tidyverse)
-  library(picante)
-  NF_comm <- as.data.frame(t(read.table(file = "D:/Research/PdPy_Div/data/18s_seqtab.csv", sep = ",", 
-                                        header = TRUE, row.names = 1, stringsAsFactors = FALSE, fill = TRUE)))
-})
-
-NFOTU_null_func <- function(x){
-  community = NF_comm
-  n.mod = "independentswap"
-  method = "chao"
-  as.matrix(vegdist(randomizeMatrix(community, null.model = n.mod), method = method))
-}
-
-nsim.list <- sapply(1:999, list)
-test <- parLapply(cl, nsim.list, NFOTU_null_func)
-test[[1000]] <- as.matrix(vegdist(NF_comm, null.model = "independentswap", method = "chao"))
-
-NFOTU_null <- data.frame(matrix(unlist(test), ncol = length(test), byrow = FALSE)) %>%
-  cbind(expand.grid(row.names(NF_comm), row.names(NF_comm))) %>%
-  rename(obs = X1000)
-write.table(NFOTU_null, file = "D:/Research/PdPy_Div/Results/NF_chao_null.csv", 
-            sep = ",", col.names = TRUE, row.names = FALSE)
-stopCluster(cl)
-```
-
 
 
 
