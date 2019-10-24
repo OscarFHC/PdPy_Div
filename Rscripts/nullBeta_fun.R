@@ -239,6 +239,9 @@ my.env <- read.table(file = "C:/Users/user/Downloads/env.data.txt", sep = "\t", 
 phylo <- read.tree(file = "C:/Users/user/Downloads/comparative.phylo.txt")
 my.phylog <- newick2phylog(write.tree(phylo))
 
+mant <- mantel.correlog(vegdist(trait, method = "euclidean"), cophenetic(phylo))
+
+
 COA.samp <- dudi.coa(samp, scan = FALSE, nf = dim(samp)[2] - 1)
 PCA.xy <- dudi.pca(my.xys, COA.samp$lw, scan = FALSE, nf = dim(my.xys)[1] - 1)
 

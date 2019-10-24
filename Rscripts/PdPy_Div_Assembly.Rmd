@@ -161,16 +161,70 @@ if (!require(cowplot)) {
 }else{library(cowplot)}
 ```
 
-```{r, read in data, include=FALSE}
-Bac_comm <- t(read.table(file = "D:/Research/PdPy_Div/data/16s_seqtab.csv", sep = ",", 
-                         header = TRUE, row.names = 1, stringsAsFactors = FALSE, fill = TRUE))
+```{r, read in data}
+Bac_comm <- as.data.frame(t(read.table(file = "D:/Research/PdPy_Div/data/16s_seqtab.csv", sep = ",", 
+                                       header = TRUE, row.names = 1, stringsAsFactors = FALSE, fill = TRUE)))
 Bac_ra_comm <- Bac_comm / rowSums(Bac_comm)
 Bac_phylo<- read.tree(file = "D:/Research/PdPy_Div/data/treeNJ_16s.tree")
 
+NF_comm <- as.data.frame(t(read.table(file = "D:/Research/PdPy_Div/data/18s_seqtab.csv", sep = ",", 
+                                      header = TRUE, row.names = 1, stringsAsFactors = FALSE, fill = TRUE)))
+NF_ra_comm <- NF_comm / rowSums(NF_comm)
+NF_phylo<- read.tree(file = "D:/Research/PdPy_Div/data/treeNJ_18s.tree")
 
+Vars <- read.table(file = "D:/Research/PdPy_Div/data/sECS_Vars.csv", sep = ",", 
+                         header = TRUE, stringsAsFactors = FALSE, fill = TRUE)
 ```
 
+# Phylogenetic signal
 
+```{r, Bacteria phylogenetic signal}
+Bac_Niche <- as.data.frame(matrix(0, ncol(Bac_comm), 8)) %>%
+  #mutate(Bac_ID = names(Bac_comm)) %>%
+  rename(Temp = V1, Sal = V2, PAR = V3, NO2 = V4, NO3 = V5, DIN = V6, PO3 = V7, Chla = V8) 
+
+for(i in 1:ncol(Bac_comm)){ 
+  Bac_Niche[i, "Temp"] = sum(Bac_comm[,names(Bac_comm)[i]] * Vars$Temp) / sum(Bac_comm[,names(Bac_comm)[i]])
+  Bac_Niche[i, "Sal"] = sum(Bac_comm[,names(Bac_comm)[i]] * Vars$Sal) / sum(Bac_comm[,names(Bac_comm)[i]])
+  Bac_Niche[i, "PAR"] = sum(Bac_comm[,names(Bac_comm)[i]] * Vars$PAR) / sum(Bac_comm[,names(Bac_comm)[i]])
+  Bac_Niche[i, "NO2"] = sum(Bac_comm[,names(Bac_comm)[i]] * Vars$NO2) / sum(Bac_comm[,names(Bac_comm)[i]])
+  Bac_Niche[i, "NO3"] = sum(Bac_comm[,names(Bac_comm)[i]] * Vars$NO3) / sum(Bac_comm[,names(Bac_comm)[i]])
+  Bac_Niche[i, "DIN"] = sum(Bac_comm[,names(Bac_comm)[i]] * Vars$DIN) / sum(Bac_comm[,names(Bac_comm)[i]])
+  Bac_Niche[i, "PO3"] = sum(Bac_comm[,names(Bac_comm)[i]] * Vars$PO3) / sum(Bac_comm[,names(Bac_comm)[i]])
+  Bac_Niche[i, "Chla"] = sum(Bac_comm[,names(Bac_comm)[i]] * Vars$Chla) / sum(Bac_comm[,names(Bac_comm)[i]])
+}
+
+Bac_Niche <- as.data.frame(scale(Bac_Niche, center = TRUE, scale = TRUE))
+Bac_Niche_Dist <- vegdist(Bac_Niche, method = "euclidean")
+Bac_Phylo_Dist <- cophenetic(Bac_phylo)
+Bac_PhySig <- mantel.correlog(Bac_Niche_Dist, Bac_Phylo_Dist, n.class = 50)
+Bac_PhySig_fig <- plot(Bac_PhySig)
+#ggsave(plot(Bac_PhySig), file = "D:/Research/PdPy_Div/Results/Bac_PhySig_fig.pdf", dpi = 600) 
+```
+
+```{r, Nanoflagellate phylogenetic signal}
+NF_Niche <- as.data.frame(matrix(0, ncol(NF_comm), 8)) %>%
+  #mutate(Bac_ID = names(Bac_comm)) %>%
+  rename(Temp = V1, Sal = V2, PAR = V3, NO2 = V4, NO3 = V5, DIN = V6, PO3 = V7, Chla = V8) 
+
+for(i in 1:ncol(NF_comm)){ 
+  NF_Niche[i, "Temp"] = sum(NF_comm[,names(NF_comm)[i]] * Vars$Temp) / sum(NF_comm[,names(NF_comm)[i]])
+  NF_Niche[i, "Sal"] = sum(NF_comm[,names(NF_comm)[i]] * Vars$Sal) / sum(NF_comm[,names(NF_comm)[i]])
+  NF_Niche[i, "PAR"] = sum(NF_comm[,names(NF_comm)[i]] * Vars$PAR) / sum(NF_comm[,names(NF_comm)[i]])
+  NF_Niche[i, "NO2"] = sum(NF_comm[,names(NF_comm)[i]] * Vars$NO2) / sum(NF_comm[,names(NF_comm)[i]])
+  NF_Niche[i, "NO3"] = sum(NF_comm[,names(NF_comm)[i]] * Vars$NO3) / sum(NF_comm[,names(NF_comm)[i]])
+  NF_Niche[i, "DIN"] = sum(NF_comm[,names(NF_comm)[i]] * Vars$DIN) / sum(NF_comm[,names(NF_comm)[i]])
+  NF_Niche[i, "PO3"] = sum(NF_comm[,names(NF_comm)[i]] * Vars$PO3) / sum(NF_comm[,names(NF_comm)[i]])
+  NF_Niche[i, "Chla"] = sum(NF_comm[,names(NF_comm)[i]] * Vars$Chla) / sum(NF_comm[,names(NF_comm)[i]])
+}
+
+NF_Niche <- as.data.frame(scale(NF_Niche, center = TRUE, scale = TRUE))
+NF_Niche_Dist <- vegdist(NF_Niche, method = "euclidean")
+NF_Phylo_Dist <- cophenetic(NF_phylo)
+NF_PhySig <- mantel.correlog(NF_Niche_Dist, NF_Phylo_Dist, n.class = 50)
+plot(NF_PhySig)
+ggsave(plot(NF_PhySig), file = "D:/Research/PdPy_Div/Results/NF_PhySig_fig.pdf", dpi = 600) 
+```
 
 This week in lecture we learned about chi-square tests and ANOVAs. Let's revisit both of these tests in today's lab. 
 # Chi-square test of independence
