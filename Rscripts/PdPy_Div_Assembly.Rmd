@@ -204,7 +204,7 @@ Bac_Niche_Dist <- vegdist(Bac_Niche, method = "euclidean")
 Bac_Phylo_Dist <- cophenetic(Bac_phylo)
 Bac_PhySig <- mantel.correlog(Bac_Niche_Dist, Bac_Phylo_Dist, n.class = 50)
 Bac_PhySig_fig <- plot(Bac_PhySig)
-#ggsave(plot(Bac_PhySig), file = "D:/Research/PdPy_Div/Results/Bac_PhySig_fig.pdf", dpi = 600) 
+ggsave(plot(Bac_PhySig), file = "D:/Research/PdPy_Div/Results/Bac_PhySig_fig.pdf", dpi = 600) 
 ```
 
 ```{r, Nanoflagellate phylogenetic signal}
@@ -231,19 +231,27 @@ plot(NF_PhySig)
 ggsave(plot(NF_PhySig), file = "D:/Research/PdPy_Div/Results/NF_PhySig_fig.pdf", dpi = 600) 
 ```
 
-# Phylogenetic turnover / Selection strength
-
+# Phylogenetic turnover / deterministic vs stochastic processes
 
 ```{r}
 comdistnt.shuffle <- function(community, phylo){
   as.matrix(comdistnt(community, cophenetic(tipShuffle(phylo)), abundance.weighted = TRUE))
 }
+nsim <- 999
 
+BacPhylo_null <- abind(as.matrix(comdistnt(Bac_comm, cophenetic(Bac_phylo))), 
+                       replicate(nsim, comdistnt.shuffle(Bac_comm, Bac_phylo)))
+write.table(as.matrix(BacPhylo_null), file = "D:/Research/PdPy_Div/Results/Bac_MNTD_null.csv", 
+            sep = ",", row.names = FALSE, col.names = FALSE)
+BacPhylo_null <- array(dim = c(nrow(Bac_comm), nrow(Bac_comm), nsim + 1), 
+                       as.matrix(read.table(file = "D:/Research/PdPy_Div/Results/Bac_MNTD_null.csv", sep = ",")))
 
-Bac_null <- abind(as.matrix(comdistnt(Bac_comm, cophenetic(Bac_phylo))), 
-                  replicate(999, comdistnt.shuffle(Bac_comm, Bac_phylo)))
 NF_null <- abind(as.matrix(comdistnt(NF_comm, cophenetic(NF_phylo))), 
                  replicate(999, comdistnt.shuffle(NF_comm, NF_phylo)))
+write.table(as.matrix(NF_null), file = "D:/Research/PdPy_Div/Results/NF_MNTD_null.csv", 
+            sep = ",", row.names = FALSE, col.names = FALSE)
+NF_null <- array(dim = c(nrow(NF_comm), nrow(NF_comm), nsim + 1), 
+                  as.matrix(read.table(file = "D:/Research/PdPy_Div/Results/NF_MNTD_null.csv", sep = ",")))
 
 Bac_ses <- (Bac_null[,,1] - apply(Bac_null[,,-1], c(1, 2), mean)) / apply(Bac_null[,,-1], c(1, 2), sd)
 NF_ses <- (NF_null[,,1] - apply(NF_null[,,-1], c(1, 2), mean)) / apply(NF_null[,,-1], c(1, 2), sd)
@@ -252,7 +260,73 @@ Bac_rank <- array(dim = dim(Bac_null), t(apply(apply(Bac_null, c(1, 2), rank), 3
 NF_rank <- array(dim = dim(NF_null), t(apply(apply(NF_null, c(1, 2), rank), 3, t)))
 ```
 
+# OTU turnover / Dispersal limitation vs homogeneous dispersal
 
+```{r, Bacteria OTU turnover}
+numCores <- detectCores()
+numCores
+
+cl <- makeCluster(numCores)
+
+clusterEvalQ(cl, {
+  library(vegan)
+  library(tidyverse)
+  library(picante)
+  Bac_comm <- as.data.frame(t(read.table(file = "D:/Research/PdPy_Div/data/16s_seqtab.csv", sep = ",", 
+                                       header = TRUE, row.names = 1, stringsAsFactors = FALSE, fill = TRUE)))
+})
+
+BacOTU_null_func <- function(x){
+  community = Bac_comm
+  n.mod = "independentswap"
+  method = "chao"
+  as.matrix(vegdist(randomizeMatrix(community, null.model = n.mod), method = method))
+}
+
+nsim.list <- sapply(1:999, list)
+test <- parLapply(cl, nsim.list, BacOTU_null_func)
+test[[1000]] <- as.matrix(vegdist(Bac_comm, null.model = "independentswap", method = "chao"))
+
+BacOTU_null <- data.frame(matrix(unlist(test), ncol = length(test), byrow = FALSE)) %>%
+  cbind(expand.grid(row.names(Bac_comm), row.names(Bac_comm))) %>%
+  rename(obs = X1000)
+# write.table(BacOTU_null, file = "D:/Research/PdPy_Div/Results/Bac_chao_null.csv", 
+#             sep = ",", col.names = TRUE, row.names = FALSE)
+stopCluster(cl)
+```
+
+```{r, nanoflagellate OTU turnover}
+numCores <- detectCores()
+numCores
+
+cl <- makeCluster(numCores)
+
+clusterEvalQ(cl, {
+  library(vegan)
+  library(tidyverse)
+  library(picante)
+  NF_comm <- as.data.frame(t(read.table(file = "D:/Research/PdPy_Div/data/18s_seqtab.csv", sep = ",", 
+                                        header = TRUE, row.names = 1, stringsAsFactors = FALSE, fill = TRUE)))
+})
+
+NFOTU_null_func <- function(x){
+  community = NF_comm
+  n.mod = "independentswap"
+  method = "chao"
+  as.matrix(vegdist(randomizeMatrix(community, null.model = n.mod), method = method))
+}
+
+nsim.list <- sapply(1:999, list)
+test <- parLapply(cl, nsim.list, NFOTU_null_func)
+test[[1000]] <- as.matrix(vegdist(NF_comm, null.model = "independentswap", method = "chao"))
+
+NFOTU_null <- data.frame(matrix(unlist(test), ncol = length(test), byrow = FALSE)) %>%
+  cbind(expand.grid(row.names(NF_comm), row.names(NF_comm))) %>%
+  rename(obs = X1000)
+write.table(NFOTU_null, file = "D:/Research/PdPy_Div/Results/NF_chao_null.csv", 
+            sep = ",", col.names = TRUE, row.names = FALSE)
+stopCluster(cl)
+```
 
 This week in lecture we learned about chi-square tests and ANOVAs. Let's revisit both of these tests in today's lab. 
 # Chi-square test of independence

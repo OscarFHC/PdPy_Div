@@ -226,14 +226,14 @@ BDiv_null_fun = function(x){
   
   
   ## count number of sites and total species richness across all plots (gamma)
-  n_sites<-nrow(spXsite)
-  gamma<-ncol(spXsite)
+  n_sites <- nrow(spXsite)
+  gamma <- ncol(spXsite)
   
   ##make the spXsite matrix into a pres/abs. (overwrites initial spXsite matrix):
   spXsite_p <- ceiling(spXsite/max(spXsite))
   
   ##create an occurrence vector- used to give more weight to widely distributed species in the null model:
-  occur<-apply(spXsite, MARGIN=2, FUN=sum)
+  occur <- apply(spXsite, MARGIN = 2, FUN = sum)
   
   
   ##NOT recommended- this is a non-trivial change to the metric:

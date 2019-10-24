@@ -245,9 +245,12 @@ comdistnt.shuffle <- function(community, phylo){
 }
 null <- abind(as.matrix(comdistnt(samp, cophenetic(phylo))), 
               replicate(999, comdistnt.shuffle(samp, phylo)))
-
+array(dim = c(5,5,1000),as.matrix(null))
 ses <- (null[,,1] - apply(null[,,-1], c(1, 2), mean)) / apply(null[,,-1], c(1, 2), sd)
 rank <- array(dim = dim(null), t(apply(apply(null, c(1, 2), rank), 3, t)))
+
+samp
+randomizeMatrix(samp, null.model = "richness")
 
 COA.samp <- dudi.coa(samp, scan = FALSE, nf = dim(samp)[2] - 1)
 PCA.xy <- dudi.pca(my.xys, COA.samp$lw, scan = FALSE, nf = dim(my.xys)[1] - 1)
