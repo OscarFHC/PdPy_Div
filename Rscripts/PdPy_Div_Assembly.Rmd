@@ -183,7 +183,7 @@ Vars <- read.table(file = "D:/Research/PdPy_Div/data/sECS_Vars.csv", sep = ",",
 
 # Phylogenetic signal
 
-```{r, Bacteria phylogenetic signal}
+```{r, Bacteria phylogenetic signal, eval = FALSE}
 Bac_Niche <- as.data.frame(matrix(0, ncol(Bac_comm), 8)) %>%
   #mutate(Bac_ID = names(Bac_comm)) %>%
   rename(Temp = V1, Sal = V2, PAR = V3, NO2 = V4, NO3 = V5, DIN = V6, PO3 = V7, Chla = V8) 
@@ -207,7 +207,7 @@ Bac_PhySig_fig <- plot(Bac_PhySig)
 ggsave(plot(Bac_PhySig), file = "D:/Research/PdPy_Div/Results/Bac_PhySig_fig.pdf", dpi = 600) 
 ```
 
-```{r, Nanoflagellate phylogenetic signal}
+```{r, Nanoflagellate phylogenetic signal, eval = FALSE}
 NF_Niche <- as.data.frame(matrix(0, ncol(NF_comm), 8)) %>%
   #mutate(Bac_ID = names(Bac_comm)) %>%
   rename(Temp = V1, Sal = V2, PAR = V3, NO2 = V4, NO3 = V5, DIN = V6, PO3 = V7, Chla = V8) 
@@ -233,7 +233,46 @@ ggsave(plot(NF_PhySig), file = "D:/Research/PdPy_Div/Results/NF_PhySig_fig.pdf",
 
 # Phylogenetic turnover / deterministic vs stochastic processes
 
-```{r}
+```{r, Bacteria phylogenetic turnover}
+numCores <- detectCores()
+numCores
+
+cl <- makeCluster(numCores)
+
+clusterEvalQ(cl, {
+  library(vegan)
+  library(tidyverse)
+  library(picante)
+  Bac_comm <- as.data.frame(t(read.table(file = "D:/Research/PdPy_Div/data/16s_seqtab.csv", sep = ",", 
+                                       header = TRUE, row.names = 1, stringsAsFactors = FALSE, fill = TRUE)))
+  Bac_phylo<- read.tree(file = "D:/Research/PdPy_Div/data/treeNJ_16s.tree")
+
+})
+
+BacPhylo_null_func <- function(x){
+  #set up parameters and data
+  community = Bac_comm
+  phylo = Bac_phylo
+  n.mod = "independentswap"
+  method = "chao"
+  # performing comdistnt to calculate MNTD
+  as.matrix(comdistnt(community, cophenetic(tipShuffle(phylo)), abundance.weighted = TRUE))
+}
+
+nsim.list <- sapply(1:999, list)
+test <- parLapply(cl, nsim.list, BacPhylo_null_func)
+test[[1000]] <- as.matrix(comdistnt(Bac_comm, cophenetic(Bac_phylo), abundance.weighted = TRUE))
+
+BacPhylo_null <- data.frame(matrix(unlist(test), ncol = length(test), byrow = FALSE)) %>%
+  cbind(expand.grid(row.names(Bac_comm), row.names(Bac_comm))) %>%
+  rename(obs = X1000)
+# write.table(BacOTU_null, file = "D:/Research/PdPy_Div/Results/Bac_MNTD_null.csv", 
+#             sep = ",", col.names = TRUE, row.names = FALSE)
+stopCluster(cl)
+```
+
+
+```{r, Bacteria phylogenetic turnover}
 comdistnt.shuffle <- function(community, phylo){
   as.matrix(comdistnt(community, cophenetic(tipShuffle(phylo)), abundance.weighted = TRUE))
 }
