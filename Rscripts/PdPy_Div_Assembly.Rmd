@@ -271,32 +271,41 @@ BacPhylo_null <- data.frame(matrix(unlist(test), ncol = length(test), byrow = FA
 stopCluster(cl)
 ```
 
+```{r, Nanoflagellate phylogenetic turnover}
+numCores <- detectCores()
+numCores
 
-```{r, Bacteria phylogenetic turnover}
-comdistnt.shuffle <- function(community, phylo){
+cl <- makeCluster(numCores)
+
+clusterEvalQ(cl, {
+  library(vegan)
+  library(tidyverse)
+  library(picante)
+  NF_comm <- as.data.frame(t(read.table(file = "D:/Research/PdPy_Div/data/18s_seqtab.csv", sep = ",", 
+                                      header = TRUE, row.names = 1, stringsAsFactors = FALSE, fill = TRUE)))
+  NF_phylo<- read.tree(file = "D:/Research/PdPy_Div/data/treeNJ_18s.tree")
+})
+
+NFPhylo_null_func <- function(x){
+  #set up parameters and data
+  community = NF_comm
+  phylo = NF_phylo
+  n.mod = "independentswap"
+  method = "chao"
+  # performing comdistnt to calculate MNTD
   as.matrix(comdistnt(community, cophenetic(tipShuffle(phylo)), abundance.weighted = TRUE))
 }
-nsim <- 999
 
-BacPhylo_null <- abind(as.matrix(comdistnt(Bac_comm, cophenetic(Bac_phylo))), 
-                       replicate(nsim, comdistnt.shuffle(Bac_comm, Bac_phylo)))
-write.table(as.matrix(BacPhylo_null), file = "D:/Research/PdPy_Div/Results/Bac_MNTD_null.csv", 
-            sep = ",", row.names = FALSE, col.names = FALSE)
-BacPhylo_null <- array(dim = c(nrow(Bac_comm), nrow(Bac_comm), nsim + 1), 
-                       as.matrix(read.table(file = "D:/Research/PdPy_Div/Results/Bac_MNTD_null.csv", sep = ",")))
+nsim.list <- sapply(1:999, list)
+test <- parLapply(cl, nsim.list, NFPhylo_null_func)
+test[[1000]] <- as.matrix(comdistnt(NF_comm, cophenetic(NF_phylo), abundance.weighted = TRUE))
 
-NF_null <- abind(as.matrix(comdistnt(NF_comm, cophenetic(NF_phylo))), 
-                 replicate(999, comdistnt.shuffle(NF_comm, NF_phylo)))
-write.table(as.matrix(NF_null), file = "D:/Research/PdPy_Div/Results/NF_MNTD_null.csv", 
-            sep = ",", row.names = FALSE, col.names = FALSE)
-NF_null <- array(dim = c(nrow(NF_comm), nrow(NF_comm), nsim + 1), 
-                  as.matrix(read.table(file = "D:/Research/PdPy_Div/Results/NF_MNTD_null.csv", sep = ",")))
-
-Bac_ses <- (Bac_null[,,1] - apply(Bac_null[,,-1], c(1, 2), mean)) / apply(Bac_null[,,-1], c(1, 2), sd)
-NF_ses <- (NF_null[,,1] - apply(NF_null[,,-1], c(1, 2), mean)) / apply(NF_null[,,-1], c(1, 2), sd)
-
-Bac_rank <- array(dim = dim(Bac_null), t(apply(apply(Bac_null, c(1, 2), rank), 3, t)))
-NF_rank <- array(dim = dim(NF_null), t(apply(apply(NF_null, c(1, 2), rank), 3, t)))
+NFPhylo_null <- data.frame(matrix(unlist(test), ncol = length(test), byrow = FALSE)) %>%
+  cbind(expand.grid(row.names(NF_comm), row.names(NF_comm))) %>%
+  rename(obs = X1000)
+# write.table(BacOTU_null, file = "D:/Research/PdPy_Div/Results/Bac_MNTD_null.csv", 
+#             sep = ",", col.names = TRUE, row.names = FALSE)
+stopCluster(cl)
 ```
 
 # OTU turnover / Dispersal limitation vs homogeneous dispersal
@@ -334,7 +343,7 @@ BacOTU_null <- data.frame(matrix(unlist(test), ncol = length(test), byrow = FALS
 stopCluster(cl)
 ```
 
-```{r, nanoflagellate OTU turnover}
+```{r, Nanoflagellate OTU turnover}
 numCores <- detectCores()
 numCores
 
@@ -366,6 +375,15 @@ write.table(NFOTU_null, file = "D:/Research/PdPy_Div/Results/NF_chao_null.csv",
             sep = ",", col.names = TRUE, row.names = FALSE)
 stopCluster(cl)
 ```
+
+
+
+
+
+
+
+
+
 
 This week in lecture we learned about chi-square tests and ANOVAs. Let's revisit both of these tests in today's lab. 
 # Chi-square test of independence
