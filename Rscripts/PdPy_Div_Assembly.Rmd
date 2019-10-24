@@ -140,6 +140,11 @@ if (!require(loo)) {
   library(loo)
 }else{library(loo)}
 
+if (!require(abind)) {
+  install.packages("abind", dependencies=TRUE, repos = 'http://cran.us.r-project.org')
+  library(abind)
+}else{library(abind)}
+
 if (!require(ggplot2)) {
   install.packages("ggplot2", dependencies=TRUE, repos = 'http://cran.us.r-project.org')
   library(ggplot2)
@@ -225,6 +230,29 @@ NF_PhySig <- mantel.correlog(NF_Niche_Dist, NF_Phylo_Dist, n.class = 50)
 plot(NF_PhySig)
 ggsave(plot(NF_PhySig), file = "D:/Research/PdPy_Div/Results/NF_PhySig_fig.pdf", dpi = 600) 
 ```
+
+# Phylogenetic turnover / Selection strength
+
+
+```{r}
+comdistnt.shuffle <- function(community, phylo){
+  as.matrix(comdistnt(community, cophenetic(tipShuffle(phylo)), abundance.weighted = TRUE))
+}
+
+
+Bac_null <- abind(as.matrix(comdistnt(Bac_comm, cophenetic(Bac_phylo))), 
+                  replicate(999, comdistnt.shuffle(Bac_comm, Bac_phylo)))
+NF_null <- abind(as.matrix(comdistnt(NF_comm, cophenetic(NF_phylo))), 
+                 replicate(999, comdistnt.shuffle(NF_comm, NF_phylo)))
+
+Bac_ses <- (Bac_null[,,1] - apply(Bac_null[,,-1], c(1, 2), mean)) / apply(Bac_null[,,-1], c(1, 2), sd)
+NF_ses <- (NF_null[,,1] - apply(NF_null[,,-1], c(1, 2), mean)) / apply(NF_null[,,-1], c(1, 2), sd)
+
+Bac_rank <- array(dim = dim(Bac_null), t(apply(apply(Bac_null, c(1, 2), rank), 3, t)))
+NF_rank <- array(dim = dim(NF_null), t(apply(apply(NF_null, c(1, 2), rank), 3, t)))
+```
+
+
 
 This week in lecture we learned about chi-square tests and ANOVAs. Let's revisit both of these tests in today's lab. 
 # Chi-square test of independence
