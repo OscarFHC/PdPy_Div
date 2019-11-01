@@ -181,6 +181,15 @@ Vars <- read.table(file = "D:/Research/PdPy_Div/data/sECS_Vars.csv", sep = ",",
                          header = TRUE, stringsAsFactors = FALSE, fill = TRUE)
 ```
 
+
+```{r}
+Bac_A <- iNEXT(t(Bac_comm), q = 0, datatype = "abundance", size = max(colSums(Bac_comm)) + 100000)$AsyEst
+
+Bac_Div <-  Bac_A %>% select(Site, Diversity, Estimator) %>% spread(Diversity, Estimator) %>%
+  rename(SR = "Species richness", Shannon = "Shannon diversity", Simpson = "Simpson diversity") 
+```
+
+
 # Phylogenetic turnover / deterministic vs stochastic processes
 
 ```{r, Bacteria phylogenetic turnover}

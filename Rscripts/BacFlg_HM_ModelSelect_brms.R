@@ -144,6 +144,37 @@ if (!require(ggpmisc)) {
 }else{library(ggpmisc)}
 ######## Loading necessary libraries ########################################################################################
 
+HNF_seqIDXst <- as.data.frame(read.table(file = "D:/Research/PdPy_Div/data/HNF_seqIDXst.csv", sep = ",", 
+                                         header = TRUE, row.names = 1, stringsAsFactors = FALSE, fill = TRUE))
+
+NF_seqIDXst <- as.data.frame(read.table(file = "D:/Research/PdPy_Div/data/18s_seqIDXst.csv", sep = ",", 
+                                          header = TRUE, row.names = 1, stringsAsFactors = FALSE, fill = TRUE))
+
+NF_seqXst <- as.data.frame(read.table(file = "D:/Research/PdPy_Div/data/18s_seqXst.csv", sep = ",", 
+                                          header = TRUE, row.names = 1, stringsAsFactors = FALSE, fill = TRUE))
+
+HNF_seqIDXst <- HNF_seqIDXst[,colnames(HNF_seqIDXst) %in% colnames(NF_seqIDXst)] %>%
+  filter(rowSums(HNF_seqIDXst[,1:ncol(HNF_seqIDXst)]) > 0)
+
+NFfindID <- c()
+for (i in 1:nrow(NF_seqIDXst)){
+  NFfindID <- c(NFfindID, toString(NF_seqIDXst[i,]))
+}
+
+HNFfindID <- c()
+for (i in 1:nrow(HNF_seqIDXst)){
+  HNFfindID <- c(HNFfindID, toString(HNF_seqIDXst[i,]))
+}
+
+found <- c()
+for (i in 1:100){ #nrow(HNF_seqIDXst)
+  print(c(i, which(NFfindID == HNFfindID[i])))
+  #found <- c(found, which(NFfindID == HNFfindID[i]))
+}
+
+HNFfindID %in% NFfindID
+
+match(toString(HNF_seqIDXst[nrow(HNF_seqIDXst),]), toString(NF_seqIDXst[nrow(NF_seqIDXst),]))
 ##### Reading data ##############################################################################################
 Dat.raw <- read.table(file = "D:/Research/PdPy_Div/data/16s_OTUtab.csv", 
                       sep = ",", header = TRUE, stringsAsFactors = FALSE, fill = TRUE)
