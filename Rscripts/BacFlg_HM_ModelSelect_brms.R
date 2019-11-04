@@ -144,6 +144,46 @@ if (!require(ggpmisc)) {
 }else{library(ggpmisc)}
 ######## Loading necessary libraries ########################################################################################
 
+name <- read.table(file = "D:/Research/PdPy_Div/data/HNF_taxaNameList.csv", sep = ",", header = TRUE, stringsAsFactors = FALSE, fill = TRUE)
+NFseq <- read.table(file = "D:/Research/PdPy_Div/data/18s_seq_taxaname.csv", sep = ",", header = TRUE, stringsAsFactors = FALSE, fill = TRUE)
+
+ls <- c()
+for (i in 1:nrow(name)){
+  Phylum <- which(NFseq$Phylum == name[i, "Phylum"])
+  Class <- which(NFseq[Phylum, "Class"] == name[i, "Class"])
+  Order <- which(NFseq[Class, "Order"] == name[i, "Order"])
+  Family <- which(NFseq[Order, "Family"] == name[i, "Family"])
+  Genus <- which(NFseq[Family, "Genus"] == name[i, "Genus"])
+  
+  if (sum(Genus) > 0){
+    ls_temp <- Genus
+  } else if (sum(Family) > 0){
+    ls_temp <- Family
+  } else if (sum(Order) > 0){
+    ls_temp <- Order
+  } else if (sum(Class) > 0){
+    ls_temp <- Class
+  } else if (sum(Phylum) > 0){
+    ls_temp <- Phylum
+  }
+  
+  ls <- c(ls, ls_temp)
+}
+
+HNFseq <- NFseq[ls, ]
+NF_seqXst <- as.data.frame(read.table(file = "D:/Research/PdPy_Div/data/18s_seqXst.csv", sep = ",", 
+                                      header = TRUE, row.names = 1, stringsAsFactors = FALSE, fill = TRUE))
+
+HNF <- c()
+for (i in 1:nrow(HNFseq)){
+  print(which(row.names(NF_seqXst) == HNFseq$seq[i])  )
+}
+
+
+
+
+
+
 HNF_seqIDXst <- as.data.frame(read.table(file = "D:/Research/PdPy_Div/data/HNF_seqIDXst.csv", sep = ",", 
                                          header = TRUE, row.names = 1, stringsAsFactors = FALSE, fill = TRUE))
 
