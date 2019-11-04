@@ -175,6 +175,9 @@ Bac_phylo<- read.tree(file = "D:/Research/PdPy_Div/data/treeNJ_16s.tree")
 NF_comm <- as.data.frame(t(read.table(file = "D:/Research/PdPy_Div/data/18s_seqXst.csv", sep = ",", 
                                       header = TRUE, row.names = 1, stringsAsFactors = FALSE, fill = TRUE)))
 NF_ra_comm <- NF_comm / rowSums(NF_comm)
+HNF_comm <- as.data.frame(t(read.table(file = "D:/Research/PdPy_Div/data/HNF_seqXst.csv", sep = ",", 
+                                      header = TRUE, row.names = 1, stringsAsFactors = FALSE, fill = TRUE)))
+HNF_ra_comm <- HNF_comm / rowSums(HNF_comm)
 NF_phylo<- read.tree(file = "D:/Research/PdPy_Div/data/treeNJ_18s.tree")
 
 Vars <- read.table(file = "D:/Research/PdPy_Div/data/sECS_Vars.csv", sep = ",", 
@@ -273,7 +276,7 @@ clusterEvalQ(cl, {
   library(vegan)
   library(tidyverse)
   library(picante)
-  NF_comm <- as.data.frame(t(read.table(file = "D:/Research/PdPy_Div/data/18s_seqXst.csv", sep = ",", 
+  NF_comm <- as.data.frame(t(read.table(file = "D:/Research/PdPy_Div/data/HNF_seqXst.csv", sep = ",", 
                                       header = TRUE, row.names = 1, stringsAsFactors = FALSE, fill = TRUE)))
   NF_phylo<- read.tree(file = "D:/Research/PdPy_Div/data/treeNJ_18s.tree")
 })
