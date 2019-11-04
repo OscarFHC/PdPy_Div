@@ -254,7 +254,7 @@ NFPhylo_null_func <- function(x){
   as.matrix(comdistnt(community, cophenetic(tipShuffle(phylo)), abundance.weighted = TRUE))
 }
 
-nsim.list <- sapply(1:999, list)
+nsim.list <- sapply(1:10, list)
 test <- parLapply(cl, nsim.list, NFPhylo_null_func)
 test[[1000]] <- as.matrix(comdistnt(NF_comm, cophenetic(NF_phylo), abundance.weighted = TRUE))
 
@@ -288,9 +288,10 @@ NFPhylo_null_func <- function(x){
   # performing comdistnt to calculate MNTD
   as.matrix(comdistnt(community, cophenetic(tipShuffle(phylo)), abundance.weighted = TRUE))
 }
-
-nsim.list <- sapply(1:999, list)
+ini <- Sys.time()
+nsim.list <- sapply(1:, list)
 test <- parLapply(cl, nsim.list, NFPhylo_null_func)
+Sys.time() - ini
 test[[1000]] <- as.matrix(comdistnt(NF_comm, cophenetic(NF_phylo), abundance.weighted = TRUE))
 
 NFPhylo_null <- data.frame(matrix(unlist(test), ncol = length(test), byrow = FALSE)) %>%

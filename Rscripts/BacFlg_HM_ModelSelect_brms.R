@@ -146,9 +146,10 @@ if (!require(ggpmisc)) {
 
 name <- read.table(file = "D:/Research/PdPy_Div/data/HNF_taxaNameList.csv", sep = ",", header = TRUE, stringsAsFactors = FALSE, fill = TRUE)
 NFseq <- read.table(file = "D:/Research/PdPy_Div/data/18s_seq_taxaname.csv", sep = ",", header = TRUE, stringsAsFactors = FALSE, fill = TRUE)
+NFseq_c <- read.table(file = "D:/Research/PdPy_Div/data/18s_seq_taxaname_clean.csv", sep = ",", header = TRUE, stringsAsFactors = FALSE, fill = TRUE)
 
 ls <- c()
-for (i in 1:nrow(name)){
+for (i in 1:nrow(name)){#
   Phylum <- which(NFseq$Phylum == name[i, "Phylum"])
   Class <- which(NFseq[Phylum, "Class"] == name[i, "Class"])
   Order <- which(NFseq[Class, "Order"] == name[i, "Order"])
