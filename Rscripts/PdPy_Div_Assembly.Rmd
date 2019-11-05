@@ -289,7 +289,7 @@ NFPhylo_null_func <- function(x){
   as.matrix(comdistnt(community, cophenetic(tipShuffle(phylo)), abundance.weighted = TRUE))
 }
 ini <- Sys.time()
-nsim.list <- sapply(1:, list)
+nsim.list <- sapply(1:1000, list)
 test <- parLapply(cl, nsim.list, NFPhylo_null_func)
 Sys.time() - ini
 test[[1000]] <- as.matrix(comdistnt(NF_comm, cophenetic(NF_phylo), abundance.weighted = TRUE))
