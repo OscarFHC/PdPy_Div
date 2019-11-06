@@ -261,24 +261,24 @@ clusterEvalQ(cl, {
 
 NFPhylo_null_func <- function(x){
   # set up parameters and data
-  ini <- Sys.time()
+  # ini <- Sys.time()
   community = NF_comm
   phylo = NF_phylo
   # performing comdistnt to calculate MNTD
   as.matrix(comdistnt(community, cophenetic(tipShuffle(phylo)), abundance.weighted = TRUE))
-  Sys.time() - ini
+  # Sys.time() - ini
 }
-ini <- Sys.time()
+# ini <- Sys.time()
 nsim.list <- sapply(1:1000, list)
 test <- parLapply(cl, nsim.list, NFPhylo_null_func)
-Sys.time() - ini
+# Sys.time() - ini
 test[[1000]] <- as.matrix(comdistnt(NF_comm, cophenetic(NF_phylo), abundance.weighted = TRUE))
 
 NFPhylo_null <- data.frame(matrix(unlist(test), ncol = length(test), byrow = FALSE)) %>%
   cbind(expand.grid(row.names(NF_comm), row.names(NF_comm))) %>%
   rename(obs = X1000)
-# write.table(NFOTU_null, file = "D:/Research/PdPy_Div/Results/NF_MNTD_null.csv", 
-#             sep = ",", col.names = TRUE, row.names = FALSE)
+write.table(NFPhylo_null, file = "D:/Research/PdPy_Div_Results/HNF_MNTD_null.csv", 
+           sep = ",", col.names = TRUE, row.names = FALSE)
 stopCluster(cl)
 ##### Hetero-trophic Nanoflagellate phylogenetic turnover ###########################
 
