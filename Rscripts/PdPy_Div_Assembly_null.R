@@ -103,11 +103,11 @@ cl <- makeCluster(numCores)
 
 clusterEvalQ(cl, {
   library(vegan)
-  library(tidyverse)
+  #library(tidyverse)
   library(picante)
-  Bac_comm <- as.data.frame(t(read.table(file = "D:/Research/PdPy_Div/data/16s_seqXst.csv", sep = ",", 
+  Bac_comm <- as.data.frame(t(read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/16s_seqXst.csv", sep = ",", 
                                          header = TRUE, row.names = 1, stringsAsFactors = FALSE, fill = TRUE)))
-  Bac_phylo<- read.tree(file = "D:/Research/PdPy_Div/data/treeNJ_16s.tree")
+  Bac_phylo <- read.tree(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/treeNJ_16s.tree")
   
 })
 
@@ -122,10 +122,6 @@ BacPhylo_null_func <- function(x){
 nsim.list <- sapply(1:999, list)
 test <- parLapply(cl, nsim.list, BacPhylo_null_func)
 test[[1000]] <- as.matrix(comdistnt(Bac_comm, cophenetic(Bac_phylo), abundance.weighted = TRUE))
-
-lala.d <- data.frame(matrix(unlist(lala), ncol = length(lala), byrow = FALSE)) %>%
-  cbind(expand.grid(row.names(Bac_comm), row.names(Bac_comm))) %>%
-  rename(obs = X1000)
 
 BacPhylo_null <- data.frame(matrix(unlist(test), ncol = length(test), byrow = FALSE)) %>%
   cbind(expand.grid(row.names(Bac_comm), row.names(Bac_comm))) %>%
@@ -145,9 +141,9 @@ clusterEvalQ(cl, {
   library(vegan)
   library(tidyverse)
   library(picante)
-  NF_comm <- as.data.frame(t(read.table(file = "D:/Research/PdPy_Div/data/18s_seqXst.csv", sep = ",", 
+  NF_comm <- as.data.frame(t(read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/18s_seqXst.csv", sep = ",", 
                                         header = TRUE, row.names = 1, stringsAsFactors = FALSE, fill = TRUE)))
-  NF_phylo<- read.tree(file = "D:/Research/PdPy_Div/data/treeNJ_18s.tree")
+  NF_phylo <- read.tree(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/treeNJ_18s.tree")
 })
 
 NFPhylo_null_func <- function(x){
@@ -181,9 +177,9 @@ clusterEvalQ(cl, {
   library(tidyverse)
   library(picante)
   
-  HNF_comm <- as.data.frame(t(read.table(file = "D:/Research/PdPy_Div/data/HNF_seqXst.csv", sep = ",", 
+  HNF_comm <- as.data.frame(t(read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/HNF_seqXst.csv", sep = ",", 
                                         header = TRUE, row.names = 1, stringsAsFactors = FALSE, fill = TRUE)))
-  HNF_phylo<- read.tree(file = "D:/Research/PdPy_Div/data/treeNJ_18s.tree")
+  HNF_phylo <- read.tree(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/treeNJ_18s.tree")
 })
 
 HNFPhylo_null_func <- function(x){
@@ -225,7 +221,7 @@ clusterEvalQ(cl, {
   library(vegan)
   library(tidyverse)
   library(picante)
-  Bac_comm <- as.data.frame(t(read.table(file = "D:/Research/PdPy_Div/data/16s_seqXst.csv", sep = ",", 
+  Bac_comm <- as.data.frame(t(read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/16s_seqXst.csv", sep = ",", 
                                          header = TRUE, row.names = 1, stringsAsFactors = FALSE, fill = TRUE)))
 })
 
@@ -260,7 +256,7 @@ clusterEvalQ(cl, {
   library(vegan)
   library(tidyverse)
   library(picante)
-  NF_comm <- as.data.frame(t(read.table(file = "D:/Research/PdPy_Div/data/18s_seqXst.csv", sep = ",", 
+  NF_comm <- as.data.frame(t(read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/18s_seqXst.csv", sep = ",", 
                                         header = TRUE, row.names = 1, stringsAsFactors = FALSE, fill = TRUE)))
 })
 
@@ -296,7 +292,7 @@ clusterEvalQ(cl, {
   library(vegan)
   library(tidyverse)
   library(picante)
-  HNF_comm <- as.data.frame(t(read.table(file = "D:/Research/PdPy_Div/data/HNF_seqXst.csv", sep = ",", 
+  HNF_comm <- as.data.frame(t(read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/HNF_seqXst.csv", sep = ",", 
                                         header = TRUE, row.names = 1, stringsAsFactors = FALSE, fill = TRUE)))
 })
 
