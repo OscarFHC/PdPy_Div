@@ -231,15 +231,15 @@ NFPhylo_null_func <- function(x){
   as.matrix(comdistnt(community, cophenetic(tipShuffle(phylo)), abundance.weighted = TRUE))
 }
 
-nsim.list <- sapply(1:10, list)
+nsim.list <- sapply(1:999, list)
 test <- parLapply(cl, nsim.list, NFPhylo_null_func)
 test[[1000]] <- as.matrix(comdistnt(NF_comm, cophenetic(NF_phylo), abundance.weighted = TRUE))
 
 NFPhylo_null <- data.frame(matrix(unlist(test), ncol = length(test), byrow = FALSE)) %>%
   cbind(expand.grid(row.names(NF_comm), row.names(NF_comm))) %>%
   rename(obs = X1000)
-# write.table(NFOTU_null, file = "D:/Research/PdPy_Div_Results/NF_MNTD_null.csv", 
-#             sep = ",", col.names = TRUE, row.names = FALSE)
+write.table(NFPhylo_null, file = "D:/Research/PdPy_Div_Results/NF_MNTD_null.csv",
+            sep = ",", col.names = TRUE, row.names = FALSE)
 stopCluster(cl)
 ##### Nanoflagellate phylogenetic turnover ##########################################
 
