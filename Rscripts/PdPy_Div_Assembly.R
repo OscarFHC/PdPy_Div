@@ -169,11 +169,46 @@ Vars <- read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/m
 ###############################################################################################
 
 ###############################################################################################
-##### Loading nulls ###########################################################################
+##### Loading nulls and alpha diversity #######################################################
 ###############################################################################################
+Bac_MNTD_null <- read.table(file = "D:/Research/PdPy_Div_Results/Bac_MNTD_null.csv", sep = ",", 
+                            header = TRUE, stringsAsFactors = FALSE, fill = TRUE)
+Bac_MNTD <- Bac_MNTD_null %>% 
+  select(c(obs, Var1, Var2)) %>%
+  mutate(null_mean = apply(Bac_MNTD_null[, !names(Bac_MNTD_null) %in% c("obs", "Var1", "Var2")], 1, mean),
+         null_sd = apply(Bac_MNTD_null[, !names(Bac_MNTD_null) %in% c("obs", "Var1", "Var2")], 1, sd),
+         Bac_select_strength = (obs - null_mean) / null_sd,
+         Bac_select_p = pnorm(-abs(Bac_select_strength), 0, 1))
 
+Bac_A <- iNEXT(t(Bac_comm), q = 0, datatype = "abundance", size = max(colSums(Bac_comm)) + 100000)$AsyEst %>% 
+  select(Site, Diversity, Estimator) %>% 
+  spread(Diversity, Estimator) %>%
+  rename(Bac_SR = "Species richness", Bac_Shannon = "Shannon diversity", Bac_Simpson = "Simpson diversity") %>%
+  mutate(Site = rownames(Bac_comm))
+
+HNF_MNTD_null <- read.table(file = "D:/Research/PdPy_Div_Results/HNF_MNTD_null.csv", sep = ",", 
+                            header = TRUE, stringsAsFactors = FALSE, fill = TRUE)
+HNF_MNTD <- HNF_MNTD_null %>% select(c(obs, Var1, Var2)) %>%
+  mutate(null_mean = apply(HNF_MNTD_null[, !names(HNF_MNTD_null) %in% c("obs", "Var1", "Var2")], 1, mean),
+         null_sd = apply(HNF_MNTD_null[, !names(HNF_MNTD_null) %in% c("obs", "Var1", "Var2")], 1, sd),
+         HNF_select_strength = (obs - null_mean) / null_sd,
+         HNF_select_p = pnorm(-abs(HNF_select_strength), 0, 1))
+
+HNF_A <- iNEXT(t(HNF_comm), q = 0, datatype = "abundance", size = max(colSums(HNF_comm)) + 100000)$AsyEst %>% 
+  select(Site, Diversity, Estimator) %>% 
+  spread(Diversity, Estimator) %>%
+  rename(HNF_SR = "Species richness", HNF_Shannon = "Shannon diversity", HNF_Simpson = "Simpson diversity") %>%
+  mutate(Site = rownames(HNF_comm))
 ###############################################################################################
-##### Loading nulls ###########################################################################
+##### Loading nulls and alpha diversity #######################################################
 ###############################################################################################
+Bac <- Bac_MNTD %>%
+  inner_join(Bac_A, by = c("Var2" = "Site")) 
+
+HNF <- HNF_MNTD %>%
+  inner_join(HNF_A, by = c("Var2" = "Site")) 
+
+HNF_Bac <- HNF_MNTD %>%
+  inner_join(Bac_MNTD, by = c("Var2" = "Var2", "Var1" = "Var1")) 
 
 
