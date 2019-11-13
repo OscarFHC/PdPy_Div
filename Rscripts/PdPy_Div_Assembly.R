@@ -204,13 +204,80 @@ HNF_A <- iNEXT(t(HNF_comm), q = 0, datatype = "abundance", size = max(colSums(HN
 ###############################################################################################
 
 ###############################################################################################
+##### Beta level analyses #####################################################################
+###############################################################################################
+### Preping data ##########
+HNF_Bac_B <- Bac_MNTD %>%
+  inner_join(HNF_MNTD, by = c("Var2" = "Var2", "Var1" = "Var1")) %>%
+  inner_join(Vars, by = c("Var2" = "SampleID")) %>%
+  rename(Bac_BDiv_MNTD = "obs.x", HNF_BDiv_MNTD = "obs.y") %>%
+  filter(Bac_BDiv_MNTD != 0 & HNF_BDiv_MNTD != 0) %>% 
+  filter(!is.na(NF_Biom))
+
+#apply(is.na(HNF_Bac_B), 2, which) 
+
+head(HNF_Bac_B)
+### Preping data ##########
+
+### Plotting ##########
+HNF_Bac_B %>%
+  ggplot() + 
+  geom_point(aes(x = Bac_BDiv_MNTD, y = HNF_BDiv_MNTD, colour = Bac_select_strength)) + 
+  scale_colour_viridis(alpha = 0.5) 
+### Plotting ##########
+
+### Analyzing ##########
+mod_0_psem <- psem(
+  Bac_BDiv_MNTD %~~% HNF_BDiv_MNTD,
+  lm(Bac_BDiv_MNTD ~ Bac_select_strength + HNF_select_strength + Temp + Sal + PAR + DIN + PO3,
+     data = HNF_Bac_B),
+  lm(HNF_BDiv_MNTD ~ Bac_select_strength + HNF_select_strength + Temp + Sal + PAR + DIN + PO3,
+     data = HNF_Bac_B),
+  data = HNF_Bac_B
+)
+summary(mod_0_psem)
+
+mod_1_psem <- psem(
+  Bac_BDiv_MNTD %~~% HNF_BDiv_MNTD,
+  lme(Bac_BDiv_MNTD ~ Bac_select_strength + HNF_select_strength + Temp + Sal + PAR + DIN + PO3,
+      random = ~ Bac_select_strength + HNF_select_strength + Temp + Sal + PAR + DIN + PO3 | Season,
+      data = HNF_Bac_B),
+  lme(HNF_BDiv_MNTD ~ Bac_select_strength + HNF_select_strength + Temp + Sal + PAR + DIN + PO3, 
+      random = ~ Bac_select_strength + HNF_select_strength + Temp + Sal + PAR + DIN + PO3 | Season, 
+      data = HNF_Bac_B),
+  data = HNF_Bac_B
+)
+summary(mod_1_psem)
+
+summary(lme(Bac_BDiv_MNTD ~ HNF_BDiv_MNTD + 
+                            Bac_select_strength + HNF_select_strength + Temp + Sal + PAR + DIN + PO3,
+            random = ~ Bac_select_strength + HNF_select_strength + Temp + Sal + PAR + DIN + PO3 | Season,
+            data = HNF_Bac_B))
+
+
+dat <- data.frame(x1 = runif(50), y1 = runif(50), y2 = runif(50), y3 = runif(50))
+model <- psem(lm(y1 ~ x1 + y2, dat), lm(y2 ~ x1, dat), lm(y3 ~ y1, dat))
+summary(model)
+
+Bac_HNF <- bf(Bac_BDiv_MNTD ~~ HNF_BDiv_MNTD)
+Bac_bf <- bf(Bac_BDiv_MNTD ~ HNF_BDiv_MNTD + 
+     Bac_select_strength + HNF_select_strength + 
+     Temp + Sal + PAR + DIN + PO3)
+HNF_bf <- bf(HNF_BDiv_MNTD ~ 
+     Bac_select_strength + HNF_select_strength +
+     Temp + Sal + PAR + DIN + PO3)
+Mod0 <- brm(formula = Bac_bf + HNF_bf, data = HNF_Bac_B, family = gaussian(), control = list(adapt_delta = 0.9))
+
+### Analyzing ##########
+###############################################################################################
+##### Beta level analyses #####################################################################
+###############################################################################################
+
+
+###############################################################################################
 ##### Combining data ##########################################################################
 ###############################################################################################
-### Beta diversity
-
-
-
-### Alpha diversity
+### Alpha diversity ##########
 Bac <- Bac_MNTD %>%
   #filter(Bac_select_p < 0.05) %>%
   group_by(Var2) %>%
@@ -226,9 +293,17 @@ HNF_Bac_A <- Bac %>%
   inner_join(Bac_A, by = c("Var2" = "Site")) %>%
   inner_join(HNF_A, by = c("Var2" = "Site")) %>%
   inner_join(Vars, by = c("Var2" = "SampleID"))
+### Alpha diversity ##########
 ###############################################################################################
 ##### Combining data ##########################################################################
 ###############################################################################################
+
+
+##### Beta level analyses #########
+
+##### Beta level analyses #########
+
+
 
 
 HNF_Bac %>% 
