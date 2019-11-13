@@ -206,40 +206,53 @@ HNF_A <- iNEXT(t(HNF_comm), q = 0, datatype = "abundance", size = max(colSums(HN
 ###############################################################################################
 ##### Combining data ##########################################################################
 ###############################################################################################
+### Beta diversity
+
+
+
+### Alpha diversity
 Bac <- Bac_MNTD %>%
-  filter(Bac_select_p < 0.05) %>%
+  #filter(Bac_select_p < 0.05) %>%
   group_by(Var2) %>%
-  summarize(Bac_select = mean(Bac_select_strength)) %>%
+  summarize(Bac_select = mean(Bac_select_strength, na.rm = TRUE))
+
+HNF_selec <- HNF_MNTD %>%
+  #filter(HNF_select_p < 0.05) %>%
+  group_by(Var2) %>%
+  summarize(HNF_select = mean(HNF_select_strength, na.rm = TRUE))
+
+HNF_Bac_A <- Bac %>%
+  inner_join(HNF_selec, by = c("Var2" = "Var2")) %>%
   inner_join(Bac_A, by = c("Var2" = "Site")) %>%
-  inner_join(HNF_A, by = c("Var2" = "Site"))
-
-HNF <- HNF_MNTD %>%
-  filter(HNF_select_p < 0.05) %>%
-  group_by(Var2) %>%
-  summarize(HNF_select = mean(HNF_select_strength)) %>%
   inner_join(HNF_A, by = c("Var2" = "Site")) %>%
-  inner_join(Bac_A, by = c("Var2" = "Site"))
-
-HNF_Bac <- HNF_MNTD %>%
-  inner_join(Bac_MNTD, by = c("Var2" = "Var2", "Var1" = "Var1")) 
+  inner_join(Vars, by = c("Var2" = "SampleID"))
 ###############################################################################################
 ##### Combining data ##########################################################################
 ###############################################################################################
 
 
 HNF_Bac %>% 
-  filter(HNF_select_p < 0.05 & Bac_select_p < 0.05 ) %>%
+  #filter(HNF_select_p < 0.05 & Bac_select_p < 0.05 ) %>%
   ggplot() + 
-  geom_point(aes(x = HNF_select_strength, y = Bac_select_strength))
+  geom_point(aes(x = HNF_select, y = Bac_select))
     
 
-Bac %>% 
+HNF_Bac %>% 
   ggplot() + 
-    geom_point(aes(x = Bac_SR, y = HNF_SR, colour = Bac_select)) + 
+    geom_point(aes(x = Bac_SR, y = HNF_SR, colour = HNF_select)) + 
     scale_colour_viridis()
 
-fn0 <- bf(Bac_SR ~ HNF_SR*Bac_select)
-fn1 <- bf(Bac_SR ~ HNF_SR + (1 + HNF_SR | Bac_select))
-Mod0 <- brm(formula = fn0, data = Bac, family = gaussian(), control = list(adapt_delta = 0.9))
+fn0 <- bf(Bac_SR ~ HNF_SR + HNF_SR:Bac_select + HNF_SR:HNF_select)
+fn1_season <- bf(Bac_SR ~ HNF_SR + HNF_SR:Bac_select + (1 + HNF_SR + HNF_SR:Bac_select | Season))
+fn2_station <- bf(Bac_SR ~ HNF_SR + HNF_SR:Bac_select + (1 + HNF_SR + HNF_SR:Bac_select | Station))
+Mod0 <- brm(formula = fn0, data = HNF_Bac, family = gaussian(), control = list(adapt_delta = 0.9))
+Mod0 <- brm(formula = fn0, data = HNF_Bac, family = gaussian(), control = list(adapt_delta = 0.9), autocor = cor_s)
+Mod1_season <- brm(formula = fn1_season, data = Bac, family = gaussian(), control = list(adapt_delta = 0.9), iter = 5000, cores = 4)
+Mod2_station <- brm(formula = fn2_station, data = Bac, family = gaussian(), control = list(adapt_delta = 0.9), iter = 5000, cores = 4)
+summary(Mod1)
+marginal_effects(Mod1)
 
 
+summary(lm(Bac_SR ~ HNF_SR, data = Bac))
+summary(lm(Bac_SR ~ HNF_SR*Bac_select, data = Bac))
+lme(Bac_SR ~ HNF_SR, random = ~ HNF_SR | Bac_select, data = Bac)
