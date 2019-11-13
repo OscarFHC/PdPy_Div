@@ -118,6 +118,11 @@ if (!require(loo)) {
   library(loo)
 }else{library(loo)}
 
+if (!require(lmodel2)) {
+  install.packages("lmodel2", dependencies=TRUE, repos = 'http://cran.us.r-project.org')
+  library(lmodel2)
+}else{library(lmodel2)}
+
 if (!require(abind)) {
   install.packages("abind", dependencies=TRUE, repos = 'http://cran.us.r-project.org')
   library(abind)
@@ -175,10 +180,19 @@ Bac_MNTD_null <- read.table(file = "D:/Research/PdPy_Div_Results/Bac_MNTD_null.c
                             header = TRUE, stringsAsFactors = FALSE, fill = TRUE)
 Bac_MNTD <- Bac_MNTD_null %>% 
   select(c(obs, Var1, Var2)) %>%
-  mutate(null_mean = apply(Bac_MNTD_null[, !names(Bac_MNTD_null) %in% c("obs", "Var1", "Var2")], 1, mean),
-         null_sd = apply(Bac_MNTD_null[, !names(Bac_MNTD_null) %in% c("obs", "Var1", "Var2")], 1, sd),
-         Bac_select_strength = (obs - null_mean) / null_sd,
+  mutate(MNTD_null_mean = apply(Bac_MNTD_null[, !names(Bac_MNTD_null) %in% c("obs", "Var1", "Var2")], 1, mean),
+         MNTD_null_sd = apply(Bac_MNTD_null[, !names(Bac_MNTD_null) %in% c("obs", "Var1", "Var2")], 1, sd),
+         Bac_select_strength = (obs - MNTD_null_mean) / mntd_null_sd,
          Bac_select_p = pnorm(-abs(Bac_select_strength), 0, 1))
+
+Bac_Chao_null <- read.table(file = "D:/Research/PdPy_Div_Results/Bac_Chao_null.csv", sep = ",", 
+                            header = TRUE, stringsAsFactors = FALSE, fill = TRUE)
+Bac_BDiv_Chao <- Bac_Chao_null %>% 
+  select(c(obs, Var1, Var2)) %>%
+  mutate(Chao_null_mean = apply(Bac_Chao_null[, !names(Bac_Chao_null) %in% c("obs", "Var1", "Var2")], 1, mean),
+         Chao_null_sd = apply(Bac_Chao_null[, !names(Bac_Chao_null) %in% c("obs", "Var1", "Var2")], 1, sd),
+         Bac_disp_strength = (obs - Chao_null_mean) / Chao_null_sd,
+         Bac_disp_p = pnorm(Bac_disp_strength, 0, 1))
 
 Bac_A <- iNEXT(t(Bac_comm), q = 0, datatype = "abundance", size = max(colSums(Bac_comm)) + 100000)$AsyEst %>% 
   select(Site, Diversity, Estimator) %>% 
@@ -189,10 +203,18 @@ Bac_A <- iNEXT(t(Bac_comm), q = 0, datatype = "abundance", size = max(colSums(Ba
 HNF_MNTD_null <- read.table(file = "D:/Research/PdPy_Div_Results/HNF_MNTD_null.csv", sep = ",", 
                             header = TRUE, stringsAsFactors = FALSE, fill = TRUE)
 HNF_MNTD <- HNF_MNTD_null %>% select(c(obs, Var1, Var2)) %>%
-  mutate(null_mean = apply(HNF_MNTD_null[, !names(HNF_MNTD_null) %in% c("obs", "Var1", "Var2")], 1, mean),
-         null_sd = apply(HNF_MNTD_null[, !names(HNF_MNTD_null) %in% c("obs", "Var1", "Var2")], 1, sd),
-         HNF_select_strength = (obs - null_mean) / null_sd,
+  mutate(MNTD_null_mean = apply(HNF_MNTD_null[, !names(HNF_MNTD_null) %in% c("obs", "Var1", "Var2")], 1, mean),
+         MNTD_null_sd = apply(HNF_MNTD_null[, !names(HNF_MNTD_null) %in% c("obs", "Var1", "Var2")], 1, sd),
+         HNF_select_strength = (obs - MNTD_null_mean) / MNTD_null_sd,
          HNF_select_p = pnorm(-abs(HNF_select_strength), 0, 1))
+HNF_Chao_null <- read.table(file = "D:/Research/PdPy_Div_Results/HNF_Chao_null.csv", sep = ",", 
+                            header = TRUE, stringsAsFactors = FALSE, fill = TRUE)
+HNF_BDiv_Chao <- HNF_Chao_null %>% 
+  select(c(obs, Var1, Var2)) %>%
+  mutate(Chao_null_mean = apply(HNF_Chao_null[, !names(HNF_Chao_null) %in% c("obs", "Var1", "Var2")], 1, mean),
+         Chao_null_sd = apply(HNF_Chao_null[, !names(HNF_Chao_null) %in% c("obs", "Var1", "Var2")], 1, sd),
+         HNF_disp_strength = (obs - Chao_null_mean) / Chao_null_sd,
+         HNF_disp_p = pnorm(HNF_disp_strength, 0, 1))
 
 HNF_A <- iNEXT(t(HNF_comm), q = 0, datatype = "abundance", size = max(colSums(HNF_comm)) + 100000)$AsyEst %>% 
   select(Site, Diversity, Estimator) %>% 
@@ -206,27 +228,70 @@ HNF_A <- iNEXT(t(HNF_comm), q = 0, datatype = "abundance", size = max(colSums(HN
 ###############################################################################################
 ##### Beta level analyses #####################################################################
 ###############################################################################################
-### Preping data ##########
+##### Preping data ##########
 HNF_Bac_B <- Bac_MNTD %>%
+  inner_join(Bac_BDiv_Chao, by = c("Var2" = "Var2", "Var1" = "Var1")) %>%
+  rename(Bac_BDiv_MNTD = "obs.x", Bac_BDiv_Chao = "obs.y") %>%
   inner_join(HNF_MNTD, by = c("Var2" = "Var2", "Var1" = "Var1")) %>%
+  rename(HNF_BDiv_MNTD = "obs") %>%
+  inner_join(HNF_BDiv_Chao, by = c("Var2" = "Var2", "Var1" = "Var1")) %>%
+  rename(HNF_BDiv_Chao = "obs") %>%
   inner_join(Vars, by = c("Var2" = "SampleID")) %>%
-  rename(Bac_BDiv_MNTD = "obs.x", HNF_BDiv_MNTD = "obs.y") %>%
   filter(Bac_BDiv_MNTD != 0 & HNF_BDiv_MNTD != 0) %>% 
   filter(!is.na(NF_Biom))
 
 #apply(is.na(HNF_Bac_B), 2, which) 
 
 head(HNF_Bac_B)
-### Preping data ##########
+##### Preping data ##########
 
-### Plotting ##########
-HNF_Bac_B %>%
+##### Plotting ##########
+p_selec <- HNF_Bac_B %>%
+  filter(Bac_select_p <0.05 & HNF_select_p<0.05) %>%
+  ggplot() + 
+  geom_point(aes(x = Bac_select_strength, y = HNF_select_strength))
+p_selec
+
+p_MNTD_Bac_selec <- HNF_Bac_B %>%
   ggplot() + 
   geom_point(aes(x = Bac_BDiv_MNTD, y = HNF_BDiv_MNTD, colour = Bac_select_strength)) + 
-  scale_colour_viridis(alpha = 0.5) 
-### Plotting ##########
+  scale_colour_viridis(alpha = 0.7)
+p_MNTD_Bac_selec
 
-### Analyzing ##########
+p_MNTD_HNF_selec <- HNF_Bac_B %>%
+  ggplot() + 
+  geom_point(aes(x = Bac_BDiv_MNTD, y = HNF_BDiv_MNTD, colour = Bac_select_strength)) + 
+  scale_colour_viridis(alpha = 0.7)
+p_MNTD_HNF_selec
+
+p_Chao_Bac_selec <- HNF_Bac_B %>%
+  ggplot() + 
+  geom_point(aes(x = Bac_BDiv_Chao, y = HNF_BDiv_Chao, colour = Bac_select_strength)) + 
+  scale_colour_viridis(alpha = 0.7)
+p_Chao_Bac_selec
+
+p_Chao_HNF_selec <- HNF_Bac_B %>%
+  ggplot() + 
+  geom_point(aes(x = Bac_BDiv_Chao, y = HNF_BDiv_Chao, colour = HNF_select_strength)) + 
+  scale_colour_viridis(alpha = 0.7)
+p_Chao_HNF_selec
+##### Plotting ##########
+
+##### Analyzing ##########
+### Major axis linear model #####
+mod_MA <- lmodel2(Bac_BDiv_Chao ~ HNF_BDiv_Chao,# + HNF_BDiv_Chao:Bac_select_strength + HNF_BDiv_Chao:HNF_select_strength, 
+                  data = HNF_Bac_B, nperm = 5000)
+mod_MA
+### Major axis linear model #####
+### linear model #####
+mod_lme <- lme(Bac_BDiv_Chao ~ HNF_BDiv_Chao + HNF_BDiv_Chao:Bac_select_strength + HNF_BDiv_Chao:HNF_select_strength,
+               random = ~ 1 | Season,
+               data = HNF_Bac_B)
+summary(mod_lme)
+### linear model #####
+
+
+
 mod_0_psem <- psem(
   Bac_BDiv_MNTD %~~% HNF_BDiv_MNTD,
   lm(Bac_BDiv_MNTD ~ Bac_select_strength + HNF_select_strength + Temp + Sal + PAR + DIN + PO3,
