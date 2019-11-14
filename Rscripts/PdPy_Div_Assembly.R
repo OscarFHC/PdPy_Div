@@ -239,14 +239,13 @@ HNF_selec <- HNF_MNTD %>%
   group_by(Var2) %>%
   summarize(HNF_select = mean(HNF_select_strength, na.rm = TRUE))
 
-head(HNF_Bac_A)
-
 HNF_Bac_A <- Bac_selec %>%
   inner_join(HNF_selec, by = c("Var2" = "Var2")) %>%
   inner_join(Bac_A, by = c("Var2" = "Site")) %>%
   inner_join(HNF_A, by = c("Var2" = "Site")) %>%
   inner_join(Vars, by = c("Var2" = "SampleID")) %>%
   filter(!is.na(NF_Biom))
+#head(HNF_Bac_A)
 ##### Preping data ##########
 
 ##### Plotting ##########
@@ -286,12 +285,18 @@ summary(lm1_ADiv_Shannon_St)
 
 ### SEM
 psem0_ADiv <- psem(
-  #lme(Bac_Shannon ~ HNF_Shannon*Bac_select + HNF_Shannon:HNF_select, random = ~1 | Season, data = HNF_Bac_A),
+  lme(Bac_Shannon ~ HNF_Shannon*Bac_select + HNF_Shannon:HNF_select, random = ~1 | Season, data = HNF_Bac_A),
   lme(Bac_Biom ~ Bac_Shannon + HNF_Shannon, random = ~1 | Season, data = HNF_Bac_A),
   lme(HNF_Biom ~ Bac_Shannon + HNF_Shannon, random = ~1 | Season, data = HNF_Bac_A),
   data = HNF_Bac_A
 )
 summary(mod_0_psem)
+### This is not working for unknown reason???
+
+Bac_bf <- bf(Bac_Shannon ~ HNF_Shannon*Bac_select + HNF_Shannon:HNF_select + 1 | Season)
+HNF_bf <- bf(Bac_Biom ~ Bac_Shannon + HNF_Shannon + 1 | Season)
+Mod0 <- brm(formula = Bac_bf + HNF_bf, data = HNF_Bac_A, family = gaussian(), control = list(adapt_delta = 0.9))
+
 
 
 ##### Analyzing ##########
