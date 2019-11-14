@@ -182,7 +182,7 @@ Bac_MNTD <- Bac_MNTD_null %>%
   select(c(obs, Var1, Var2)) %>%
   mutate(MNTD_null_mean = apply(Bac_MNTD_null[, !names(Bac_MNTD_null) %in% c("obs", "Var1", "Var2")], 1, mean),
          MNTD_null_sd = apply(Bac_MNTD_null[, !names(Bac_MNTD_null) %in% c("obs", "Var1", "Var2")], 1, sd),
-         Bac_select_strength = (obs - MNTD_null_mean) / mntd_null_sd,
+         Bac_select_strength = (obs - MNTD_null_mean) / MNTD_null_sd,
          Bac_select_p = pnorm(-abs(Bac_select_strength), 0, 1))
 
 Bac_Chao_null <- read.table(file = "D:/Research/PdPy_Div_Results/Bac_Chao_null.csv", sep = ",", 
@@ -223,6 +223,80 @@ HNF_A <- iNEXT(t(HNF_comm), q = 0, datatype = "abundance", size = max(colSums(HN
   mutate(Site = rownames(HNF_comm))
 ###############################################################################################
 ##### Loading nulls and alpha diversity #######################################################
+###############################################################################################
+
+###############################################################################################
+##### Alpha level analyses ####################################################################
+###############################################################################################
+##### Preping data ##########
+Bac_selec <- Bac_MNTD %>%
+  filter(Bac_select_p < 0.05) %>%
+  group_by(Var2) %>%
+  summarize(Bac_select = mean(Bac_select_strength, na.rm = TRUE))
+
+HNF_selec <- HNF_MNTD %>%
+  filter(HNF_select_p < 0.05) %>%
+  group_by(Var2) %>%
+  summarize(HNF_select = mean(HNF_select_strength, na.rm = TRUE))
+
+head(HNF_Bac_A)
+
+HNF_Bac_A <- Bac_selec %>%
+  inner_join(HNF_selec, by = c("Var2" = "Var2")) %>%
+  inner_join(Bac_A, by = c("Var2" = "Site")) %>%
+  inner_join(HNF_A, by = c("Var2" = "Site")) %>%
+  inner_join(Vars, by = c("Var2" = "SampleID")) %>%
+  filter(!is.na(NF_Biom))
+##### Preping data ##########
+
+##### Plotting ##########
+p_ADiv_BacSelect <- HNF_Bac_A %>% 
+  ggplot() + 
+    geom_point(aes(x = Bac_Shannon, y = HNF_Shannon, color = Bac_select)) + 
+    scale_colour_viridis(alpha = 0.7)
+p_ADiv_BacSelect
+p_ADiv_HNFSelect <- HNF_Bac_A %>% 
+  ggplot() + 
+    geom_point(aes(x = Bac_Shannon, y = HNF_Shannon, color = HNF_select)) + 
+    scale_colour_viridis(alpha = 0.7)
+p_ADiv_HNFSelect
+##### Plotting ##########
+
+##### Analyzing ##########
+### linear model
+lm0_ADiv_Shannon <- lm(Bac_Shannon ~ HNF_Shannon, data = HNF_Bac_A)
+lm0_ADiv_Shannon_Sea <- lme(Bac_Shannon ~ HNF_Shannon, random = ~1 | Season, data = HNF_Bac_A)
+lm0_ADiv_Shannon_Cr <- lme(Bac_Shannon ~ HNF_Shannon, random = ~1 | Cruise, data = HNF_Bac_A)
+lm0_ADiv_Shannon_St <- lme(Bac_Shannon ~ HNF_Shannon, random = ~1 | Station, data = HNF_Bac_A)
+AIC(lm0_ADiv_Shannon, lm0_ADiv_Shannon_Sea, lm0_ADiv_Shannon_Cr, lm0_ADiv_Shannon_St)
+summary(lm0_ADiv_Shannon_Cr)
+lm_ADiv_Shannon_Cr
+
+# lm21_ADiv_Shannon <- lmodel2(Bac_Shannon ~ HNF_Shannon,# + HNF_BDiv_Chao:Bac_select_strength + HNF_BDiv_Chao:HNF_select_strength, 
+#                   data = HNF_Bac_A)
+# lm21_ADiv_Shannon
+lm1_ADiv_Shannon <- lm(Bac_Shannon ~ HNF_Shannon*Bac_select + HNF_Shannon:HNF_select, data = HNF_Bac_A)
+lm1_ADiv_Shannon_Sea <- lme(Bac_Shannon ~ HNF_Shannon*Bac_select + HNF_Shannon:HNF_select, random = ~1 | Season, data = HNF_Bac_A)
+lm1_ADiv_Shannon_Cr <- lme(Bac_Shannon ~ HNF_Shannon*Bac_select + HNF_Shannon:HNF_select, random = ~1 | Cruise, data = HNF_Bac_A)
+lm1_ADiv_Shannon_St <- lme(Bac_Shannon ~ HNF_Shannon*Bac_select + HNF_Shannon:HNF_select, random = ~1 | Station, data = HNF_Bac_A)
+AIC(lm1_ADiv_Shannon, lm1_ADiv_Shannon_Sea, lm1_ADiv_Shannon_Cr, lm1_ADiv_Shannon_St)
+summary(lm1_ADiv_Shannon_Sea)
+summary(lm1_ADiv_Shannon_Cr) # this is the best model
+summary(lm1_ADiv_Shannon_St)
+
+### SEM
+psem0_ADiv <- psem(
+  #lme(Bac_Shannon ~ HNF_Shannon*Bac_select + HNF_Shannon:HNF_select, random = ~1 | Season, data = HNF_Bac_A),
+  lme(Bac_Biom ~ Bac_Shannon + HNF_Shannon, random = ~1 | Season, data = HNF_Bac_A),
+  lme(HNF_Biom ~ Bac_Shannon + HNF_Shannon, random = ~1 | Season, data = HNF_Bac_A),
+  data = HNF_Bac_A
+)
+summary(mod_0_psem)
+
+
+##### Analyzing ##########
+###############################################################################################
+##### Alpha level analyses ####################################################################
 ###############################################################################################
 
 ###############################################################################################
@@ -339,29 +413,7 @@ Mod0 <- brm(formula = Bac_bf + HNF_bf, data = HNF_Bac_B, family = gaussian(), co
 ###############################################################################################
 
 
-###############################################################################################
-##### Combining data ##########################################################################
-###############################################################################################
-### Alpha diversity ##########
-Bac <- Bac_MNTD %>%
-  #filter(Bac_select_p < 0.05) %>%
-  group_by(Var2) %>%
-  summarize(Bac_select = mean(Bac_select_strength, na.rm = TRUE))
 
-HNF_selec <- HNF_MNTD %>%
-  #filter(HNF_select_p < 0.05) %>%
-  group_by(Var2) %>%
-  summarize(HNF_select = mean(HNF_select_strength, na.rm = TRUE))
-
-HNF_Bac_A <- Bac %>%
-  inner_join(HNF_selec, by = c("Var2" = "Var2")) %>%
-  inner_join(Bac_A, by = c("Var2" = "Site")) %>%
-  inner_join(HNF_A, by = c("Var2" = "Site")) %>%
-  inner_join(Vars, by = c("Var2" = "SampleID"))
-### Alpha diversity ##########
-###############################################################################################
-##### Combining data ##########################################################################
-###############################################################################################
 
 
 ##### Beta level analyses #########
