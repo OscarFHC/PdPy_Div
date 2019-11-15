@@ -287,7 +287,8 @@ summary(lm1_ADiv_Shannon_St)
 
 ### SEM
 psem0_ADiv <- psem(
-  lm1_ADiv_Shannon_Cr <- lme(Bac_Shannon ~ HNF_Shannon*Bac_select + HNF_Shannon:HNF_select, random = ~1 | Cruise, data = HNF_Bac_A),
+  Bac_Shannon %~~% HNF_Shannon,
+  #lm1_ADiv_Shannon_Cr <- lme(Bac_Shannon ~ HNF_Shannon*Bac_select + HNF_Shannon:HNF_select, random = ~1 | Cruise, data = HNF_Bac_A),
   # glm(Bac_Shannon ~ HNF_Shannon*Bac_select, data = HNF_Bac_A),
   # glm(Bac_Biom ~ Bac_Shannon + HNF_Shannon, data = HNF_Bac_A),
   # lme(Bac_Shannon ~ HNF_Shannon*Bac_select + HNF_Shannon:HNF_select, random = ~1 | Season, data = HNF_Bac_A),
@@ -297,14 +298,6 @@ psem0_ADiv <- psem(
 )
 summary(mod_0_psem)
 
-psem(
-  Bac_BDiv_MNTD %~~% HNF_BDiv_MNTD,
-  lm(Bac_BDiv_MNTD ~ HNF_BDiv_MNTD*Bac_select_strength + HNF_select_strength + Temp + Sal + PAR + DIN + PO3,
-     data = HNF_Bac_B),
-  lm(HNF_BDiv_MNTD ~ Bac_select_strength + HNF_select_strength + Temp + Sal + PAR + DIN + PO3,
-     data = HNF_Bac_B),
-  data = HNF_Bac_B
-)
 ### This is not working for unknown reason???
 
 Bac_bf <- bf(Bac_Shannon ~ HNF_Shannon*Bac_select + HNF_Shannon:HNF_select + 1 | Season)
