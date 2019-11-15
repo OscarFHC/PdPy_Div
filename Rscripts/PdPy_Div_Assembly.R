@@ -251,14 +251,16 @@ HNF_Bac_A <- Bac_selec %>%
 ##### Plotting ##########
 p_ADiv_BacSelect <- HNF_Bac_A %>% 
   ggplot() + 
-    geom_point(aes(x = Bac_Shannon, y = HNF_Shannon, color = Bac_select)) + 
+    geom_point(aes(x = Bac_Shannon, y = HNF_Shannon, color = Bac_select), size = 3) + 
     scale_colour_viridis(alpha = 0.7)
 p_ADiv_BacSelect
+ggsave(p_ADiv_BacSelect, file = "D:/Research/PdPy_Div_Results/p_ADiv_BacSelect.jpeg")
 p_ADiv_HNFSelect <- HNF_Bac_A %>% 
   ggplot() + 
-    geom_point(aes(x = Bac_Shannon, y = HNF_Shannon, color = HNF_select)) + 
+    geom_point(aes(x = Bac_Shannon, y = HNF_Shannon, color = HNF_select), size = 3) + 
     scale_colour_viridis(alpha = 0.7)
 p_ADiv_HNFSelect
+ggsave(p_ADiv_HNFSelect, file = "D:/Research/PdPy_Div_Results/p_ADiv_HNFSelect.jpeg")
 ##### Plotting ##########
 
 ##### Analyzing ##########
@@ -285,12 +287,24 @@ summary(lm1_ADiv_Shannon_St)
 
 ### SEM
 psem0_ADiv <- psem(
-  lme(Bac_Shannon ~ HNF_Shannon*Bac_select + HNF_Shannon:HNF_select, random = ~1 | Season, data = HNF_Bac_A),
-  lme(Bac_Biom ~ Bac_Shannon + HNF_Shannon, random = ~1 | Season, data = HNF_Bac_A),
-  lme(HNF_Biom ~ Bac_Shannon + HNF_Shannon, random = ~1 | Season, data = HNF_Bac_A),
+  lm1_ADiv_Shannon_Cr <- lme(Bac_Shannon ~ HNF_Shannon*Bac_select + HNF_Shannon:HNF_select, random = ~1 | Cruise, data = HNF_Bac_A),
+  # glm(Bac_Shannon ~ HNF_Shannon*Bac_select, data = HNF_Bac_A),
+  # glm(Bac_Biom ~ Bac_Shannon + HNF_Shannon, data = HNF_Bac_A),
+  # lme(Bac_Shannon ~ HNF_Shannon*Bac_select + HNF_Shannon:HNF_select, random = ~1 | Season, data = HNF_Bac_A),
+  # lme(Bac_Biom ~ Bac_Shannon + HNF_Shannon, random = ~1 | Season, data = HNF_Bac_A),
+  # lme(HNF_Biom ~ Bac_Shannon + HNF_Shannon, random = ~1 | Season, data = HNF_Bac_A),
   data = HNF_Bac_A
 )
 summary(mod_0_psem)
+
+psem(
+  Bac_BDiv_MNTD %~~% HNF_BDiv_MNTD,
+  lm(Bac_BDiv_MNTD ~ HNF_BDiv_MNTD*Bac_select_strength + HNF_select_strength + Temp + Sal + PAR + DIN + PO3,
+     data = HNF_Bac_B),
+  lm(HNF_BDiv_MNTD ~ Bac_select_strength + HNF_select_strength + Temp + Sal + PAR + DIN + PO3,
+     data = HNF_Bac_B),
+  data = HNF_Bac_B
+)
 ### This is not working for unknown reason???
 
 Bac_bf <- bf(Bac_Shannon ~ HNF_Shannon*Bac_select + HNF_Shannon:HNF_select + 1 | Season)
@@ -348,12 +362,14 @@ p_Chao_Bac_selec <- HNF_Bac_B %>%
   geom_point(aes(x = Bac_BDiv_Chao, y = HNF_BDiv_Chao, colour = Bac_select_strength)) + 
   scale_colour_viridis(alpha = 0.7)
 p_Chao_Bac_selec
+ggsave(p_Chao_Bac_selec, file = "D:/Research/PdPy_Div_Results/p_BDiv_BacSelect.jpeg")
 
 p_Chao_HNF_selec <- HNF_Bac_B %>%
   ggplot() + 
   geom_point(aes(x = Bac_BDiv_Chao, y = HNF_BDiv_Chao, colour = HNF_select_strength)) + 
   scale_colour_viridis(alpha = 0.7)
 p_Chao_HNF_selec
+ggsave(p_Chao_HNF_selec, file = "D:/Research/PdPy_Div_Results/p_BDiv_HNFSelect.jpeg")
 ##### Plotting ##########
 
 ##### Analyzing ##########
@@ -363,35 +379,52 @@ mod_MA <- lmodel2(Bac_BDiv_Chao ~ HNF_BDiv_Chao,# + HNF_BDiv_Chao:Bac_select_str
 mod_MA
 ### Major axis linear model #####
 ### linear model #####
-mod_lme <- lme(Bac_BDiv_Chao ~ HNF_BDiv_Chao + HNF_BDiv_Chao:Bac_select_strength + HNF_BDiv_Chao:HNF_select_strength,
-               random = ~ 1 | Season,
-               data = HNF_Bac_B)
-summary(mod_lme)
+lm1_BDiv_Season <- lme(Bac_BDiv_Chao ~ HNF_BDiv_Chao + HNF_BDiv_Chao:Bac_select_strength + HNF_BDiv_Chao:HNF_select_strength,
+                       random = ~ 1 | Season,
+                       data = HNF_Bac_B)
+lm1_BDiv_Cr <- lme(Bac_BDiv_Chao ~ HNF_BDiv_Chao + HNF_BDiv_Chao:Bac_select_strength + HNF_BDiv_Chao:HNF_select_strength,
+                   random = ~ 1 | Cruise,
+                   data = HNF_Bac_B)
+lm1_BDiv_St <- lme(Bac_BDiv_Chao ~ HNF_BDiv_Chao + HNF_BDiv_Chao:Bac_select_strength + HNF_BDiv_Chao:HNF_select_strength,
+                   random = ~ 1 | Station,
+                   data = HNF_Bac_B)
+AIC(lm1_BDiv_Season, lm1_BDiv_Cr, lm1_BDiv_St)
+summary(lm1_BDiv_Season)
+
 ### linear model #####
 
 
 
 mod_0_psem <- psem(
-  Bac_BDiv_MNTD %~~% HNF_BDiv_MNTD,
-  lm(Bac_BDiv_MNTD ~ Bac_select_strength + HNF_select_strength + Temp + Sal + PAR + DIN + PO3,
-     data = HNF_Bac_B),
-  lm(HNF_BDiv_MNTD ~ Bac_select_strength + HNF_select_strength + Temp + Sal + PAR + DIN + PO3,
-     data = HNF_Bac_B),
+  #Bac_BDiv_Chao %~~% HNF_BDiv_Chao,
+  lme(Bac_BDiv_Chao ~ HNF_BDiv_Chao + HNF_BDiv_Chao:Bac_select_strength + HNF_BDiv_Chao:HNF_select_strength,
+      random = ~ 1 | Season,
+      data = HNF_Bac_B),
+  # lme(HNF_BDiv_Chao ~ Bac_BDiv_Chao*Bac_select_strength + Bac_BDiv_Chao:HNF_select_strength,
+  #     random = ~ 1 | Season,
+  #     data = HNF_Bac_B),
   data = HNF_Bac_B
 )
 summary(mod_0_psem)
 
 mod_1_psem <- psem(
-  Bac_BDiv_MNTD %~~% HNF_BDiv_MNTD,
-  lme(Bac_BDiv_MNTD ~ Bac_select_strength + HNF_select_strength + Temp + Sal + PAR + DIN + PO3,
-      random = ~ Bac_select_strength + HNF_select_strength + Temp + Sal + PAR + DIN + PO3 | Season,
+  lme(Bac_BDiv_Chao ~ HNF_BDiv_Chao + HNF_BDiv_Chao:Bac_select_strength + HNF_BDiv_Chao:HNF_select_strength,
+      random = ~ 1 | Season,
       data = HNF_Bac_B),
-  lme(HNF_BDiv_MNTD ~ Bac_select_strength + HNF_select_strength + Temp + Sal + PAR + DIN + PO3, 
-      random = ~ Bac_select_strength + HNF_select_strength + Temp + Sal + PAR + DIN + PO3 | Season, 
+  lme(log(Bac_Biom) ~ Bac_BDiv_Chao + HNF_BDiv_Chao,
+      random = ~ 1 | Season,
+      data = HNF_Bac_B),
+  lme(log(HNF_Biom) ~ Bac_BDiv_Chao + HNF_BDiv_Chao,
+      random = ~ 1 | Season,
       data = HNF_Bac_B),
   data = HNF_Bac_B
 )
 summary(mod_1_psem)
+coef <- coefs(mod_1_psem, standardize = "scale")
+coef[,10] <- coef$Estimate - coef$Std.Error * qnorm(0.975)
+coef[,11] <- coef$Estimate + coef$Std.Error * qnorm(0.975)
+
+
 
 summary(lme(Bac_BDiv_MNTD ~ HNF_BDiv_MNTD + 
                             Bac_select_strength + HNF_select_strength + Temp + Sal + PAR + DIN + PO3,
