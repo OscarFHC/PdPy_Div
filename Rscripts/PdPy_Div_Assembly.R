@@ -285,18 +285,21 @@ summary(lm1_ADiv_Shannon_Sea)
 summary(lm1_ADiv_Shannon_Cr) # this is the best model
 summary(lm1_ADiv_Shannon_St)
 
+HNF_Bac_A <- as.data.frame(HNF_Bac_A)
 ### SEM
 psem0_ADiv <- psem(
-  Bac_Shannon %~~% HNF_Shannon,
-  #lm1_ADiv_Shannon_Cr <- lme(Bac_Shannon ~ HNF_Shannon*Bac_select + HNF_Shannon:HNF_select, random = ~1 | Cruise, data = HNF_Bac_A),
-  # glm(Bac_Shannon ~ HNF_Shannon*Bac_select, data = HNF_Bac_A),
+  lme(Bac_Shannon ~ HNF_Shannon*Bac_select + HNF_Shannon:HNF_select, random = ~1 | as.factor(Cruise), data = HNF_Bac_A),
+  # glm(Bac_Shannon ~ HNF_Shannon*Bac_select + HNF_Shannon:HNF_select, data = HNF_Bac_A),
   # glm(Bac_Biom ~ Bac_Shannon + HNF_Shannon, data = HNF_Bac_A),
   # lme(Bac_Shannon ~ HNF_Shannon*Bac_select + HNF_Shannon:HNF_select, random = ~1 | Season, data = HNF_Bac_A),
   # lme(Bac_Biom ~ Bac_Shannon + HNF_Shannon, random = ~1 | Season, data = HNF_Bac_A),
   # lme(HNF_Biom ~ Bac_Shannon + HNF_Shannon, random = ~1 | Season, data = HNF_Bac_A),
   data = HNF_Bac_A
 )
-summary(mod_0_psem)
+summary(psem0_ADiv)
+
+str(HNF_Bac_A)
+
 
 ### This is not working for unknown reason???
 
