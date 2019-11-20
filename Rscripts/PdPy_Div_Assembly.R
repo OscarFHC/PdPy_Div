@@ -84,6 +84,11 @@ if (!require(lavaan)) {
   library(lavaan)
 }else{library(lavaan)}
 
+if (!require(plspm)) {
+  install.packages("plspm", dependencies=TRUE, repos = 'http://cran.us.r-project.org')
+  library(plspm)
+}else{library(plspm)}
+
 if (!require(nlme)) {
   install.packages("nlme", dependencies=TRUE, repos = 'http://cran.us.r-project.org')
   library(nlme)
@@ -314,24 +319,42 @@ p_ADiv_HNFSelect
 ggsave(p_ADiv_HNFSelect, file = "D:/Research/PdPy_Div_Results/p_ADiv_HNFSelect.jpeg")
 ##### Plotting ##########
 
-install.packages("plspm")
-library(plspm)
+Attack = c(0, 0, 0)
+Defense = c(0, 0, 0)
+Success = c(1, 1, 0)
+# path matrix created by row binding
+foot_path = rbind(Attack, Defense, Success)
+# add column names (optional)
+colnames(foot_path) = rownames(foot_path)
 
-motivation=c(0,0,0,0)
-strat.use=c(1,0,0,0)
-vocabulary=c(1,1,0,0)
-reading=c(1,1,1,0) 
+foot_blocks = list(1:4, 5:8, 9:12)
 
-inmodel=rbind(motivation,
-              strat.use, vocabulary, reading) 
+innerplot(foot_path)
 
-innerplot(inmodel)
+foot_modes = c("A", "A", "A")
 
-measurmodel=list(11:20,21:30,31:34, 1:10) 
+data("spainfoot")
+head(spainfoot)
+foot_pls = plspm(spainfoot, foot_path, foot_blocks, modes = foot_modes)
+summary(foot_pls)
 
-mode = c("B","B","A","A")# The first two constructs are formative but the second two are reflective. 
 
-Pls=plspm(data, innermodel, outermodel, mode, boot.val=TRUE) 
+GSH = c(0, 0, 0)
+GSA = c(0, 0, 0)
+SSH = c(1, 1, 0)
+# path matrix created by row binding
+foot_path = rbind(GSH, GSA, SSH)
+# add column names (optional)
+colnames(foot_path) = rownames(foot_path)
+
+foot_blocks = list(1, 2, 3)
+
+innerplot(foot_path)
+
+foot_modes = c("A", "A", "B")
+
+foot_pls2 = plspm(spainfoot, foot_path, foot_blocks, modes = foot_modes)
+summary(foot_pls2)
 
 ##### Analyzing ##########
 ### linear model
