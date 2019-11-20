@@ -226,6 +226,41 @@ HNF_A <- iNEXT(t(HNF_comm), q = 0, datatype = "abundance", size = max(colSums(HN
 ###############################################################################################
 
 ###############################################################################################
+##### Loading functions #######################################################################
+###############################################################################################
+cor_fun <- function(data, mapping, method="pearson", ndp=2, sz=5, stars=TRUE, ...){
+  
+  x <- eval_data_col(data, mapping$x)
+  y <- eval_data_col(data, mapping$y)
+  
+  corr <- cor.test(x, y, method = method)
+  est <- corr$estimate
+  lb.size <- 6#sz* abs(est) 
+  
+  if(stars){
+    stars <- c("***", "**", "*", "")[findInterval(corr$p.value, c(0, 0.001, 0.01, 0.05, 1))]
+    lbl <- paste0(round(est, ndp), stars)
+  }else{
+    lbl <- round(est, ndp)
+  }
+  
+  ggplot(data = data, mapping = mapping) + 
+    annotate("text", x = mean(x, na.rm = TRUE), y = mean(y, na.rm = TRUE), label = lbl, size = lb.size, ...)+
+    theme(panel.grid = element_blank())
+}
+
+fit_fun <- function(data, mapping, ...){
+  p <- ggplot(data = data, mapping = mapping) + 
+    geom_point() + 
+    geom_smooth(method = loess, fill = "red", color = "red", ...) +
+    geom_smooth(method = lm, fill = "blue", color = "blue", ...)
+  p
+}
+###############################################################################################
+##### Loading functions #######################################################################
+###############################################################################################
+
+###############################################################################################
 ##### Alpha level analyses ####################################################################
 ###############################################################################################
 ##### Preping data ##########
@@ -245,8 +280,24 @@ HNF_Bac_A <- Bac_selec %>%
   inner_join(HNF_A, by = c("Var2" = "Site")) %>%
   inner_join(Vars, by = c("Var2" = "SampleID")) %>%
   filter(!is.na(NF_Biom))
-#head(HNF_Bac_A)
+head(HNF_Bac_A)
 ##### Preping data ##########
+
+##### Exploratory Analyses ##########
+p_Adiv_pairs <- HNF_Bac_A %>%
+  mutate(ln_Bac_Biom = log(Bac_Biom),
+         ln_HNF_Biom = log(HNF_Biom)) %>%
+  ggpairs(columns = c("Bac_Shannon", "HNF_Shannon", "ln_Bac_Biom", "ln_HNF_Biom", "Bac_select", "HNF_select"),
+          columnLabels = c("Bacteria\nShannon diversity", "HNF\nShannon diversity", "log(Bacteria\nbiomass)", "log(HNF\nbiomass)", 
+                           "Bacteria\nselection", "HNF\nselection"),
+          #mapping = ggplot2::aes(colour = Cruise),
+          upper = list(continuous = cor_fun),
+          lower = list(continuous = fit_fun)) +
+  theme(strip.text.x = element_text(color = "black", size = 14),
+        strip.text.y = element_text(angle = 45, color = "black", size = 14))
+p_Adiv_pairs
+ggsave(p_Adiv_pairs, file = "D:/Research/PdPy_Div_Results/p_ADiv_pairs.jpeg", dpi = 600, width = 34, height = 28, units = "cm")
+##### Exploratory Analyses ##########
 
 ##### Plotting ##########
 p_ADiv_BacSelect <- HNF_Bac_A %>% 
@@ -262,6 +313,25 @@ p_ADiv_HNFSelect <- HNF_Bac_A %>%
 p_ADiv_HNFSelect
 ggsave(p_ADiv_HNFSelect, file = "D:/Research/PdPy_Div_Results/p_ADiv_HNFSelect.jpeg")
 ##### Plotting ##########
+
+install.packages("plspm")
+library(plspm)
+
+motivation=c(0,0,0,0)
+strat.use=c(1,0,0,0)
+vocabulary=c(1,1,0,0)
+reading=c(1,1,1,0) 
+
+inmodel=rbind(motivation,
+              strat.use, vocabulary, reading) 
+
+innerplot(inmodel)
+
+measurmodel=list(11:20,21:30,31:34, 1:10) 
+
+mode = c("B","B","A","A")# The first two constructs are formative but the second two are reflective. 
+
+Pls=plspm(data, innermodel, outermodel, mode, boot.val=TRUE) 
 
 ##### Analyzing ##########
 ### linear model
@@ -301,8 +371,6 @@ summary(psem0_ADiv)
 str(HNF_Bac_A)
 
 
-### This is not working for unknown reason???
-
 Bac_bf <- bf(Bac_Shannon ~ HNF_Shannon*Bac_select + HNF_Shannon:HNF_select + 1 | Season)
 HNF_bf <- bf(Bac_Biom ~ Bac_Shannon + HNF_Shannon + 1 | Season)
 Mod0 <- brm(formula = Bac_bf + HNF_bf, data = HNF_Bac_A, family = gaussian(), control = list(adapt_delta = 0.9))
@@ -333,6 +401,23 @@ HNF_Bac_B <- Bac_MNTD %>%
 
 head(HNF_Bac_B)
 ##### Preping data ##########
+
+##### Exploratory Analyses ##########
+p_Bdiv_pairs <- HNF_Bac_B %>%
+  mutate(ln_Bac_Biom = log(Bac_Biom),
+         ln_HNF_Biom = log(HNF_Biom)) %>%
+  ggpairs(columns = c("Bac_BDiv_Chao", "HNF_BDiv_Chao", "ln_Bac_Biom", "ln_HNF_Biom", "Bac_select_strength", "HNF_select_strength"),
+          columnLabels = c("Bacteria\nbeta diversity", "HNF\nbeta diversity", "log(Bacteria\nbiomass)", "log(HNF\nbiomass)", 
+                           "Bacteria\nselection", "HNF\nselection"),
+          #mapping = ggplot2::aes(colour = Cruise),
+          upper = list(continuous = cor_fun),
+          lower = list(continuous = fit_fun)) +
+  theme(strip.text.x = element_text(color = "black", size = 14),
+        strip.text.y = element_text(angle = 45, color = "black", size = 14))
+p_Bdiv_pairs
+ggsave(p_Bdiv_pairs, file = "D:/Research/PdPy_Div_Results/p_BDiv_pairs.jpeg", dpi = 600, width = 34, height = 28, units = "cm")
+##### Exploratory Analyses ##########
+
 
 ##### Plotting ##########
 p_selec <- HNF_Bac_B %>%
