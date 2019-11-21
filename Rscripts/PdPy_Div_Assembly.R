@@ -319,43 +319,6 @@ p_ADiv_HNFSelect
 ggsave(p_ADiv_HNFSelect, file = "D:/Research/PdPy_Div_Results/p_ADiv_HNFSelect.jpeg")
 ##### Plotting ##########
 
-Attack = c(0, 0, 0)
-Defense = c(0, 0, 0)
-Success = c(1, 1, 0)
-# path matrix created by row binding
-foot_path = rbind(Attack, Defense, Success)
-# add column names (optional)
-colnames(foot_path) = rownames(foot_path)
-
-foot_blocks = list(1:4, 5:8, 9:12)
-
-innerplot(foot_path)
-
-foot_modes = c("A", "A", "A")
-
-data("spainfoot")
-head(spainfoot)
-foot_pls = plspm(spainfoot, foot_path, foot_blocks, modes = foot_modes)
-summary(foot_pls)
-
-
-GSH = c(0, 0, 0)
-GSA = c(0, 0, 0)
-SSH = c(1, 1, 0)
-# path matrix created by row binding
-foot_path = rbind(GSH, GSA, SSH)
-# add column names (optional)
-colnames(foot_path) = rownames(foot_path)
-
-foot_blocks = list(1, 2, 3)
-
-innerplot(foot_path)
-
-foot_modes = c("A", "A", "B")
-
-foot_pls2 = plspm(spainfoot, foot_path, foot_blocks, modes = foot_modes)
-summary(foot_pls2)
-
 ##### Analyzing ##########
 ### linear model
 lm0_ADiv_Shannon <- lm(Bac_Shannon ~ HNF_Shannon, data = HNF_Bac_A)
@@ -381,8 +344,10 @@ summary(lm1_ADiv_Shannon_St)
 HNF_Bac_A <- as.data.frame(HNF_Bac_A)
 ### SEM
 psem0_ADiv <- psem(
-  lme(Bac_Shannon ~ HNF_Shannon*Bac_select + HNF_Shannon:HNF_select, random = ~1 | as.factor(Cruise), data = HNF_Bac_A),
-  # glm(Bac_Shannon ~ HNF_Shannon*Bac_select + HNF_Shannon:HNF_select, data = HNF_Bac_A),
+  #Bac_Shannon %~~% HNF_Shannon,
+  #lme(Bac_Shannon ~ HNF_Shannon*Bac_select + HNF_Shannon:HNF_select, random = ~1 | as.factor(Cruise), data = HNF_Bac_A),
+  lme(HNF_Shannon ~ Bac_Shannon*Bac_select + Bac_Shannon:HNF_select, random = ~1 | as.factor(Cruise), data = HNF_Bac_A),
+  #lm(HNF_Shannon ~ Bac_Shannon*Bac_select + Bac_Shannon:HNF_select, data = HNF_Bac_A),
   # glm(Bac_Biom ~ Bac_Shannon + HNF_Shannon, data = HNF_Bac_A),
   # lme(Bac_Shannon ~ HNF_Shannon*Bac_select + HNF_Shannon:HNF_select, random = ~1 | Season, data = HNF_Bac_A),
   # lme(Bac_Biom ~ Bac_Shannon + HNF_Shannon, random = ~1 | Season, data = HNF_Bac_A),
