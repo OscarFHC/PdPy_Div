@@ -344,10 +344,8 @@ summary(lm1_ADiv_Shannon_St)
 HNF_Bac_A <- as.data.frame(HNF_Bac_A)
 ### SEM
 psem0_ADiv <- psem(
-  #Bac_Shannon %~~% HNF_Shannon,
-  #lme(Bac_Shannon ~ HNF_Shannon*Bac_select + HNF_Shannon:HNF_select, random = ~1 | as.factor(Cruise), data = HNF_Bac_A),
-  lme(HNF_Shannon ~ Bac_Shannon*Bac_select + Bac_Shannon:HNF_select, random = ~1 | as.factor(Cruise), data = HNF_Bac_A),
-  #lm(HNF_Shannon ~ Bac_Shannon*Bac_select + Bac_Shannon:HNF_select, data = HNF_Bac_A),
+  # lme(Bac_Shannon ~ HNF_Shannon*Bac_select + HNF_Shannon:HNF_select, random = ~1 | as.factor(Cruise), data = HNF_Bac_A),
+  lm(Bac_Shannon ~ HNF_Shannon + Bac_select + HNF_select, data = HNF_Bac_A),
   # glm(Bac_Biom ~ Bac_Shannon + HNF_Shannon, data = HNF_Bac_A),
   # lme(Bac_Shannon ~ HNF_Shannon*Bac_select + HNF_Shannon:HNF_select, random = ~1 | Season, data = HNF_Bac_A),
   # lme(Bac_Biom ~ Bac_Shannon + HNF_Shannon, random = ~1 | Season, data = HNF_Bac_A),
@@ -356,9 +354,23 @@ psem0_ADiv <- psem(
 )
 summary(psem0_ADiv)
 
-str(HNF_Bac_A)
+lavaan_reg <- '
+  # regressions
+    Bac_Shannon ~ HNF_Shannon + Bac_select + HNF_select
+'
 
+lavaan_latent <- '
+  # measurement model
+    Bac_Shannon =~ Bac_select + HNF_select
+  # regressions
+    Bac_Shannon ~ HNF_Shannon
+'
 
+fit_reg <- sem(lavaan_reg, data = HNF_Bac_A)
+fit_lat <- sem(lavaan_latent, data = HNF_Bac_A)
+inspect(fit_reg, "r2")
+summary(fit_reg)
+summary(fit_lat)
 Bac_bf <- bf(Bac_Shannon ~ HNF_Shannon*Bac_select + HNF_Shannon:HNF_select + 1 | Season)
 HNF_bf <- bf(Bac_Biom ~ Bac_Shannon + HNF_Shannon + 1 | Season)
 Mod0 <- brm(formula = Bac_bf + HNF_bf, data = HNF_Bac_A, family = gaussian(), control = list(adapt_delta = 0.9))

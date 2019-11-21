@@ -1,3 +1,5 @@
+data("spainfoot")
+
 Attack = c(0, 0, 0)
 Defense = c(0, 0, 0)
 Success = c(1, 1, 0)
