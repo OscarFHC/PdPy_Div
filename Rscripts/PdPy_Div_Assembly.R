@@ -84,6 +84,11 @@ if (!require(lavaan)) {
   library(lavaan)
 }else{library(lavaan)}
 
+if (!require(psych)) {
+  install.packages("psych", dependencies=TRUE, repos = 'http://cran.us.r-project.org')
+  library(psych)
+}else{library(psych)}
+
 if (!require(plspm)) {
   install.packages("plspm", dependencies=TRUE, repos = 'http://cran.us.r-project.org')
   library(plspm)
@@ -289,6 +294,12 @@ head(HNF_Bac_A)
 ##### Preping data ##########
 
 ##### Exploratory Analyses ##########
+### exploratory factor analyses
+fa <- fa.parallel(HNF_Bac_A[, c("Temp", "Sal", "PAR", "NO2", "NO3", "PO3")], fm = 'minres', fa = 'fa')
+twofactor <- fa(HNF_Bac_A[, c("Temp", "Sal", "PAR", "NO2", "NO3", "PO3")], nfactors = 2, rotate = "oblimin", fm="minres")
+print(twofactor)
+fa.diagram(twofactor)
+### plotting
 p_Adiv_pairs <- HNF_Bac_A %>%
   mutate(ln_Bac_Biom = log(Bac_Biom),
          ln_HNF_Biom = log(HNF_Biom)) %>%
