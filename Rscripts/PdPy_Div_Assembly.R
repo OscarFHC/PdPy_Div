@@ -294,12 +294,35 @@ head(HNF_Bac_A)
 ##### Preping data ##########
 
 ##### Exploratory Analyses ##########
-### exploratory factor analyses
-fa <- fa.parallel(HNF_Bac_A[, c("Temp", "Sal", "PAR", "NO2", "NO3", "PO3")], fm = 'minres', fa = 'fa')
-twofactor <- fa(HNF_Bac_A[, c("Temp", "Sal", "PAR", "NO2", "NO3", "PO3")], nfactors = 2, rotate = "oblimin", fm="minres")
-print(twofactor)
-fa.diagram(twofactor)
+### exploratory factor analyses on environmental data
+p_Envi_pairs <- HNF_Bac_A %>%
+  ggpairs(columns = c("Temp", "Sal", "PAR", "NO2", "NO3", "DIN", "PO3"),
+          columnLabels = c("Temperature", "Salinity", "PAR", "Nitrite", "Nitrate", "TN", "TP"),
+          upper = list(continuous = cor_fun),
+          lower = list(continuous = fit_fun)) +
+  theme(strip.text.x = element_text(color = "black", size = 14),
+        strip.text.y = element_text(angle = 45, color = "black", size = 14))
+p_Envi_pairs
+#ggsave(p_Envi_pairs, file = "D:/Research/PdPy_Div_Results/p_Envi_pairs.jpeg", dpi = 600, width = 34, height = 28, units = "cm")
+
+Envi <- HNF_Bac_A[, c("Temp", "Sal", "PAR", "NO2", "NO3", "PO3")] #, "DIN"
+fa <- fa.parallel(Envi, fm = "ml", fa = 'fa')
+
+fa1 <- fa(Envi, nfactors = 1, rotate = "varimax", fm = "ml")
+print(fa1)
+fa2 <- fa(Envi, nfactors = 2, rotate = "oblimin", fm = "ml")
+print(fa2)
+fa3 <- fa(Envi, nfactors = 3, rotate = "oblimin", fm = "ml")
+print(fa3)
+fa4 <- fa(Envi, nfactors = 4, rotate = "oblimin", fm = "ml")
+print(fa4)
+fa5 <- fa(Envi, nfactors = 5, rotate = "oblimin", fm = "ml")
+print(fa5)
+fa.diagram(fa10)
 ### plotting
+
+
+### Bio variables 
 p_Adiv_pairs <- HNF_Bac_A %>%
   mutate(ln_Bac_Biom = log(Bac_Biom),
          ln_HNF_Biom = log(HNF_Biom)) %>%
