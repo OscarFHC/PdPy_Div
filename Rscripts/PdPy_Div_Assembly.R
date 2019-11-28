@@ -306,17 +306,18 @@ p_Envi_pairs
 #ggsave(p_Envi_pairs, file = "D:/Research/PdPy_Div_Results/p_Envi_pairs.jpeg", dpi = 600, width = 34, height = 28, units = "cm")
 
 Envi <- HNF_Bac_A[, c("Temp", "Sal", "PAR", "NO2", "NO3", "PO3")] #, "DIN"
-fa <- fa.parallel(Envi, fm = "ml", fa = 'fa')
 
-fa1 <- fa(Envi, nfactors = 1, rotate = "varimax", fm = "ml")
+fa <- fa.parallel(Envi, fm = "minres", fa = 'fa')
+
+fa1 <- fa(Envi, nfactors = 1, rotate = "varimax", fm = "mle", n.iter = 1000)
 print(fa1)
-fa2 <- fa(Envi, nfactors = 2, rotate = "oblimin", fm = "ml")
+fa2 <- fa(Envi, nfactors = 2, rotate = "varimax", fm = "mle", n.iter = 1000)
 print(fa2)
-fa3 <- fa(Envi, nfactors = 3, rotate = "oblimin", fm = "ml")
+fa3 <- fa(Envi, nfactors = 3, rotate = "varimax", fm = "mle", n.iter = 1000)
 print(fa3)
-fa4 <- fa(Envi, nfactors = 4, rotate = "oblimin", fm = "ml")
+fa4 <- fa(Envi, nfactors = 4, rotate = "varimax", fm = "mle", n.iter = 1000)
 print(fa4)
-fa5 <- fa(Envi, nfactors = 5, rotate = "oblimin", fm = "ml")
+fa5 <- fa(Envi, nfactors = 5, rotate = "varimax", fm = "mle", n.iter = 1000)
 print(fa5)
 fa.diagram(fa10)
 ### plotting
