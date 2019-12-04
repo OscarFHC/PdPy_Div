@@ -1,0 +1,294 @@
+---
+title: "Predator prey diversity relationship"
+author: "Oscar Feng-Hsun Chang"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  html_document:
+    code_folding: show
+    highlight: textmate
+    keep_md: no
+    number_sections: yes
+    theme: flatly
+    toc: yes
+    toc_float:
+      collapsed: no
+      smooth_scroll: yes
+      toc_depth: 4
+  pdf_document:
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r, set global theme, include=FALSE}
+knitr::opts_chunk$set(fig.width=10, fig.height=10)
+```
+
+```{r, library loading, echo = FALSE, message = FALSE}
+if (!require(tidyverse)) {
+  install.packages("tidyverse", dependencies=TRUE, repos = 'http://cran.us.r-project.org')
+  library(tidyverse)
+}else{library(tidyverse)}
+
+if (!require(vegan)) {
+  install.packages("vegan", dependencies=TRUE, repos = 'http://cran.us.r-project.org')
+  library(vegan)
+}else{library(vegan)}
+
+if (!require(iNEXT)) {
+  install.packages("iNEXT", dependencies=TRUE, repos = 'http://cran.us.r-project.org')
+  library(iNEXT)
+}else{library(iNEXT)}
+
+if (!require(picante)) {
+  install.packages("picante", dependencies=TRUE, repos = 'http://cran.us.r-project.org')
+  library(picante)
+}else{library(picante)}
+
+if (!require(ecodist)) {
+  install.packages("ecodist", dependencies=TRUE, repos = 'http://cran.us.r-project.org')
+  library(ecodist)
+}else{library(ecodist)}
+
+if (!require(ade4)) {
+  install.packages("ade4", dependencies=TRUE, repos = 'http://cran.us.r-project.org')
+  library(ade4)
+}else{library(ade4)}
+
+if (!require(lavaan)) {
+  install.packages("lavaan", dependencies=TRUE, repos = 'http://cran.us.r-project.org')
+  library(lavaan)
+}else{library(lavaan)}
+
+if (!require(psych)) {
+  install.packages("psych", dependencies=TRUE, repos = 'http://cran.us.r-project.org')
+  library(psych)
+}else{library(psych)}
+
+if (!require(plspm)) {
+  install.packages("plspm", dependencies=TRUE, repos = 'http://cran.us.r-project.org')
+  library(plspm)
+}else{library(plspm)}
+
+if (!require(nlme)) {
+  install.packages("nlme", dependencies=TRUE, repos = 'http://cran.us.r-project.org')
+  library(nlme)
+}else{library(nlme)}
+
+if (!require(piecewiseSEM)) {
+  install.packages("piecewiseSEM", dependencies=TRUE, repos = 'http://cran.us.r-project.org')
+  library(piecewiseSEM)
+}else{library(piecewiseSEM)}
+
+if (!require(brms)) {
+  install.packages("brms", dependencies=TRUE, repos = 'http://cran.us.r-project.org')
+  library(brms)
+}else{library(brms)}
+
+if (!require(blavaan)) {
+  install.packages("blavaan", dependencies=TRUE, repos = 'http://cran.us.r-project.org')
+  library(blavaan)
+}else{library(blavaan)}
+
+if (!require(rstanarm)) {
+  install.packages("rstanarm", dependencies=TRUE, repos = 'http://cran.us.r-project.org')
+  library(rstanarm)
+}else{library(rstanarm)}
+
+if (!require(loo)) {
+  install.packages("loo", dependencies=TRUE, repos = 'http://cran.us.r-project.org')
+  library(loo)
+}else{library(loo)}
+
+if (!require(lmodel2)) {
+  install.packages("lmodel2", dependencies=TRUE, repos = 'http://cran.us.r-project.org')
+  library(lmodel2)
+}else{library(lmodel2)}
+
+if (!require(ggplot2)) {
+  install.packages("ggplot2", dependencies=TRUE, repos = 'http://cran.us.r-project.org')
+  library(ggplot2)
+}else{library(ggplot2)}
+
+if (!require(viridis)) {
+  install.packages("viridis", dependencies=TRUE, repos = 'http://cran.us.r-project.org')
+  library(viridis)
+}else{library(viridis)}
+
+if (!require(GGally)) {
+  install.packages("GGally", dependencies=TRUE, repos = 'http://cran.us.r-project.org')
+  library(GGally)
+}else{library(GGally)}
+
+if (!require(cowplot)) {
+  install.packages("cowplot", dependencies=TRUE, repos = 'http://cran.us.r-project.org')
+  library(cowplot)
+}else{library(cowplot)}
+```
+
+```{r, read in data, echo = FALSE}
+Bac_comm <- as.data.frame(t(read.table(file = "D:/Research/PdPy_Div/data/16s_seqXst.csv", sep = ",", 
+                                       header = TRUE, row.names = 1, stringsAsFactors = FALSE, fill = TRUE)))
+Bac_ra_comm <- Bac_comm / rowSums(Bac_comm)
+Bac_phylo<- read.tree(file = "D:/Research/PdPy_Div/data/treeNJ_16s.tree")
+
+NF_comm <- as.data.frame(t(read.table(file = "D:/Research/PdPy_Div/data/18s_seqXst.csv", sep = ",", 
+                                      header = TRUE, row.names = 1, stringsAsFactors = FALSE, fill = TRUE)))
+NF_ra_comm <- NF_comm / rowSums(NF_comm)
+HNF_comm <- as.data.frame(t(read.table(file = "D:/Research/PdPy_Div/data/HNF_seqXst.csv", sep = ",", 
+                                      header = TRUE, row.names = 1, stringsAsFactors = FALSE, fill = TRUE)))
+HNF_ra_comm <- HNF_comm / rowSums(HNF_comm)
+NF_phylo<- read.tree(file = "D:/Research/PdPy_Div/data/treeNJ_18s.tree")
+
+Vars <- read.table(file = "D:/Research/PdPy_Div/data/sECS_Vars.csv", sep = ",", 
+                         header = TRUE, stringsAsFactors = FALSE, fill = TRUE)
+
+##### reading nulls
+Bac_MNTD_null <- read.table(file = "D:/Research/PdPy_Div_Results/Bac_MNTD_null.csv", sep = ",", 
+                            header = TRUE, stringsAsFactors = FALSE, fill = TRUE)
+Bac_Chao_null <- read.table(file = "D:/Research/PdPy_Div_Results/Bac_Chao_null.csv", sep = ",", 
+                            header = TRUE, stringsAsFactors = FALSE, fill = TRUE)
+HNF_MNTD_null <- read.table(file = "D:/Research/PdPy_Div_Results/HNF_MNTD_null.csv", sep = ",", 
+                            header = TRUE, stringsAsFactors = FALSE, fill = TRUE)
+HNF_Chao_null <- read.table(file = "D:/Research/PdPy_Div_Results/HNF_Chao_null.csv", sep = ",", 
+                            header = TRUE, stringsAsFactors = FALSE, fill = TRUE)
+
+Bac_MNTD <- Bac_MNTD_null %>% 
+  select(c(obs, Var1, Var2)) %>%
+  mutate(MNTD_null_mean = apply(Bac_MNTD_null[, !names(Bac_MNTD_null) %in% c("obs", "Var1", "Var2")], 1, mean),
+         MNTD_null_sd = apply(Bac_MNTD_null[, !names(Bac_MNTD_null) %in% c("obs", "Var1", "Var2")], 1, sd),
+         Bac_select_strength = (obs - MNTD_null_mean) / MNTD_null_sd,
+         Bac_select_p = pnorm(-abs(Bac_select_strength), 0, 1))
+HNF_MNTD <- HNF_MNTD_null %>% select(c(obs, Var1, Var2)) %>%
+  mutate(MNTD_null_mean = apply(HNF_MNTD_null[, !names(HNF_MNTD_null) %in% c("obs", "Var1", "Var2")], 1, mean),
+         MNTD_null_sd = apply(HNF_MNTD_null[, !names(HNF_MNTD_null) %in% c("obs", "Var1", "Var2")], 1, sd),
+         HNF_select_strength = (obs - MNTD_null_mean) / MNTD_null_sd,
+         HNF_select_p = pnorm(-abs(HNF_select_strength), 0, 1))
+Bac_BDiv_Chao <- Bac_Chao_null %>% 
+  select(c(obs, Var1, Var2)) %>%
+  mutate(Chao_null_mean = apply(Bac_Chao_null[, !names(Bac_Chao_null) %in% c("obs", "Var1", "Var2")], 1, mean),
+         Chao_null_sd = apply(Bac_Chao_null[, !names(Bac_Chao_null) %in% c("obs", "Var1", "Var2")], 1, sd),
+         Bac_disp_strength = (obs - Chao_null_mean) / Chao_null_sd,
+         Bac_disp_p = pnorm(Bac_disp_strength, 0, 1))
+HNF_BDiv_Chao <- HNF_Chao_null %>% 
+  select(c(obs, Var1, Var2)) %>%
+  mutate(Chao_null_mean = apply(HNF_Chao_null[, !names(HNF_Chao_null) %in% c("obs", "Var1", "Var2")], 1, mean),
+         Chao_null_sd = apply(HNF_Chao_null[, !names(HNF_Chao_null) %in% c("obs", "Var1", "Var2")], 1, sd),
+         HNF_disp_strength = (obs - Chao_null_mean) / Chao_null_sd,
+         HNF_disp_p = pnorm(HNF_disp_strength, 0, 1))
+
+##### organizing data for further calculations
+Bac_A <- iNEXT(t(Bac_comm), q = 0, datatype = "abundance", size = max(colSums(Bac_comm)) + 100000)$AsyEst %>% 
+  select(Site, Diversity, Estimator) %>% 
+  spread(Diversity, Estimator) %>%
+  rename(Bac_SR = "Species richness", Bac_Shannon = "Shannon diversity", Bac_Simpson = "Simpson diversity") %>%
+  mutate(Site = rownames(Bac_comm))
+
+HNF_A <- iNEXT(t(HNF_comm), q = 0, datatype = "abundance", size = max(colSums(HNF_comm)) + 100000)$AsyEst %>% 
+  select(Site, Diversity, Estimator) %>% 
+  spread(Diversity, Estimator) %>%
+  rename(HNF_SR = "Species richness", HNF_Shannon = "Shannon diversity", HNF_Simpson = "Simpson diversity") %>%
+  mutate(Site = rownames(HNF_comm))
+
+Bac_selec <- Bac_MNTD %>%
+  filter(Bac_select_p < 0.05) %>%
+  group_by(Var2) %>%
+  summarize(Bac_select = mean(Bac_select_strength, na.rm = TRUE))
+
+HNF_selec <- HNF_MNTD %>%
+  filter(HNF_select_p < 0.05) %>%
+  group_by(Var2) %>%
+  summarize(HNF_select = mean(HNF_select_strength, na.rm = TRUE))
+
+HNF_Bac_A <- Bac_selec %>%
+  inner_join(HNF_selec, by = c("Var2" = "Var2")) %>%
+  inner_join(Bac_A, by = c("Var2" = "Site")) %>%
+  inner_join(HNF_A, by = c("Var2" = "Site")) %>%
+  inner_join(Vars, by = c("Var2" = "SampleID")) %>%
+  filter(!is.na(NF_Biom))
+```
+
+```{r, loading functions, echo=FALSE}
+cor_fun <- function(data, mapping, method="pearson", ndp=2, sz=5, stars=TRUE, ...){
+  
+  x <- eval_data_col(data, mapping$x)
+  y <- eval_data_col(data, mapping$y)
+  
+  corr <- cor.test(x, y, method = method)
+  est <- corr$estimate
+  lb.size <- 6#sz* abs(est) 
+  
+  if(stars){
+    stars <- c("***", "**", "*", "")[findInterval(corr$p.value, c(0, 0.001, 0.01, 0.05, 1))]
+    lbl <- paste0(round(est, ndp), stars)
+  }else{
+    lbl <- round(est, ndp)
+  }
+  
+  ggplot(data = data, mapping = mapping) + 
+    annotate("text", x = mean(x, na.rm = TRUE), y = mean(y, na.rm = TRUE), label = lbl, size = lb.size, ...)+
+    theme(panel.grid = element_blank())
+}
+
+fit_fun <- function(data, mapping, ...){
+  p <- ggplot(data = data, mapping = mapping) + 
+    geom_point() + 
+    geom_smooth(method = loess, fill = "red", color = "red", ...) +
+    geom_smooth(method = lm, fill = "blue", color = "blue", ...)
+  p
+}
+```
+
+# Exploratory Analyses
+
+## Factor analyses for environmental variables
+
+First, log transform the data and check pairwise relationships.
+```{r, exp ana, echo=FALSE, message=FALSE}
+HNF_Bac_A <- HNF_Bac_A %>%
+  mutate(ln.Temp = log(Temp),
+         ln.Sal = log(Sal),
+         ln.PAR = log(PAR),
+         ln.NO2 = log(NO2 + 0.0001),
+         ln.NO3 = log(NO3 + 0.0001),
+         ln.DIN = log(DIN + 0.0001),
+         ln.PO3 = log(PO3 + 0.0001))
+p_Envi_pairs <- HNF_Bac_A %>%
+  ggpairs(columns = c("ln.Temp", "ln.Sal", "ln.PAR", "ln.NO2", "ln.NO3", "ln.DIN", "ln.PO3"),
+          columnLabels = c("Temperature", "Salinity", "PAR", "Nitrite", "Nitrate", "TN", "TP"),
+          upper = list(continuous = cor_fun),
+          lower = list(continuous = fit_fun)) +
+  # ggpairs(columns = c("Temp", "Sal", "PAR", "NO2", "NO3", "DIN", "PO3"),
+  #         columnLabels = c("Temperature", "Salinity", "PAR", "Nitrite", "Nitrate", "TN", "TP"),
+  #         upper = list(continuous = cor_fun),
+  #         lower = list(continuous = fit_fun)) + 
+  theme(strip.text.x = element_text(color = "black", size = 14),
+        strip.text.y = element_text(angle = 45, color = "black", size = 14))
+p_Envi_pairs
+```
+
+Then, conduct exploratory factor analysis to see if there are common latent variables.
+
+```{r, echo=FALSE, message=FALSE} 
+Envi <- HNF_Bac_A[, c("Temp", "Sal", "PAR", "NO2", "NO3", "PO3")]
+ln.Envi <- HNF_Bac_A[, c("ln.Temp", "ln.Sal", "ln.PAR", "ln.NO2", "ln.NO3", "ln.PO3", "ln.DIN")]
+
+# fa <- fa.parallel(Envi, fm = "mle", fa = 'fa')
+# fa1 <- fa(Envi, nfactors = 1, rotate = "varimax", fm = "mle", n.iter = 1000)
+# str(fa1)
+# print(fa1)
+ln.fa <- fa.parallel(ln.Envi, fm = "mle", fa = 'fa')
+```
+
+The results indicate that there should be `r ln.fa$nfact` latent variable. The next step is to check whether this model is adequat.
+
+```{r, echo=FALSE, message=FALSE}
+ln.fa1 <- fa(ln.Envi, nfactors = 1, rotate = "oblimin", fm = "mle", n.iter = 1000)
+print(ln.fa1)
+```
+
+From the above output table, we found that the environmental variables could not be properly represented by a common variable (latent variable). The standardized root mean square of residuals (SRMR) is `r round(mean(ln.fa1$residual^2), 3)`, which is above the acceptable value (0.08) for a goof fit. The other index, root mean square error of approximation (RMSEA), is `r round(ln.fa1$RMSEA[1], 3)`, which is also above the acceptable value (0.06) for a goof fit. Finally, the Tucker-Lewis Index (TLI) is `r round(ln.fa1$TLI, 3)`, which is below the recommended value (0.95) for a good model fit. 
+Consequently, all environmental variables will be included in the following path model analysis. 
+
+
+
