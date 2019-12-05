@@ -448,6 +448,7 @@ ADiv_lavaan1.6 <- sem(ADiv_mod1.6, data = HNF_Bac_A, se = "bootstrap")
 ADiv_lavaan1.7 <- sem(ADiv_mod1.7, data = HNF_Bac_A, se = "bootstrap")
 anova(ADiv_lavaan1, ADiv_lavaan1.1, ADiv_lavaan1.2, ADiv_lavaan1.3, 
       ADiv_lavaan1.4, ADiv_lavaan1.5, ADiv_lavaan1.6, ADiv_lavaan1.7)
+
 summary(ADiv_lavaan1)
 
 
@@ -460,7 +461,7 @@ psem0.1_ADiv <- psem(
   data = HNF_Bac_A
 )
 
-anova(psem0_ADiv, psem0.1_ADiv)
+AIC(psem0_ADiv, psem0.1_ADiv)
 
 summary(psem0_ADiv)
 summary(psem0.1_ADiv)
@@ -468,7 +469,7 @@ summary(psem0.1_ADiv)
 
 
 psem1_ADiv <- psem(
-  glm(HNF_Shannon ~ Bac_Shannon + HNF_Shannon:Bac_select + HNF_Shannon:HNF_select, data = HNF_Bac_A),
+  lme(HNF_Shannon ~ Bac_Shannon + HNF_Shannon:Bac_select + HNF_Shannon:HNF_select, random = ~ 1 | Season, data = HNF_Bac_A),
   data = HNF_Bac_A
 )
 summary(psem1_ADiv)
@@ -496,7 +497,11 @@ lm0_ADiv_Shannon <- lm(Bac_Shannon ~ HNF_Shannon, data = HNF_Bac_A)
 lm0_ADiv_Shannon_Sea <- lme(Bac_Shannon ~ HNF_Shannon, random = ~1 | Season, data = HNF_Bac_A)
 lm0_ADiv_Shannon_Cr <- lme(Bac_Shannon ~ HNF_Shannon, random = ~1 | Cruise, data = HNF_Bac_A)
 lm0_ADiv_Shannon_St <- lme(Bac_Shannon ~ HNF_Shannon, random = ~1 | Station, data = HNF_Bac_A)
-AIC(lm0_ADiv_Shannon, lm0_ADiv_Shannon_Sea, lm0_ADiv_Shannon_Cr, lm0_ADiv_Shannon_St)
+
+lm0.1_ADiv_Shannon_Sea <- lme(HNF_Shannon ~ Bac_Shannon, random = ~1 | Season, data = HNF_Bac_A)
+lm0.1_ADiv_Shannon_Cr <- lme(HNF_Shannon ~ Bac_Shannon, random = ~1 | Cruise, data = HNF_Bac_A)
+lm0.1_ADiv_Shannon_St <- lme(HNF_Shannon ~ Bac_Shannon, random = ~1 | Station, data = HNF_Bac_A)
+AIC(lm0_ADiv_Shannon_Cr, lm0.1_ADiv_Shannon_Sea, lm0.1_ADiv_Shannon_Cr, lm0.1_ADiv_Shannon_St)
 summary(lm0_ADiv_Shannon_Cr)
 lm_ADiv_Shannon_Cr
 
