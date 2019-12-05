@@ -290,5 +290,27 @@ print(ln.fa1)
 From the above output table, we found that the environmental variables could not be properly represented by a common variable (latent variable). The standardized root mean square of residuals (SRMR) is `r round(mean(ln.fa1$residual^2), 3)`, which is above the acceptable value (0.08) for a goof fit. The other index, root mean square error of approximation (RMSEA), is `r round(ln.fa1$RMSEA[1], 3)`, which is also above the acceptable value (0.06) for a goof fit. Finally, the Tucker-Lewis Index (TLI) is `r round(ln.fa1$TLI, 3)`, which is below the recommended value (0.95) for a good model fit. 
 Consequently, all environmental variables will be included in the following path model analysis. 
 
+## Path analysis
+
+First, check pair wise relationships among biological variables. 
+
+```{r}
+p_Adiv_pairs <- HNF_Bac_A %>%
+  mutate(ln.Bac_Shannon = log(Bac_Shannon),
+         ln.HNF_Shannon = log(HNF_Shannon),
+         ln.Bac_Biom = log(Bac_Biom),
+         ln.HNF_Biom = log(HNF_Biom)) %>%
+  ggpairs(columns = c("ln.Bac_Shannon", "ln.HNF_Shannon", "ln.Bac_Biom", "ln.HNF_Biom", "Bac_select", "HNF_select"),
+          columnLabels = c("Bacteria\nShannon diversity", "HNF\nShannon diversity", "log(Bacteria\nbiomass)", "log(HNF\nbiomass)", 
+                           "Bacteria\nselection", "HNF\nselection"),
+          #mapping = ggplot2::aes(colour = Cruise),
+          upper = list(continuous = cor_fun),
+          lower = list(continuous = fit_fun)) +
+  theme(strip.text.x = element_text(color = "black", size = 14),
+        strip.text.y = element_text(angle = 45, color = "black", size = 14))
+p_Adiv_pairs
+```
+ 
+
 
 
