@@ -294,7 +294,7 @@ Consequently, all environmental variables will be included in the following path
 
 First, check pair wise relationships among biological variables. 
 
-```{r}
+```{r, BioPairs, echo=FALSE}
 p_Adiv_pairs <- HNF_Bac_A %>%
   mutate(ln.Bac_Shannon = log(Bac_Shannon),
          ln.HNF_Shannon = log(HNF_Shannon),
@@ -314,5 +314,9 @@ p_Adiv_pairs
 Build the path model from simple. 
 
 ![](https://github.com/OscarFHC/PdPy_Div/blob/master/data/HypoFigs/sem_L1.pdf)
+
+```{r pressure, echo=FALSE, fig.cap="A caption", out.width = '100%'}
+knitr::include_graphics("temp.png")
+```
 
 
