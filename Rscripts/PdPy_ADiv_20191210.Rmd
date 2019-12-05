@@ -311,6 +311,8 @@ p_Adiv_pairs <- HNF_Bac_A %>%
 p_Adiv_pairs
 ```
  
+Build the path model from simple. 
 
+![](https://github.com/OscarFHC/PdPy_Div/blob/master/data/HypoFigs/sem_L1.pdf)
 
 
