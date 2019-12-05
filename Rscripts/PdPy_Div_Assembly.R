@@ -289,7 +289,19 @@ HNF_Bac_A <- Bac_selec %>%
   inner_join(Bac_A, by = c("Var2" = "Site")) %>%
   inner_join(HNF_A, by = c("Var2" = "Site")) %>%
   inner_join(Vars, by = c("Var2" = "SampleID")) %>%
-  filter(!is.na(NF_Biom))
+  filter(!is.na(NF_Biom)) %>%
+  mutate(ln.Bac_Shannon = log(Bac_Shannon),
+         ln.HNF_Shannon = log(HNF_Shannon),
+         ln.Bac_Biom = log(Bac_Biom),
+         ln.HNF_Biom = log(HNF_Biom),
+         ln.Temp = log(Temp),
+         ln.Sal = log(Sal),
+         ln.PAR = log(PAR),
+         ln.NO2 = log(NO2 + 0.0001),
+         ln.NO3 = log(NO3 + 0.0001),
+         ln.DIN = log(DIN + 0.0001),
+         ln.PO3 = log(PO3 + 0.0001))
+HNF_Bac_A <- as.data.frame(HNF_Bac_A)
 head(HNF_Bac_A)
 ##### Preping data ##########
 
@@ -325,8 +337,6 @@ fa.diagram(fa3)
 
 ### Bio variables 
 p_Adiv_pairs <- HNF_Bac_A %>%
-  mutate(ln_Bac_Biom = log(Bac_Biom),
-         ln_HNF_Biom = log(HNF_Biom)) %>%
   ggpairs(columns = c("Bac_Shannon", "HNF_Shannon", "ln_Bac_Biom", "ln_HNF_Biom", "Bac_select", "HNF_select"),
           columnLabels = c("Bacteria\nShannon diversity", "HNF\nShannon diversity", "log(Bacteria\nbiomass)", "log(HNF\nbiomass)", 
                            "Bacteria\nselection", "HNF\nselection"),
@@ -355,6 +365,132 @@ ggsave(p_ADiv_HNFSelect, file = "D:/Research/PdPy_Div_Results/p_ADiv_HNFSelect.j
 ##### Plotting ##########
 
 ##### Analyzing ##########
+### first conducting classic path analysis to and determine the directionality between Bac and HNF diversity
+#Step 1
+ADiv_mod0 <- '
+  # regressions
+    Bac_Shannon ~ HNF_Shannon
+'
+ADiv_mod0.1 <- '
+  # regressions
+    HNF_Shannon ~ Bac_Shannon
+'
+
+ADiv_lavaan0 <- sem(ADiv_mod0, data = HNF_Bac_A, se = "bootstrap")
+ADiv_lavaan0.1 <- sem(ADiv_mod0.1, data = HNF_Bac_A, se = "bootstrap")
+anova(ADiv_lavaan0, ADiv_lavaan0.1)
+
+# Step 2
+# preping interaction terms
+HNF_Bac_A <- HNF_Bac_A %>%
+  mutate(Bac_Bac_int = Bac_Shannon * Bac_select,
+         Bac_HNF_int = Bac_Shannon * HNF_select)
+
+ADiv_mod1 <- '
+  # regressions
+    HNF_Shannon ~ Bac_Shannon + Bac_HNF_int + Bac_Bac_int
+    HNF_Biom ~ Bac_Biom + Bac_Shannon + HNF_Shannon
+    Bac_Biom ~ Bac_Shannon + HNF_Shannon
+'
+ADiv_mod1.1 <- '
+  # regressions
+    HNF_Shannon ~ Bac_Shannon + Bac_HNF_int + Bac_Bac_int + Bac_Biom
+    HNF_Biom ~ Bac_Shannon + HNF_Shannon + Bac_Biom
+    Bac_Biom ~ Bac_Shannon
+'
+ADiv_mod1.2 <- '
+  # regressions
+    HNF_Shannon ~ Bac_Shannon + Bac_HNF_int + Bac_Bac_int + Bac_Biom
+    HNF_Biom ~ HNF_Shannon + Bac_Biom
+    Bac_Biom ~ Bac_Shannon
+    Bac_Shannon ~ HNF_Biom
+'
+ADiv_mod1.3 <- '
+  # regressions
+    HNF_Shannon ~ Bac_Shannon + Bac_HNF_int + Bac_Bac_int
+    HNF_Biom ~ HNF_Shannon + Bac_Biom
+    Bac_Biom ~ Bac_Shannon + HNF_Shannon
+    Bac_Shannon ~ HNF_Biom
+'
+ADiv_mod1.4 <- '
+  # regressions
+    HNF_Shannon ~ Bac_Shannon + Bac_HNF_int + Bac_Bac_int
+    HNF_Biom ~ Bac_Shannon + HNF_Shannon
+    Bac_Biom ~ Bac_Shannon + HNF_Shannon + HNF_Biom
+'
+ADiv_mod1.5 <- '
+  # regressions
+    HNF_Shannon ~ Bac_Shannon + Bac_HNF_int + Bac_Bac_int + Bac_Biom
+    HNF_Biom ~ Bac_Shannon + HNF_Shannon
+    Bac_Biom ~ Bac_Shannon + HNF_Biom
+'
+ADiv_mod1.6 <- '
+  # regressions
+    HNF_Shannon ~ Bac_Shannon + Bac_HNF_int + Bac_Bac_int + Bac_Biom
+    HNF_Biom ~ HNF_Shannon
+    Bac_Biom ~ Bac_Shannon + HNF_Biom
+    Bac_Shannon ~ HNF_Biom
+'
+ADiv_mod1.7 <- '
+  # regressions
+    HNF_Shannon ~ Bac_Shannon + Bac_HNF_int + Bac_Bac_int
+    HNF_Biom ~ HNF_Shannon
+    Bac_Biom ~ Bac_Shannon + HNF_Shannon + HNF_Biom
+    Bac_Shannon ~ HNF_Biom
+'
+ADiv_lavaan1 <- sem(ADiv_mod1, data = HNF_Bac_A, se = "bootstrap")
+ADiv_lavaan1.1 <- sem(ADiv_mod1.1, data = HNF_Bac_A, se = "bootstrap")
+ADiv_lavaan1.2 <- sem(ADiv_mod1.2, data = HNF_Bac_A, se = "bootstrap")
+ADiv_lavaan1.3 <- sem(ADiv_mod1.3, data = HNF_Bac_A, se = "bootstrap")
+ADiv_lavaan1.4 <- sem(ADiv_mod1.4, data = HNF_Bac_A, se = "bootstrap")
+ADiv_lavaan1.5 <- sem(ADiv_mod1.5, data = HNF_Bac_A, se = "bootstrap")
+ADiv_lavaan1.6 <- sem(ADiv_mod1.6, data = HNF_Bac_A, se = "bootstrap")
+ADiv_lavaan1.7 <- sem(ADiv_mod1.7, data = HNF_Bac_A, se = "bootstrap")
+anova(ADiv_lavaan1, ADiv_lavaan1.1, ADiv_lavaan1.2, ADiv_lavaan1.3, 
+      ADiv_lavaan1.4, ADiv_lavaan1.5, ADiv_lavaan1.6, ADiv_lavaan1.7)
+summary(ADiv_lavaan1)
+
+
+psem0_ADiv <- psem(
+  lm(HNF_Shannon ~ Bac_Shannon, data = HNF_Bac_A),
+  data = HNF_Bac_A
+)
+psem0.1_ADiv <- psem(
+  lm(HNF_Shannon ~ Bac_Shannon, data = HNF_Bac_A),
+  data = HNF_Bac_A
+)
+
+anova(psem0_ADiv, psem0.1_ADiv)
+
+summary(psem0_ADiv)
+summary(psem0.1_ADiv)
+
+
+
+psem1_ADiv <- psem(
+  glm(HNF_Shannon ~ Bac_Shannon + HNF_Shannon:Bac_select + HNF_Shannon:HNF_select, data = HNF_Bac_A),
+  data = HNF_Bac_A
+)
+summary(psem1_ADiv)
+
+psem2_ADiv <- psem(
+  glm(Bac_Shannon ~ HNF_Shannon + HNF_Shannon:Bac_select + HNF_Shannon:HNF_select, data = HNF_Bac_A),
+  glm(Bac_Biom ~ HNF_Biom + Bac_Shannon + HNF_Shannon, data = HNF_Bac_A),
+  glm(HNF_Biom ~ Bac_Shannon + HNF_Shannon, data = HNF_Bac_A),
+  # lme(HNF_Biom ~ Bac_Shannon + HNF_Shannon, random = ~1 | Season, data = HNF_Bac_A),
+  data = HNF_Bac_A
+)
+summary(psem2_ADiv)
+
+
+
+
+
+
+lm1_ADiv_Shannon <- lm(Bac_Shannon ~ HNF_Shannon + HNF_Shannon:Bac_select + HNF_Shannon:HNF_select, data = HNF_Bac_A)
+summary(psem0_ADiv)
+
+
 ### linear model
 lm0_ADiv_Shannon <- lm(Bac_Shannon ~ HNF_Shannon, data = HNF_Bac_A)
 lm0_ADiv_Shannon_Sea <- lme(Bac_Shannon ~ HNF_Shannon, random = ~1 | Season, data = HNF_Bac_A)
@@ -367,7 +503,7 @@ lm_ADiv_Shannon_Cr
 # lm21_ADiv_Shannon <- lmodel2(Bac_Shannon ~ HNF_Shannon,# + HNF_BDiv_Chao:Bac_select_strength + HNF_BDiv_Chao:HNF_select_strength, 
 #                   data = HNF_Bac_A)
 # lm21_ADiv_Shannon
-lm1_ADiv_Shannon <- lm(Bac_Shannon ~ HNF_Shannon*Bac_select + HNF_Shannon:HNF_select, data = HNF_Bac_A)
+lm1_ADiv_Shannon <- lm(Bac_Shannon ~ HNF_Shannon + HNF_Shannon:Bac_select + HNF_Shannon:HNF_select, data = HNF_Bac_A)
 lm1_ADiv_Shannon_Sea <- lme(Bac_Shannon ~ HNF_Shannon*Bac_select + HNF_Shannon:HNF_select, random = ~1 | Season, data = HNF_Bac_A)
 lm1_ADiv_Shannon_Cr <- lme(Bac_Shannon ~ HNF_Shannon*Bac_select + HNF_Shannon:HNF_select, random = ~1 | Cruise, data = HNF_Bac_A)
 lm1_ADiv_Shannon_St <- lme(Bac_Shannon ~ HNF_Shannon*Bac_select + HNF_Shannon:HNF_select, random = ~1 | Station, data = HNF_Bac_A)
@@ -389,10 +525,7 @@ psem0_ADiv <- psem(
 )
 summary(psem0_ADiv)
 
-lavaan_reg <- '
-  # regressions
-    Bac_Shannon ~ HNF_Shannon + Bac_select + HNF_select
-'
+
 
 lavaan_latent <- '
   # measurement model

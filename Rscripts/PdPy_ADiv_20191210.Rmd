@@ -245,8 +245,12 @@ fit_fun <- function(data, mapping, ...){
 
 First, log transform the data and check pairwise relationships.
 ```{r, exp ana, echo=FALSE, message=FALSE}
-HNF_Bac_A <- HNF_Bac_A %>%
-  mutate(ln.Temp = log(Temp),
+HNF_Bac_A <- as.data.frame(HNF_Bac_A) %>%
+  mutate(ln.Bac_Shannon = log(Bac_Shannon),
+         ln.HNF_Shannon = log(HNF_Shannon),
+         ln.Bac_Biom = log(Bac_Biom),
+         ln.HNF_Biom = log(HNF_Biom),
+         ln.Temp = log(Temp),
          ln.Sal = log(Sal),
          ln.PAR = log(PAR),
          ln.NO2 = log(NO2 + 0.0001),
@@ -295,13 +299,9 @@ Consequently, all environmental variables will be included in the following path
 First, check pair wise relationships among biological variables. 
 
 ```{r, BioPairs, echo=FALSE}
-p_Adiv_pairs <- HNF_Bac_A %>%
-  mutate(ln.Bac_Shannon = log(Bac_Shannon),
-         ln.HNF_Shannon = log(HNF_Shannon),
-         ln.Bac_Biom = log(Bac_Biom),
-         ln.HNF_Biom = log(HNF_Biom)) %>%
+p_Adiv_pairs <-  HNF_Bac_A %>%
   ggpairs(columns = c("ln.Bac_Shannon", "ln.HNF_Shannon", "ln.Bac_Biom", "ln.HNF_Biom", "Bac_select", "HNF_select"),
-          columnLabels = c("Bacteria\nShannon diversity", "HNF\nShannon diversity", "log(Bacteria\nbiomass)", "log(HNF\nbiomass)", 
+          columnLabels = c("log(Bacteria\nShannon diversity)", "log(HNF\nShannon diversity)", "log(Bacteria\nbiomass)", "log(HNF\nbiomass)", 
                            "Bacteria\nselection", "HNF\nselection"),
           #mapping = ggplot2::aes(colour = Cruise),
           upper = list(continuous = cor_fun),
@@ -311,12 +311,18 @@ p_Adiv_pairs <- HNF_Bac_A %>%
 p_Adiv_pairs
 ```
  
-Build the path model from simple. 
+Build the path model from simple. We build the following path model to investigate if the relationship between bacteria diversity and hetero-trophic nano-flagellate (HNF) diversity linearly depends on the strength of selection processes on bacteria and HNF community.
 
-![](https://github.com/OscarFHC/PdPy_Div/blob/master/data/HypoFigs/sem_L1.pdf)
-
-```{r pressure, echo=FALSE, fig.cap="A caption", out.width = '100%'}
-knitr::include_graphics("temp.png")
+```{r, HypoLV1, echo=FALSE, out.width = '100%'}
+knitr::include_graphics("D:/Research/PdPy_Div/data\HypoFigs/sem_L1.png")
 ```
 
+```{r}
+lm0_ADiv_Shannon <- lm(Bac_Shannon ~ HNF_Shannon, data = HNF_Bac_A)
+lm0_ADiv_Shannon_Sea <- lme(Bac_Shannon ~ HNF_Shannon, random = ~1 | Season, data = HNF_Bac_A)
+lm0_ADiv_Shannon_Cr <- lme(Bac_Shannon ~ HNF_Shannon, random = ~1 | Cruise, data = HNF_Bac_A)
+lm0_ADiv_Shannon_St <- lme(Bac_Shannon ~ HNF_Shannon, random = ~1 | Station, data = HNF_Bac_A)
+AIC(lm0_ADiv_Shannon, lm0_ADiv_Shannon_Sea, lm0_ADiv_Shannon_Cr, lm0_ADiv_Shannon_St)
+
+```
 
