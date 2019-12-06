@@ -446,10 +446,35 @@ ADiv_lavaan1.4 <- sem(ADiv_mod1.4, data = HNF_Bac_A, se = "bootstrap")
 ADiv_lavaan1.5 <- sem(ADiv_mod1.5, data = HNF_Bac_A, se = "bootstrap")
 ADiv_lavaan1.6 <- sem(ADiv_mod1.6, data = HNF_Bac_A, se = "bootstrap")
 ADiv_lavaan1.7 <- sem(ADiv_mod1.7, data = HNF_Bac_A, se = "bootstrap")
+
 anova(ADiv_lavaan1, ADiv_lavaan1.1, ADiv_lavaan1.2, ADiv_lavaan1.3, 
       ADiv_lavaan1.4, ADiv_lavaan1.5, ADiv_lavaan1.6, ADiv_lavaan1.7)
 
-summary(ADiv_lavaan1)
+ADiv_mod1.8 <- '
+  # regressions
+    HNF_Shannon ~ Bac_Shannon + Bac_HNF_int + Bac_Bac_int + HNF_Biom
+    HNF_Biom ~ Bac_Shannon + Bac_Biom
+    Bac_Biom ~ Bac_Shannon + HNF_Shannon
+'
+ADiv_mod1.9 <- '
+  # regressions
+    HNF_Shannon ~ Bac_Shannon + Bac_HNF_int + Bac_Bac_int
+    HNF_Biom ~ Bac_Shannon + HNF_Shannon + Bac_Biom
+    Bac_Biom ~ HNF_Shannon
+    Bac_Shannon ~ Bac_Biom
+'
+ADiv_mod1.10 <- '
+  # regressions
+    HNF_Shannon ~ Bac_Shannon + Bac_HNF_int + Bac_Bac_int + HNF_Biom
+    HNF_Biom ~ HNF_Shannon + Bac_Biom
+    Bac_Biom ~ HNF_Shannon
+    Bac_Shannon ~ Bac_Biom
+'
+ADiv_lavaan1.8 <- sem(ADiv_mod1.8, data = HNF_Bac_A) #, se = "bootstrap"
+ADiv_lavaan1.9 <- sem(ADiv_mod1.9, data = HNF_Bac_A) #, se = "bootstrap"
+ADiv_lavaan1.10 <- sem(ADiv_mod1.10, data = HNF_Bac_A) #, se = "bootstrap"
+anova(ADiv_lavaan1, ADiv_lavaan1.8, ADiv_lavaan1.9, ADiv_lavaan1.10)
+ summary(ADiv_lavaan1)
 
 
 psem0_ADiv <- psem(
