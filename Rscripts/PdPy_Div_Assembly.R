@@ -305,8 +305,8 @@ HNF_Bac_A <- as.data.frame(HNF_Bac_A)
 head(HNF_Bac_A)
 ##### Preping data ##########
 
-##### Exploratory Analyses ##########
-### exploratory factor analyses on environmental data
+##### exploratory factor analyses on environmental data ##########
+### plotting
 p_Envi_pairs <- HNF_Bac_A %>%
   ggpairs(columns = c("Temp", "Sal", "PAR", "NO2", "NO3", "DIN", "PO3"),
           columnLabels = c("Temperature", "Salinity", "PAR", "Nitrite", "Nitrate", "TN", "TP"),
@@ -332,10 +332,9 @@ print(fa4)
 fa5 <- fa(Envi, nfactors = 5, rotate = "varimax", fm = "mle", n.iter = 1000)
 print(fa5)
 fa.diagram(fa3)
-### plotting
+##### exploratory factor analyses on environmental data ##########
 
-
-### Bio variables 
+##### Plotting for bio variables ##########
 p_Adiv_pairs <- HNF_Bac_A %>%
   ggpairs(columns = c("Bac_Shannon", "HNF_Shannon", "ln_Bac_Biom", "ln_HNF_Biom", "Bac_select", "HNF_select"),
           columnLabels = c("Bacteria\nShannon diversity", "HNF\nShannon diversity", "log(Bacteria\nbiomass)", "log(HNF\nbiomass)", 
@@ -347,7 +346,7 @@ p_Adiv_pairs <- HNF_Bac_A %>%
         strip.text.y = element_text(angle = 45, color = "black", size = 14))
 p_Adiv_pairs
 ggsave(p_Adiv_pairs, file = "D:/Research/PdPy_Div_Results/p_ADiv_pairs.jpeg", dpi = 600, width = 34, height = 28, units = "cm")
-##### Exploratory Analyses ##########
+##### Plotting for bio variables ##########
 
 ##### Plotting ##########
 p_ADiv_BacSelect <- HNF_Bac_A %>% 
