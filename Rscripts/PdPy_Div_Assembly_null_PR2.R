@@ -158,7 +158,7 @@ NFPhylo_null_func <- function(x){
 }
 
 
-nsim.list <- sapply(1:9, list)
+nsim.list <- sapply(1:999, list)
 test <- parLapply(cl, nsim.list, NFPhylo_null_func)
 test[[1000]] <- as.matrix(comdistnt(NF_comm, cophenetic(NF_phylo), abundance.weighted = TRUE))
 
@@ -174,7 +174,7 @@ stopCluster(cl)
 numCores <- detectCores()
 numCores
 
-cl <- makeCluster(numCores - 4)
+cl <- makeCluster(numCores)
 
 clusterEvalQ(cl, {
   library(vegan)
@@ -193,7 +193,7 @@ HNFPhylo_null_func <- function(x){
   as.matrix(comdistnt(community, cophenetic(tipShuffle(phylo)), abundance.weighted = TRUE))
 }
 ini <- Sys.time()
-nsim.list <- sapply(1:9, list)
+nsim.list <- sapply(1:999, list)
 test <- parLapply(cl, nsim.list, HNFPhylo_null_func)
 Sys.time() - ini
 test[[1000]] <- as.matrix(comdistnt(HNF_comm, cophenetic(HNF_phylo), abundance.weighted = TRUE))
@@ -201,7 +201,7 @@ test[[1000]] <- as.matrix(comdistnt(HNF_comm, cophenetic(HNF_phylo), abundance.w
 HNFPhylo_null <- data.frame(matrix(unlist(test), ncol = length(test), byrow = FALSE)) %>%
   cbind(expand.grid(row.names(NF_comm), row.names(NF_comm))) %>%
   rename(obs = X1000)
-write.table(HNFPhylo_null, file = "D:/Research/PdPy_Div_Results/HNF_MNTD_null.csv", 
+write.table(HNFPhylo_null, file = "D:/Research/PdPy_Div_Results/HNF_MNTD_null_PR2.csv", 
            sep = ",", col.names = TRUE, row.names = FALSE)
 stopCluster(cl)
 ##### Hetero-trophic Nanoflagellate phylogenetic turnover ###########################
@@ -259,7 +259,7 @@ clusterEvalQ(cl, {
   library(vegan)
   library(tidyverse)
   library(picante)
-  NF_comm <- as.data.frame(t(read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/18s_seqXst.csv", sep = ",", 
+  NF_comm <- as.data.frame(t(read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/prot_seqXst_PR2.csv", sep = ",", 
                                         header = TRUE, row.names = 1, stringsAsFactors = FALSE, fill = TRUE)))
 })
 
@@ -295,7 +295,7 @@ clusterEvalQ(cl, {
   library(vegan)
   library(tidyverse)
   library(picante)
-  HNF_comm <- as.data.frame(t(read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/HNF_seqXst.csv", sep = ",", 
+  HNF_comm <- as.data.frame(t(read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/HNF_seqXst_PR2.csv", sep = ",", 
                                         header = TRUE, row.names = 1, stringsAsFactors = FALSE, fill = TRUE)))
 })
 
