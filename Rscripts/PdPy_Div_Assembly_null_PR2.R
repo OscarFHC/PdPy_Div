@@ -77,14 +77,16 @@ Bac_comm <- as.data.frame(t(read.table(file = "https://raw.githubusercontent.com
 Bac_ra_comm <- Bac_comm / rowSums(Bac_comm)
 Bac_phylo<- read.tree(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/treeNJ_16s.tree")
 
-NF_comm <- as.data.frame(t(read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/18s_seqXst.csv", sep = ",", 
+NF_comm <- as.data.frame(t(read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/prot_seqXst_PR2.csv", sep = ",", 
                                       header = TRUE, row.names = 1, stringsAsFactors = FALSE, fill = TRUE)))
 NF_ra_comm <- NF_comm / rowSums(NF_comm)
+NF_phylo<- read.tree(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/prot_treeNJ_PR2.tree")
 
-HNF_comm <- as.data.frame(t(read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/HNF_seqXst.csv", sep = ",", 
+HNF_comm <- as.data.frame(t(read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/prot_seqXst_PR2.csv", sep = ",", 
                                        header = TRUE, row.names = 1, stringsAsFactors = FALSE, fill = TRUE)))
 HNF_ra_comm <- HNF_comm / rowSums(HNF_comm)
-NF_phylo<- read.tree(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/treeNJ_18s.tree")
+HNF_phylo<- read.tree(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/HNF_treeNJ_PR2.tree")
+
 
 Vars <- read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/sECS_Vars.csv", sep = ",", 
                    header = TRUE, stringsAsFactors = FALSE, fill = TRUE)
@@ -142,9 +144,9 @@ clusterEvalQ(cl, {
   library(vegan)
   library(tidyverse)
   library(picante)
-  NF_comm <- as.data.frame(t(read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/18s_seqXst.csv", sep = ",", 
+  NF_comm <- as.data.frame(t(read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/prot_seqXst_PR2.csv", sep = ",", 
                                         header = TRUE, row.names = 1, stringsAsFactors = FALSE, fill = TRUE)))
-  NF_phylo <- read.tree(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/treeNJ_18s.tree")
+  NF_phylo<- read.tree(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/prot_treeNJ_PR2.tree")
 })
 
 NFPhylo_null_func <- function(x){
@@ -155,7 +157,8 @@ NFPhylo_null_func <- function(x){
   as.matrix(comdistnt(community, cophenetic(tipShuffle(phylo)), abundance.weighted = TRUE))
 }
 
-nsim.list <- sapply(1:10, list)
+
+nsim.list <- sapply(1:9, list)
 test <- parLapply(cl, nsim.list, NFPhylo_null_func)
 test[[1000]] <- as.matrix(comdistnt(NF_comm, cophenetic(NF_phylo), abundance.weighted = TRUE))
 
@@ -171,16 +174,15 @@ stopCluster(cl)
 numCores <- detectCores()
 numCores
 
-cl <- makeCluster(numCores)
+cl <- makeCluster(numCores - 4)
 
 clusterEvalQ(cl, {
   library(vegan)
   library(tidyverse)
   library(picante)
-  
-  HNF_comm <- as.data.frame(t(read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/HNF_seqXst.csv", sep = ",", 
-                                        header = TRUE, row.names = 1, stringsAsFactors = FALSE, fill = TRUE)))
-  HNF_phylo <- read.tree(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/treeNJ_18s.tree")
+  HNF_comm <- as.data.frame(t(read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/HNF_seqXst_PR2.csv", sep = ",", 
+                                         header = TRUE, row.names = 1, stringsAsFactors = FALSE, fill = TRUE)))
+  HNF_phylo<- read.tree(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/HNF_treeNJ_PR2.tree")
 })
 
 HNFPhylo_null_func <- function(x){
@@ -190,10 +192,10 @@ HNFPhylo_null_func <- function(x){
   # performing comdistnt to calculate MNTD
   as.matrix(comdistnt(community, cophenetic(tipShuffle(phylo)), abundance.weighted = TRUE))
 }
-# ini <- Sys.time()
-nsim.list <- sapply(1:999, list)
+ini <- Sys.time()
+nsim.list <- sapply(1:9, list)
 test <- parLapply(cl, nsim.list, HNFPhylo_null_func)
-#Sys.time() - ini
+Sys.time() - ini
 test[[1000]] <- as.matrix(comdistnt(HNF_comm, cophenetic(HNF_phylo), abundance.weighted = TRUE))
 
 HNFPhylo_null <- data.frame(matrix(unlist(test), ncol = length(test), byrow = FALSE)) %>%
