@@ -337,10 +337,14 @@ fa.diagram(fa3)
 ##### exploratory factor analyses on environmental data ##########
 
 ##### Plotting for bio variables ##########
+names(HNF_Bac_A)
 p_Adiv_pairs <- HNF_Bac_A %>%
-  ggpairs(columns = c("Bac_Shannon", "HNF_Shannon", "ln_Bac_Biom", "ln_HNF_Biom", "Bac_select", "HNF_select"),
-          columnLabels = c("Bacteria\nShannon diversity", "HNF\nShannon diversity", "log(Bacteria\nbiomass)", "log(HNF\nbiomass)", 
-                           "Bacteria\nselection", "HNF\nselection"),
+  select(Bac_Shannon, HNF_Shannon, ln.Bac_Shannon, ln.HNF_Shannon, ln.Bac_Biom, ln.HNF_Biom, Bac_select, HNF_select) %>%
+    ggpairs(columns = c("Bac_Shannon", "HNF_Shannon", "ln.Bac_Shannon", "ln.HNF_Shannon", 
+                        "ln.Bac_Biom", "ln.HNF_Biom", "Bac_select", "HNF_select"),
+          columnLabels = c("Bacteria\nShannon diversity", "HNF\nShannon diversity", 
+                           "log(Bacteria\nShannon diversity)", "log(HNF\nShannon diversity)",
+                           "log(Bacteria\nbiomass)", "log(HNF\nbiomass)", "Bacteria\nselection", "HNF\nselection"),
           #mapping = ggplot2::aes(colour = Cruise),
           upper = list(continuous = cor_fun),
           lower = list(continuous = fit_fun)) +
@@ -370,14 +374,17 @@ ggsave(p_ADiv_HNFSelect, file = "D:/Research/PdPy_Div_Results/p_ADiv_HNFSelect.j
 
 # Selection vs alpha diversity
 HNF_Bac_A %>%
-  select(Bac_Shannon, Bac_select, HNF_select) %>%
-  gather(Community, Select, -Bac_Shannon) %>%
-  ggplot(aes(x = Select, y = Bac_Shannon)) + 
+  select(Bac_Shannon, ln.Bac_Shannon, Bac_select, HNF_select) %>%
+  gather(Community, Select, -ln.Bac_Shannon) %>%
+  ggplot(aes(x = Select, y = ln.Bac_Shannon)) + 
     geom_point(size = 3) +
     facet_grid(cols = vars(Community), scales = "free") + 
     geom_smooth(formula = y ~ x, method = loess, se = TRUE) + 
-    geom_smooth(method = mgcv::gam, formula = y ~ s(x, bs = "ps"), se = TRUE, color = "red") 
+    geom_smooth(method = mgcv::gam, formula = y ~ s(x, bs = "ts"), se = TRUE, color = "red") 
     #geom_smooth(formula = y ~ x, method = lm, se = TRUE, )
+
+gam0 <- gam(ln.Bac_Shannon ~ Bac_select + HNF_select + s(Bac_select) + s(HNF_select), data = HNF_Bac_A)
+summary(gam0)
 
 lm0_BacADiv_Shannon_Sea <- lme(Bac_Shannon ~ Bac_select + HNF_select, random = ~1 | Season, data = HNF_Bac_A)
 lm0_BacADiv_Shannon_Cr <- lme(Bac_Shannon ~ Bac_select + HNF_select, random = ~1 | Cruise, data = HNF_Bac_A)
