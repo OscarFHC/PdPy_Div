@@ -351,7 +351,7 @@ p_Adiv_pairs <- HNF_Bac_A %>%
   theme(strip.text.x = element_text(color = "black", size = 14),
         strip.text.y = element_text(angle = 45, color = "black", size = 14))
 p_Adiv_pairs
-ggsave(p_Adiv_pairs, file = "D:/Research/PdPy_Div_Results/p_ADiv_pairs.jpeg", dpi = 600, width = 34, height = 28, units = "cm")
+#ggsave(p_Adiv_pairs, file = "D:/Research/PdPy_Div_Results/p_ADiv_pairs.jpeg", dpi = 600, width = 34, height = 28, units = "cm")
 ##### Plotting for bio variables ##########
 
 ##### Plotting ##########
@@ -373,15 +373,16 @@ ggsave(p_ADiv_HNFSelect, file = "D:/Research/PdPy_Div_Results/p_ADiv_HNFSelect.j
 ### Univariate relationships
 
 # Selection vs alpha diversity
-HNF_Bac_A %>%
-  select(Bac_Shannon, ln.Bac_Shannon, Bac_select, HNF_select) %>%
+p_Bac_Selec <- HNF_Bac_A %>%
+  select(ln.Bac_Shannon, Bac_select, HNF_select) %>%
   gather(Community, Select, -ln.Bac_Shannon) %>%
   ggplot(aes(x = Select, y = ln.Bac_Shannon)) + 
     geom_point(size = 3) +
     facet_grid(cols = vars(Community), scales = "free") + 
-    geom_smooth(formula = y ~ x, method = loess, se = TRUE) + 
-    geom_smooth(method = mgcv::gam, formula = y ~ s(x, bs = "ts"), se = TRUE, color = "red") 
+    geom_smooth(formula = y ~ x, method = "lm", se = TRUE) + 
+    geom_smooth(method = mgcv::gam, formula = y ~ s(x), se = TRUE, color = "red") 
     #geom_smooth(formula = y ~ x, method = lm, se = TRUE, )
+ggsave(p_Bac_Selec, file = "D:/Research/PdPy_Div_Results/p_Bac_Selec.jpeg")
 
 gam0 <- gam(ln.Bac_Shannon ~ Bac_select + HNF_select + s(Bac_select) + s(HNF_select), data = HNF_Bac_A)
 summary(gam0)
