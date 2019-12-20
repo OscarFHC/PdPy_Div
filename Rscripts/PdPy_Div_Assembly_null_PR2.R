@@ -165,7 +165,7 @@ test[[1000]] <- as.matrix(comdistnt(NF_comm, cophenetic(NF_phylo), abundance.wei
 NFPhylo_null <- data.frame(matrix(unlist(test), ncol = length(test), byrow = FALSE)) %>%
   cbind(expand.grid(row.names(NF_comm), row.names(NF_comm))) %>%
   rename(obs = X1000)
-write.table(NFPhylo_null, file = "D:/Research/PdPy_Div_Results/NF_MNTD_null.csv",
+write.table(NFPhylo_null, file = "D:/Research/PdPy_Div_Results/NF_MNTD_null_PR2.csv",
             sep = ",", col.names = TRUE, row.names = FALSE)
 stopCluster(cl)
 ##### Nanoflagellate phylogenetic turnover ##########################################
@@ -280,8 +280,8 @@ test[[1000]] <- as.matrix(vegdist(NF_comm, null.model = "independentswap", metho
 NFOTU_null <- data.frame(matrix(unlist(test), ncol = length(test), byrow = FALSE)) %>%
   cbind(expand.grid(row.names(NF_comm), row.names(NF_comm))) %>%
   rename(obs = X1000)
-# write.table(NFOTU_null, file = "D:/Research/PdPy_Div_Results/NF_chao_null.csv", 
-#             sep = ",", col.names = TRUE, row.names = FALSE)
+write.table(NFOTU_null, file = "D:/Research/PdPy_Div_Results/NF_chao_null_PR2.csv",
+            sep = ",", col.names = TRUE, row.names = FALSE)
 stopCluster(cl)
 ##### Nanoflagellate OTU turnover ###################################################
 
@@ -315,8 +315,8 @@ test[[1000]] <- as.matrix(vegdist(HNF_comm, null.model = "independentswap", meth
 HNFOTU_null <- data.frame(matrix(unlist(test), ncol = length(test), byrow = FALSE)) %>%
   cbind(expand.grid(row.names(HNF_comm), row.names(HNF_comm))) %>%
   rename(obs = X1000)
-# write.table(HNFOTU_null, file = "D:/Research/PdPy_Div_Results/HNF_chao_null.csv", 
-#             sep = ",", col.names = TRUE, row.names = FALSE)
+write.table(HNFOTU_null, file = "D:/Research/PdPy_Div_Results/HNF_chao_null_PR2.csv",
+            sep = ",", col.names = TRUE, row.names = FALSE)
 stopCluster(cl)
 ##### Hetero-trophic Nanoflagellate OTU turnover ####################################
 
