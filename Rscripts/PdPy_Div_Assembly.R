@@ -169,13 +169,15 @@ Bac_comm <- as.data.frame(t(read.table(file = "https://raw.githubusercontent.com
 Bac_ra_comm <- Bac_comm / rowSums(Bac_comm)
 Bac_phylo<- read.tree(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/treeNJ_16s.tree")
 
-NF_comm <- as.data.frame(t(read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/18s_seqXst.csv", sep = ",", 
-                                      header = TRUE, row.names = 1, stringsAsFactors = FALSE, fill = TRUE)))
+NF_comm <- as.data.frame(t(read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/prot_seqXst_PR2.csv", 
+                                      sep = ",", header = TRUE, row.names = 1, stringsAsFactors = FALSE, fill = TRUE)))
 NF_ra_comm <- NF_comm / rowSums(NF_comm)
-HNF_comm <- as.data.frame(t(read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/HNF_seqXst.csv", sep = ",", 
-                                       header = TRUE, row.names = 1, stringsAsFactors = FALSE, fill = TRUE)))
+NF_phylo<- read.tree(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/prot_treeNJ_PR2.tree")
+
+HNF_comm <- as.data.frame(t(read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/HNF_seqXst_PR2.csv",
+                                       sep = ",", header = TRUE, row.names = 1, stringsAsFactors = FALSE, fill = TRUE)))
 HNF_ra_comm <- HNF_comm / rowSums(HNF_comm)
-NF_phylo<- read.tree(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/treeNJ_18s.tree")
+HNF_phylo<- read.tree(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/HNF_treeNJ_PR2.tree")
 
 Vars <- read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/sECS_Vars.csv", sep = ",", 
                    header = TRUE, stringsAsFactors = FALSE, fill = TRUE)
@@ -184,7 +186,7 @@ Vars <- read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/m
 ###############################################################################################
 
 ###############################################################################################
-##### Loading nulls and alpha diversity #######################################################
+##### Loading nulls ###########################################################################
 ###############################################################################################
 Bac_MNTD_null <- read.table(file = "D:/Research/PdPy_Div_Results/Bac_MNTD_null.csv", sep = ",", 
                             header = TRUE, stringsAsFactors = FALSE, fill = TRUE)
@@ -204,13 +206,7 @@ Bac_BDiv_Chao <- Bac_Chao_null %>%
          Bac_disp_strength = (obs - Chao_null_mean) / Chao_null_sd,
          Bac_disp_p = pnorm(Bac_disp_strength, 0, 1))
 
-Bac_A <- iNEXT(t(Bac_comm), q = 0, datatype = "abundance", size = max(colSums(Bac_comm)) + 100000)$AsyEst %>% 
-  select(Site, Diversity, Estimator) %>% 
-  spread(Diversity, Estimator) %>%
-  rename(Bac_SR = "Species richness", Bac_Shannon = "Shannon diversity", Bac_Simpson = "Simpson diversity") %>%
-  mutate(Site = rownames(Bac_comm))
-
-HNF_MNTD_null <- read.table(file = "D:/Research/PdPy_Div_Results/HNF_MNTD_null.csv", sep = ",", 
+HNF_MNTD_null <- read.table(file = "D:/Research/PdPy_Div_Results/HNF_MNTD_null_PR2.csv", sep = ",", 
                             header = TRUE, stringsAsFactors = FALSE, fill = TRUE)
 HNF_MNTD <- HNF_MNTD_null %>% select(c(obs, Var1, Var2)) %>%
   mutate(MNTD_null_mean = apply(HNF_MNTD_null[, !names(HNF_MNTD_null) %in% c("obs", "Var1", "Var2")], 1, mean),
@@ -225,14 +221,8 @@ HNF_BDiv_Chao <- HNF_Chao_null %>%
          Chao_null_sd = apply(HNF_Chao_null[, !names(HNF_Chao_null) %in% c("obs", "Var1", "Var2")], 1, sd),
          HNF_disp_strength = (obs - Chao_null_mean) / Chao_null_sd,
          HNF_disp_p = pnorm(HNF_disp_strength, 0, 1))
-
-HNF_A <- iNEXT(t(HNF_comm), q = 0, datatype = "abundance", size = max(colSums(HNF_comm)) + 100000)$AsyEst %>% 
-  select(Site, Diversity, Estimator) %>% 
-  spread(Diversity, Estimator) %>%
-  rename(HNF_SR = "Species richness", HNF_Shannon = "Shannon diversity", HNF_Simpson = "Simpson diversity") %>%
-  mutate(Site = rownames(HNF_comm))
 ###############################################################################################
-##### Loading nulls and alpha diversity #######################################################
+##### Loading nulls ###########################################################################
 ###############################################################################################
 
 ###############################################################################################
@@ -274,6 +264,18 @@ fit_fun <- function(data, mapping, ...){
 ##### Alpha level analyses ####################################################################
 ###############################################################################################
 ##### Preping data ##########
+Bac_A <- iNEXT(t(Bac_comm), q = 0, datatype = "abundance", size = max(colSums(Bac_comm)) + 100000)$AsyEst %>% 
+  select(Site, Diversity, Estimator) %>% 
+  spread(Diversity, Estimator) %>%
+  rename(Bac_SR = "Species richness", Bac_Shannon = "Shannon diversity", Bac_Simpson = "Simpson diversity") %>%
+  mutate(Site = rownames(Bac_comm))
+
+HNF_A <- iNEXT(t(HNF_comm), q = 0, datatype = "abundance", size = max(colSums(HNF_comm)) + 100000)$AsyEst %>% 
+  select(Site, Diversity, Estimator) %>% 
+  spread(Diversity, Estimator) %>%
+  rename(HNF_SR = "Species richness", HNF_Shannon = "Shannon diversity", HNF_Simpson = "Simpson diversity") %>%
+  mutate(Site = rownames(HNF_comm))
+
 Bac_selec <- Bac_MNTD %>%
   filter(Bac_select_p < 0.05) %>%
   group_by(Var2) %>%
@@ -335,17 +337,21 @@ fa.diagram(fa3)
 ##### exploratory factor analyses on environmental data ##########
 
 ##### Plotting for bio variables ##########
+names(HNF_Bac_A)
 p_Adiv_pairs <- HNF_Bac_A %>%
-  ggpairs(columns = c("Bac_Shannon", "HNF_Shannon", "ln_Bac_Biom", "ln_HNF_Biom", "Bac_select", "HNF_select"),
-          columnLabels = c("Bacteria\nShannon diversity", "HNF\nShannon diversity", "log(Bacteria\nbiomass)", "log(HNF\nbiomass)", 
-                           "Bacteria\nselection", "HNF\nselection"),
+  select(Bac_Shannon, HNF_Shannon, ln.Bac_Shannon, ln.HNF_Shannon, ln.Bac_Biom, ln.HNF_Biom, Bac_select, HNF_select) %>%
+    ggpairs(columns = c("Bac_Shannon", "HNF_Shannon", "ln.Bac_Shannon", "ln.HNF_Shannon", 
+                        "ln.Bac_Biom", "ln.HNF_Biom", "Bac_select", "HNF_select"),
+          columnLabels = c("Bacteria\nShannon diversity", "HNF\nShannon diversity", 
+                           "log(Bacteria\nShannon diversity)", "log(HNF\nShannon diversity)",
+                           "log(Bacteria\nbiomass)", "log(HNF\nbiomass)", "Bacteria\nselection", "HNF\nselection"),
           #mapping = ggplot2::aes(colour = Cruise),
           upper = list(continuous = cor_fun),
           lower = list(continuous = fit_fun)) +
   theme(strip.text.x = element_text(color = "black", size = 14),
         strip.text.y = element_text(angle = 45, color = "black", size = 14))
 p_Adiv_pairs
-ggsave(p_Adiv_pairs, file = "D:/Research/PdPy_Div_Results/p_ADiv_pairs.jpeg", dpi = 600, width = 34, height = 28, units = "cm")
+#ggsave(p_Adiv_pairs, file = "D:/Research/PdPy_Div_Results/p_ADiv_pairs.jpeg", dpi = 600, width = 34, height = 28, units = "cm")
 ##### Plotting for bio variables ##########
 
 ##### Plotting ##########
@@ -364,6 +370,30 @@ ggsave(p_ADiv_HNFSelect, file = "D:/Research/PdPy_Div_Results/p_ADiv_HNFSelect.j
 ##### Plotting ##########
 
 ##### Analyzing ##########
+### Univariate relationships
+
+# Selection vs alpha diversity
+p_Bac_Selec <- HNF_Bac_A %>%
+  select(ln.Bac_Shannon, Bac_select, HNF_select) %>%
+  gather(Community, Select, -ln.Bac_Shannon) %>%
+  ggplot(aes(x = Select, y = ln.Bac_Shannon)) + 
+    geom_point(size = 3) +
+    facet_grid(cols = vars(Community), scales = "free") + 
+    geom_smooth(formula = y ~ x, method = "lm", se = TRUE) + 
+    geom_smooth(method = mgcv::gam, formula = y ~ s(x), se = TRUE, color = "red") 
+    #geom_smooth(formula = y ~ x, method = lm, se = TRUE, )
+ggsave(p_Bac_Selec, file = "D:/Research/PdPy_Div_Results/p_Bac_Selec.jpeg")
+
+gam0 <- gam(ln.Bac_Shannon ~ Bac_select + HNF_select + s(Bac_select) + s(HNF_select), data = HNF_Bac_A)
+summary(gam0)
+
+lm0_BacADiv_Shannon_Sea <- lme(Bac_Shannon ~ Bac_select + HNF_select, random = ~1 | Season, data = HNF_Bac_A)
+lm0_BacADiv_Shannon_Cr <- lme(Bac_Shannon ~ Bac_select + HNF_select, random = ~1 | Cruise, data = HNF_Bac_A)
+lm0_BacADiv_Shannon_St <- lme(Bac_Shannon ~ Bac_select + HNF_select, random = ~1 | Station, data = HNF_Bac_A)
+AIC(lm0_BacADiv_Shannon_Sea, lm0_BacADiv_Shannon_Cr, lm0_BacADiv_Shannon_St)
+summary(lm0_BacADiv_Shannon_Sea)
+
+
 ### first conducting classic path analysis to and determine the directionality between Bac and HNF diversity
 #Step 1
 ADiv_mod0 <- '
