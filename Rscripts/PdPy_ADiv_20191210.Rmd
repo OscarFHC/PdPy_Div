@@ -245,8 +245,17 @@ fit_fun <- function(data, mapping, ...){
 
 First, log transform the data and check pairwise relationships.
 ```{r, exp ana, echo=FALSE, message=FALSE}
-HNF_Bac_A <- as.data.frame(HNF_Bac_A) %>%
-  mutate(ln.Bac_Shannon = log(Bac_Shannon),
+HNF_Bac_A <- Bac_selec %>%
+  inner_join(HNF_selec, by = c("Var2" = "Var2")) %>%
+  inner_join(Bac_A, by = c("Var2" = "Site")) %>%
+  inner_join(HNF_A, by = c("Var2" = "Site")) %>%
+  inner_join(Vars, by = c("Var2" = "SampleID")) %>%
+  filter(!is.na(NF_Biom)) %>%
+  mutate(ln.Bac_SR = log(Bac_SR),
+         ln.HNF_SR = log(HNF_SR),
+         ln.Bac_Simpson = log(Bac_Simpson),
+         ln.HNF_Simpson = log(HNF_Simpson),
+         ln.Bac_Shannon = log(Bac_Shannon),
          ln.HNF_Shannon = log(HNF_Shannon),
          ln.Bac_Biom = log(Bac_Biom),
          ln.HNF_Biom = log(HNF_Biom),
@@ -256,16 +265,14 @@ HNF_Bac_A <- as.data.frame(HNF_Bac_A) %>%
          ln.NO2 = log(NO2 + 0.0001),
          ln.NO3 = log(NO3 + 0.0001),
          ln.DIN = log(DIN + 0.0001),
-         ln.PO3 = log(PO3 + 0.0001))
+         ln.PO3 = log(PO3 + 0.0001), 
+         ln.Chla = log(Chla + 0.0001))
+HNF_Bac_A <- as.data.frame(HNF_Bac_A)
 p_Envi_pairs <- HNF_Bac_A %>%
-  ggpairs(columns = c("ln.Temp", "ln.Sal", "ln.PAR", "ln.NO2", "ln.NO3", "ln.DIN", "ln.PO3"),
-          columnLabels = c("Temperature", "Salinity", "PAR", "Nitrite", "Nitrate", "TN", "TP"),
+  ggpairs(columns = c("Temp", "Sal", "PAR", "NO2", "NO3", "DIN", "PO3", "Chla"),
+          columnLabels = c("Temperature", "Salinity", "PAR", "Nitrite", "Nitrate", "TN", "TP", "Chla"),
           upper = list(continuous = cor_fun),
           lower = list(continuous = fit_fun)) +
-  # ggpairs(columns = c("Temp", "Sal", "PAR", "NO2", "NO3", "DIN", "PO3"),
-  #         columnLabels = c("Temperature", "Salinity", "PAR", "Nitrite", "Nitrate", "TN", "TP"),
-  #         upper = list(continuous = cor_fun),
-  #         lower = list(continuous = fit_fun)) + 
   theme(strip.text.x = element_text(color = "black", size = 14),
         strip.text.y = element_text(angle = 45, color = "black", size = 14))
 p_Envi_pairs
@@ -274,13 +281,8 @@ p_Envi_pairs
 Then, conduct exploratory factor analysis to see if there are common latent variables.
 
 ```{r, echo=FALSE, message=FALSE} 
-Envi <- HNF_Bac_A[, c("Temp", "Sal", "PAR", "NO2", "NO3", "PO3")]
-ln.Envi <- HNF_Bac_A[, c("ln.Temp", "ln.Sal", "ln.PAR", "ln.NO2", "ln.NO3", "ln.PO3", "ln.DIN")]
-
-# fa <- fa.parallel(Envi, fm = "mle", fa = 'fa')
-# fa1 <- fa(Envi, nfactors = 1, rotate = "varimax", fm = "mle", n.iter = 1000)
-# str(fa1)
-# print(fa1)
+Envi <- HNF_Bac_A[, c("Temp", "Sal", "PAR", "DIN", "PO3", "Chla")]
+ln.Envi <- HNF_Bac_A[, c("ln.Temp", "ln.Sal", "ln.PAR", "ln.DIN", "ln.PO3", "ln.Chla")]
 ln.fa <- fa.parallel(ln.Envi, fm = "mle", fa = 'fa')
 ```
 
