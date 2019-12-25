@@ -953,28 +953,25 @@ summary(Bacq0_HNFq1_mod2.St)
 ##### Path model analysis : Bac_q0 vs HNF_q0 ##########
 
 
-##### Plotting HNF-Bac A diversity relationship with selection as color code ##########
-community.labs <- c("Selection on bacteria community", "Selection on HNF community")
-names(community.labs) <- c("Bac_select", "HNF_select")
-
-p_ADiv_Select <- HNF_Bac_A %>% 
-  select(Bac_SR, HNF_Shannon, Bac_select, HNF_select) %>%
-  gather(key = "community", value = "Selection", -c(Bac_SR, HNF_Shannon)) %>%
+##### Univariate HNF-Bac A diversity relationship ##########
+### Plotting
+p_ADiv_BacSelect <- HNF_Bac_A %>% 
   ggplot() + 
-  geom_point(aes(x = Bac_SR, y = HNF_Shannon, color = Selection), size = 3) + 
-  facet_grid(~ community, labeller = labeller(community = community.labs)) +  
-  scale_colour_viridis(alpha = 0.7) + 
-  labs(x = expression("Bacteria species richness (q = 0)"),
-       y = expression("HNF Shannon diversity (q = 1)"),
-       colour = expression(paste("\U03B2", "NTI"))) + 
-  theme(
-    strip.text.x = element_text(size = 12, face = "bold"),
-    
-  )
-p_ADiv_Select
-ggsave(p_ADiv_Select, file = "D:/Research/PdPy_Div_Results/p_ADiv_Bacq0_HNFq1_Select.jpeg",
-       dpi = 600, width = 34, height = 28, units = "cm")
-##### Plotting HNF-Bac A diversity relationship with selection as color code ##########
+  geom_point(aes(x = Bac_Shannon, y = HNF_Shannon, color = Bac_select), size = 3) + 
+  scale_colour_viridis(alpha = 0.7)
+p_ADiv_BacSelect
+#ggsave(p_ADiv_BacSelect, file = "D:/Research/PdPy_Div_Results/p_ADiv_BacSelect.jpeg")
+p_ADiv_HNFSelect <- HNF_Bac_A %>% 
+  ggplot() + 
+  geom_point(aes(x = Bac_Shannon, y = HNF_Shannon, color = HNF_select), size = 3) + 
+  scale_colour_viridis(alpha = 0.7)
+p_ADiv_HNFSelect
+#ggsave(p_ADiv_HNFSelect, file = "D:/Research/PdPy_Div_Results/p_ADiv_HNFSelect.jpeg")
+### Plotting
+
+
+##### Univariate HNF-Bac A diversity relationship ##########
+
 
 
 ##### Analyzing ##########

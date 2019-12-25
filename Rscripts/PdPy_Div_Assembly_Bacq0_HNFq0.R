@@ -900,7 +900,7 @@ AICstep1 <- AIC(Bacq0_HNFq0_lavaan1.0, Bacq0_HNFq0_lavaan1.1, Bacq0_HNFq0_lavaan
                 Bacq0_HNFq0_lavaan1.60, Bacq0_HNFq0_lavaan1.61, Bacq0_HNFq0_lavaan1.62, Bacq0_HNFq0_lavaan1.63)
 AICstep1 <- AICstep1 %>% cbind(row.names(AICstep1)) %>%
   arrange(AIC)
-# AICstep1
+# AICstep1[1:10,]
 moreFitIndices(Bacq0_HNFq0_lavaan1.21, fit.measures = "all", nPrior = 1)
 moreFitIndices(Bacq0_HNFq0_lavaan1.23, fit.measures = "all", nPrior = 1)
 moreFitIndices(Bacq0_HNFq0_lavaan1.29, fit.measures = "all", nPrior = 1)
@@ -910,10 +910,20 @@ moreFitIndices(Bacq0_HNFq0_lavaan1.55, fit.measures = "all", nPrior = 1)
 moreFitIndices(Bacq0_HNFq0_lavaan1.61, fit.measures = "all", nPrior = 1)
 moreFitIndices(Bacq0_HNFq0_lavaan1.63, fit.measures = "all", nPrior = 1)
 
+Bacq0_HNFq0_mod1.53 <- '
+  # regressions
+    ln.Bac_SR ~ ln.HNF_Biom
+    ln.Bac_Biom ~ ln.HNF_Biom + ln.Bac_SR + ln.HNF_SR
+    ln.HNF_SR ~ ln.Bac_SR + ln.HNF_Biom
+'
+Bacq0_HNFq0_lavaan1.53 <- sem(Bacq0_HNFq0_mod1.53, data = HNF_Bac_A)
+summary(Bacq0_HNFq0_lavaan1.53)
+
+
 ### Step 2 : include selection processes as the interaction terms and grouping variables (random effects)
 HNF_Bac_A <- HNF_Bac_A %>%
-  mutate(HNF_Bac_int = ln.HNF_SR * Bac_select,
-         HNF_HNF_int = ln.HNF_SR * HNF_select)
+  mutate(Bac_Bac_int = ln.Bac_SR * Bac_select,
+         Bac_HNF_int = ln.Bac_SR * HNF_select)
 HNF_Bac_A <- as.data.frame(HNF_Bac_A)
 
 Bacq0_HNFq0_mod2.Cr <- psem(
@@ -921,7 +931,7 @@ Bacq0_HNFq0_mod2.Cr <- psem(
       random = ~ 1 | Cruise, data = HNF_Bac_A),
   lme(ln.Bac_Biom ~ ln.HNF_Biom + ln.Bac_SR + ln.HNF_SR + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
       random = ~ 1 | Cruise, data = HNF_Bac_A),
-  lme(ln.HNF_SR ~ ln.Bac_SR + ln.HNF_Biom + HNF_Bac_int + HNF_HNF_int + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
+  lme(ln.HNF_SR ~ ln.Bac_SR + ln.HNF_Biom + Bac_Bac_int + Bac_HNF_int + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
       random = ~ 1 | Cruise, data = HNF_Bac_A),
   lme(ln.HNF_Biom ~ ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
       random = ~ 1 | Cruise, data = HNF_Bac_A),
@@ -932,7 +942,7 @@ Bacq0_HNFq0_mod2.Season <- psem(
       random = ~ 1 | Season, data = HNF_Bac_A),
   lme(ln.Bac_Biom ~ ln.HNF_Biom + ln.Bac_SR + ln.HNF_SR + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
       random = ~ 1 | Season, data = HNF_Bac_A),
-  lme(ln.HNF_SR ~ ln.Bac_SR + ln.HNF_Biom + HNF_Bac_int + HNF_HNF_int + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
+  lme(ln.HNF_SR ~ ln.Bac_SR + ln.HNF_Biom + Bac_Bac_int + Bac_HNF_int + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
       random = ~ 1 | Season, data = HNF_Bac_A),
   lme(ln.HNF_Biom ~ ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
       random = ~ 1 | Season, data = HNF_Bac_A),
@@ -943,7 +953,7 @@ Bacq0_HNFq0_mod2.St <- psem(
       random = ~ 1 | Station, data = HNF_Bac_A),
   lme(ln.Bac_Biom ~ ln.HNF_Biom + ln.Bac_SR + ln.HNF_SR + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
       random = ~ 1 | Station, data = HNF_Bac_A),
-  lme(ln.HNF_SR ~ ln.Bac_SR + ln.HNF_Biom + HNF_Bac_int + HNF_HNF_int + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
+  lme(ln.HNF_SR ~ ln.Bac_SR + ln.HNF_Biom + Bac_Bac_int + Bac_HNF_int + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
       random = ~ 1 | Station, data = HNF_Bac_A),
   lme(ln.HNF_Biom ~ ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
       random = ~ 1 | Season, data = HNF_Bac_A),
@@ -959,25 +969,28 @@ summary(Bacq0_HNFq0_mod2.Season)
 summary(Bacq0_HNFq0_mod2.St)
 ##### Path model analysis : Bac_q0 vs HNF_q0 ##########
 
+##### Plotting HNF-Bac A diversity relationship with selection as color code ##########
+community.labs <- c("Selection on bacteria community", "Selection on HNF community")
+names(community.labs) <- c("Bac_select", "HNF_select")
 
-##### Univariate HNF-Bac A diversity relationship ##########
-### Plotting
-p_ADiv_BacSelect <- HNF_Bac_A %>% 
+p_ADiv_Select <- HNF_Bac_A %>% 
+  select(Bac_SR, HNF_SR, Bac_select, HNF_select) %>%
+  gather(key = "community", value = "Selection", -c(Bac_SR, HNF_SR)) %>%
   ggplot() + 
-  geom_point(aes(x = Bac_Shannon, y = HNF_Shannon, color = Bac_select), size = 3) + 
-  scale_colour_viridis(alpha = 0.7)
-p_ADiv_BacSelect
-#ggsave(p_ADiv_BacSelect, file = "D:/Research/PdPy_Div_Results/p_ADiv_BacSelect.jpeg")
-p_ADiv_HNFSelect <- HNF_Bac_A %>% 
-  ggplot() + 
-  geom_point(aes(x = Bac_Shannon, y = HNF_Shannon, color = HNF_select), size = 3) + 
-  scale_colour_viridis(alpha = 0.7)
-p_ADiv_HNFSelect
-#ggsave(p_ADiv_HNFSelect, file = "D:/Research/PdPy_Div_Results/p_ADiv_HNFSelect.jpeg")
-### Plotting
-
-
-##### Univariate HNF-Bac A diversity relationship ##########
+  geom_point(aes(x = Bac_SR, y = HNF_SR, color = Selection), size = 3) + 
+  facet_grid(~ community, labeller = labeller(community = community.labs)) +  
+  scale_colour_viridis(alpha = 0.7) + 
+  labs(x = expression("Bacteria species richness (q = 0)"),
+       y = expression("HNF species richness (q = 0)"),
+       colour = expression(paste("\U03B2", "NTI"))) + 
+  theme(
+    strip.text.x = element_text(size = 12, face = "bold"),
+    
+  )
+p_ADiv_Select
+ggsave(p_ADiv_Select, file = "D:/Research/PdPy_Div_Results/p_ADiv_Bacq0_HNFq0_Select.jpeg",
+       dpi = 600, width = 34, height = 28, units = "cm")
+##### Plotting HNF-Bac A diversity relationship with selection as color code ##########
 
 
 
