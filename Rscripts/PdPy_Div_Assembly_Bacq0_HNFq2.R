@@ -384,594 +384,597 @@ p_Adiv_pairs
 
 ##### Path model analysis : Bac_q0 vs HNF_q1 ##########
 ### Step 1 
-Bacq0_HNFq1_mod1.0 <- '
+Bacq0_HNFq2_mod1.0 <- '
   # regressions
-    ln.Bac_SR ~ ln.HNF_Shannon
-    ln.Bac_Biom ~ ln.Bac_SR + ln.HNF_Shannon
-    ln.HNF_Biom ~ ln.Bac_Biom + ln.Bac_SR + ln.HNF_Shannon
+    ln.Bac_SR ~ ln.HNF_Simpson
+    ln.Bac_Biom ~ ln.Bac_SR + ln.HNF_Simpson
+    ln.HNF_Biom ~ ln.Bac_Biom + ln.Bac_SR + ln.HNF_Simpson
 '
-Bacq0_HNFq1_mod1.1 <- '
+Bacq0_HNFq2_mod1.1 <- '
   # regressions
-    ln.Bac_SR ~ ln.HNF_Shannon + ln.HNF_Biom
-    ln.Bac_Biom ~ ln.Bac_SR + ln.HNF_Shannon
-    ln.HNF_Biom ~ ln.Bac_Biom + ln.HNF_Shannon
+    ln.Bac_SR ~ ln.HNF_Simpson + ln.HNF_Biom
+    ln.Bac_Biom ~ ln.Bac_SR + ln.HNF_Simpson
+    ln.HNF_Biom ~ ln.Bac_Biom + ln.HNF_Simpson
 '
-Bacq0_HNFq1_mod1.2 <- '
+Bacq0_HNFq2_mod1.2 <- '
   # regressions
-    ln.Bac_SR ~ ln.HNF_Shannon
+    ln.Bac_SR ~ ln.HNF_Simpson
     ln.Bac_Biom ~ ln.Bac_SR
-    ln.HNF_Biom ~ ln.Bac_Biom + ln.Bac_SR + ln.HNF_Shannon
-    ln.HNF_Shannon ~ ln.Bac_Biom
+    ln.HNF_Biom ~ ln.Bac_Biom + ln.Bac_SR + ln.HNF_Simpson
+    ln.HNF_Simpson ~ ln.Bac_Biom
 '
-Bacq0_HNFq1_mod1.3 <- '
+Bacq0_HNFq2_mod1.3 <- '
   # regressions
-    ln.Bac_SR ~ ln.HNF_Shannon + ln.HNF_Biom
+    ln.Bac_SR ~ ln.HNF_Simpson + ln.HNF_Biom
     ln.Bac_Biom ~ ln.Bac_SR
-    ln.HNF_Biom ~ ln.Bac_Biom + ln.HNF_Shannon
-    ln.HNF_Shannon ~ ln.Bac_Biom
+    ln.HNF_Biom ~ ln.Bac_Biom + ln.HNF_Simpson
+    ln.HNF_Simpson ~ ln.Bac_Biom
 '
-Bacq0_HNFq1_mod1.4 <- '
+Bacq0_HNFq2_mod1.4 <- '
   # regressions
-    ln.Bac_SR ~ ln.HNF_Shannon
-    ln.Bac_Biom ~ ln.HNF_Biom + ln.Bac_SR + ln.HNF_Shannon
-    ln.HNF_Biom ~ ln.Bac_SR + ln.HNF_Shannon
+    ln.Bac_SR ~ ln.HNF_Simpson
+    ln.Bac_Biom ~ ln.HNF_Biom + ln.Bac_SR + ln.HNF_Simpson
+    ln.HNF_Biom ~ ln.Bac_SR + ln.HNF_Simpson
 '
-Bacq0_HNFq1_mod1.5 <- '
+Bacq0_HNFq2_mod1.5 <- '
   # regressions
-    ln.Bac_SR ~ ln.HNF_Shannon + ln.HNF_Biom
-    ln.Bac_Biom ~ ln.HNF_Biom + ln.Bac_SR + ln.HNF_Shannon
-    ln.HNF_Biom ~ ln.HNF_Shannon
+    ln.Bac_SR ~ ln.HNF_Simpson + ln.HNF_Biom
+    ln.Bac_Biom ~ ln.HNF_Biom + ln.Bac_SR + ln.HNF_Simpson
+    ln.HNF_Biom ~ ln.HNF_Simpson
 '
-Bacq0_HNFq1_mod1.6 <- '
+Bacq0_HNFq2_mod1.6 <- '
   # regressions
-    ln.Bac_SR ~ ln.HNF_Shannon
+    ln.Bac_SR ~ ln.HNF_Simpson
     ln.Bac_Biom ~ ln.HNF_Biom + ln.Bac_SR
-    ln.HNF_Biom ~ ln.Bac_SR + ln.HNF_Shannon
-    ln.HNF_Shannon ~ ln.Bac_Biom
+    ln.HNF_Biom ~ ln.Bac_SR + ln.HNF_Simpson
+    ln.HNF_Simpson ~ ln.Bac_Biom
 '
-Bacq0_HNFq1_mod1.7 <- '
+Bacq0_HNFq2_mod1.7 <- '
   # regressions
-    ln.Bac_SR ~ ln.HNF_Shannon + ln.HNF_Biom
+    ln.Bac_SR ~ ln.HNF_Simpson + ln.HNF_Biom
     ln.Bac_Biom ~ ln.HNF_Biom + ln.Bac_SR
-    ln.HNF_Biom ~ ln.HNF_Shannon
-    ln.HNF_Shannon ~ ln.Bac_Biom
+    ln.HNF_Biom ~ ln.HNF_Simpson
+    ln.HNF_Simpson ~ ln.Bac_Biom
 '
-Bacq0_HNFq1_mod1.8 <- '
+Bacq0_HNFq2_mod1.8 <- '
   # regressions
-    ln.Bac_SR ~ ln.HNF_Shannon + ln.Bac_Biom
-    ln.Bac_Biom ~ ln.HNF_Shannon
-    ln.HNF_Biom ~ ln.Bac_Biom + ln.Bac_SR + ln.HNF_Shannon
+    ln.Bac_SR ~ ln.HNF_Simpson + ln.Bac_Biom
+    ln.Bac_Biom ~ ln.HNF_Simpson
+    ln.HNF_Biom ~ ln.Bac_Biom + ln.Bac_SR + ln.HNF_Simpson
 '
-Bacq0_HNFq1_mod1.9 <- '
+Bacq0_HNFq2_mod1.9 <- '
   # regressions
-    ln.Bac_SR ~ ln.HNF_Shannon + ln.Bac_Biom + ln.HNF_Biom
-    ln.Bac_Biom ~ ln.HNF_Shannon
-    ln.HNF_Biom ~ ln.Bac_Biom + ln.HNF_Shannon
+    ln.Bac_SR ~ ln.HNF_Simpson + ln.Bac_Biom + ln.HNF_Biom
+    ln.Bac_Biom ~ ln.HNF_Simpson
+    ln.HNF_Biom ~ ln.Bac_Biom + ln.HNF_Simpson
 '
-Bacq0_HNFq1_mod1.10 <- '
+Bacq0_HNFq2_mod1.10 <- '
   # regressions
-    ln.Bac_SR ~ ln.HNF_Shannon + ln.Bac_Biom
-    ln.HNF_Biom ~ ln.Bac_Biom + ln.Bac_SR + ln.HNF_Shannon
-    ln.HNF_Shannon ~ ln.Bac_Biom
+    ln.Bac_SR ~ ln.HNF_Simpson + ln.Bac_Biom
+    ln.HNF_Biom ~ ln.Bac_Biom + ln.Bac_SR + ln.HNF_Simpson
+    ln.HNF_Simpson ~ ln.Bac_Biom
 '
-Bacq0_HNFq1_mod1.11 <- '
+Bacq0_HNFq2_mod1.11 <- '
   # regressions
-    ln.Bac_SR ~ ln.HNF_Shannon + ln.Bac_Biom + ln.HNF_Biom
-    ln.HNF_Biom ~ ln.Bac_Biom + ln.HNF_Shannon
-    ln.HNF_Shannon ~ ln.Bac_Biom
+    ln.Bac_SR ~ ln.HNF_Simpson + ln.Bac_Biom + ln.HNF_Biom
+    ln.HNF_Biom ~ ln.Bac_Biom + ln.HNF_Simpson
+    ln.HNF_Simpson ~ ln.Bac_Biom
 '
-Bacq0_HNFq1_mod1.12 <- '
+Bacq0_HNFq2_mod1.12 <- '
   # regressions
-    ln.Bac_SR ~ ln.HNF_Shannon + ln.Bac_Biom
-    ln.Bac_Biom ~ ln.HNF_Biom + ln.HNF_Shannon
-    ln.HNF_Biom ~ ln.Bac_SR + ln.HNF_Shannon
+    ln.Bac_SR ~ ln.HNF_Simpson + ln.Bac_Biom
+    ln.Bac_Biom ~ ln.HNF_Biom + ln.HNF_Simpson
+    ln.HNF_Biom ~ ln.Bac_SR + ln.HNF_Simpson
 '
-Bacq0_HNFq1_mod1.13 <- '
+Bacq0_HNFq2_mod1.13 <- '
   # regressions
-    ln.Bac_SR ~ ln.HNF_Shannon + ln.Bac_Biom + ln.HNF_Biom
-    ln.Bac_Biom ~ ln.HNF_Biom + ln.HNF_Shannon
-    ln.HNF_Biom ~ ln.HNF_Shannon
+    ln.Bac_SR ~ ln.HNF_Simpson + ln.Bac_Biom + ln.HNF_Biom
+    ln.Bac_Biom ~ ln.HNF_Biom + ln.HNF_Simpson
+    ln.HNF_Biom ~ ln.HNF_Simpson
 '
-Bacq0_HNFq1_mod1.14 <- '
+Bacq0_HNFq2_mod1.14 <- '
   # regressions
-    ln.Bac_SR ~ ln.HNF_Shannon + ln.Bac_Biom
+    ln.Bac_SR ~ ln.HNF_Simpson + ln.Bac_Biom
     ln.Bac_Biom ~ ln.HNF_Biom
-    ln.HNF_Biom ~ ln.Bac_SR + ln.HNF_Shannon
-    ln.HNF_Shannon ~ ln.Bac_Biom
+    ln.HNF_Biom ~ ln.Bac_SR + ln.HNF_Simpson
+    ln.HNF_Simpson ~ ln.Bac_Biom
 '
-Bacq0_HNFq1_mod1.15 <- '
+Bacq0_HNFq2_mod1.15 <- '
   # regressions
-    ln.Bac_SR ~ ln.HNF_Shannon + ln.Bac_Biom + ln.HNF_Biom
+    ln.Bac_SR ~ ln.HNF_Simpson + ln.Bac_Biom + ln.HNF_Biom
     ln.Bac_Biom ~ ln.HNF_Biom
-    ln.HNF_Biom ~ ln.HNF_Shannon
-    ln.HNF_Shannon ~ ln.Bac_Biom
+    ln.HNF_Biom ~ ln.HNF_Simpson
+    ln.HNF_Simpson ~ ln.Bac_Biom
 '
-Bacq0_HNFq1_mod1.16 <- '
+Bacq0_HNFq2_mod1.16 <- '
   # regressions
-    ln.Bac_SR ~ ln.HNF_Shannon
-    ln.Bac_Biom ~ ln.Bac_SR + ln.HNF_Shannon
+    ln.Bac_SR ~ ln.HNF_Simpson
+    ln.Bac_Biom ~ ln.Bac_SR + ln.HNF_Simpson
     ln.HNF_Biom ~ ln.Bac_Biom + ln.Bac_SR
-    ln.HNF_Shannon ~ ln.HNF_Biom
+    ln.HNF_Simpson ~ ln.HNF_Biom
 '
-Bacq0_HNFq1_mod1.17 <- '
+Bacq0_HNFq2_mod1.17 <- '
   # regressions
-    ln.Bac_SR ~ ln.HNF_Shannon + ln.HNF_Biom
-    ln.Bac_Biom ~ ln.Bac_SR + ln.HNF_Shannon
+    ln.Bac_SR ~ ln.HNF_Simpson + ln.HNF_Biom
+    ln.Bac_Biom ~ ln.Bac_SR + ln.HNF_Simpson
     ln.HNF_Biom ~ ln.Bac_Biom
-    ln.HNF_Shannon ~ ln.HNF_Biom
+    ln.HNF_Simpson ~ ln.HNF_Biom
 '
-Bacq0_HNFq1_mod1.18 <- '
+Bacq0_HNFq2_mod1.18 <- '
   # regressions
-    ln.Bac_SR ~ ln.HNF_Shannon
+    ln.Bac_SR ~ ln.HNF_Simpson
     ln.Bac_Biom ~ ln.Bac_SR
     ln.HNF_Biom ~ ln.Bac_Biom + ln.Bac_SR
-    ln.HNF_Shannon ~ ln.Bac_Biom + ln.HNF_Biom
+    ln.HNF_Simpson ~ ln.Bac_Biom + ln.HNF_Biom
 '
-Bacq0_HNFq1_mod1.19 <- '
+Bacq0_HNFq2_mod1.19 <- '
   # regressions
-    ln.Bac_SR ~ ln.HNF_Shannon + ln.HNF_Biom
+    ln.Bac_SR ~ ln.HNF_Simpson + ln.HNF_Biom
     ln.Bac_Biom ~ ln.Bac_SR
     ln.HNF_Biom ~ ln.Bac_Biom
-    ln.HNF_Shannon ~ ln.Bac_Biom + ln.HNF_Biom
+    ln.HNF_Simpson ~ ln.Bac_Biom + ln.HNF_Biom
 '
-Bacq0_HNFq1_mod1.20 <- '
+Bacq0_HNFq2_mod1.20 <- '
   # regressions
-    ln.Bac_SR ~ ln.HNF_Shannon
-    ln.Bac_Biom ~ ln.HNF_Biom + ln.Bac_SR + ln.HNF_Shannon
+    ln.Bac_SR ~ ln.HNF_Simpson
+    ln.Bac_Biom ~ ln.HNF_Biom + ln.Bac_SR + ln.HNF_Simpson
     ln.HNF_Biom ~ ln.Bac_SR
-    ln.HNF_Shannon ~ ln.HNF_Biom
+    ln.HNF_Simpson ~ ln.HNF_Biom
 '
-Bacq0_HNFq1_mod1.21 <- '
+Bacq0_HNFq2_mod1.21 <- '
   # regressions
-    ln.Bac_SR ~ ln.HNF_Shannon + ln.HNF_Biom
-    ln.Bac_Biom ~ ln.HNF_Biom + ln.Bac_SR + ln.HNF_Shannon
-    ln.HNF_Shannon ~ ln.HNF_Biom
+    ln.Bac_SR ~ ln.HNF_Simpson + ln.HNF_Biom
+    ln.Bac_Biom ~ ln.HNF_Biom + ln.Bac_SR + ln.HNF_Simpson
+    ln.HNF_Simpson ~ ln.HNF_Biom
 '
-Bacq0_HNFq1_mod1.22 <- '
+Bacq0_HNFq2_mod1.22 <- '
   # regressions
-    ln.Bac_SR ~ ln.HNF_Shannon
+    ln.Bac_SR ~ ln.HNF_Simpson
     ln.Bac_Biom ~ ln.HNF_Biom + ln.Bac_SR
     ln.HNF_Biom ~ ln.Bac_SR
-    ln.HNF_Shannon ~ ln.Bac_Biom + ln.HNF_Biom
+    ln.HNF_Simpson ~ ln.Bac_Biom + ln.HNF_Biom
 '
-Bacq0_HNFq1_mod1.23 <- '
+Bacq0_HNFq2_mod1.23 <- '
   # regressions
-    ln.Bac_SR ~ ln.HNF_Shannon + ln.HNF_Biom
+    ln.Bac_SR ~ ln.HNF_Simpson + ln.HNF_Biom
     ln.Bac_Biom ~ ln.HNF_Biom + ln.Bac_SR
-    ln.HNF_Shannon ~ ln.Bac_Biom + ln.HNF_Biom
+    ln.HNF_Simpson ~ ln.Bac_Biom + ln.HNF_Biom
 '
-Bacq0_HNFq1_mod1.24 <- '
+Bacq0_HNFq2_mod1.24 <- '
   # regressions
-    ln.Bac_SR ~ ln.HNF_Shannon + ln.Bac_Biom
-    ln.Bac_Biom ~ ln.HNF_Shannon
+    ln.Bac_SR ~ ln.HNF_Simpson + ln.Bac_Biom
+    ln.Bac_Biom ~ ln.HNF_Simpson
     ln.HNF_Biom ~ ln.Bac_Biom + ln.Bac_SR
-    ln.HNF_Shannon ~ ln.HNF_Biom
+    ln.HNF_Simpson ~ ln.HNF_Biom
 '
-Bacq0_HNFq1_mod1.25 <- '
+Bacq0_HNFq2_mod1.25 <- '
   # regressions
-    ln.Bac_SR ~ ln.HNF_Shannon + ln.Bac_Biom + ln.HNF_Biom
-    ln.Bac_Biom ~ ln.HNF_Shannon
+    ln.Bac_SR ~ ln.HNF_Simpson + ln.Bac_Biom + ln.HNF_Biom
+    ln.Bac_Biom ~ ln.HNF_Simpson
     ln.HNF_Biom ~ ln.Bac_Biom
-    ln.HNF_Shannon ~ ln.HNF_Biom
+    ln.HNF_Simpson ~ ln.HNF_Biom
 '
-Bacq0_HNFq1_mod1.26 <- '
+Bacq0_HNFq2_mod1.26 <- '
   # regressions
-    ln.Bac_SR ~ ln.HNF_Shannon + ln.Bac_Biom
+    ln.Bac_SR ~ ln.HNF_Simpson + ln.Bac_Biom
     ln.HNF_Biom ~ ln.Bac_Biom + ln.Bac_SR
-    ln.HNF_Shannon ~ ln.Bac_Biom + ln.HNF_Biom
+    ln.HNF_Simpson ~ ln.Bac_Biom + ln.HNF_Biom
 '
-Bacq0_HNFq1_mod1.27 <- '
+Bacq0_HNFq2_mod1.27 <- '
   # regressions
-    ln.Bac_SR ~ ln.HNF_Shannon + ln.Bac_Biom + ln.HNF_Biom
+    ln.Bac_SR ~ ln.HNF_Simpson + ln.Bac_Biom + ln.HNF_Biom
     ln.HNF_Biom ~ ln.Bac_Biom
-    ln.HNF_Shannon ~ ln.Bac_Biom + ln.HNF_Biom
+    ln.HNF_Simpson ~ ln.Bac_Biom + ln.HNF_Biom
 '
-Bacq0_HNFq1_mod1.28 <- '
+Bacq0_HNFq2_mod1.28 <- '
   # regressions
-    ln.Bac_SR ~ ln.HNF_Shannon + ln.Bac_Biom
-    ln.Bac_Biom ~ ln.HNF_Biom + ln.HNF_Shannon
+    ln.Bac_SR ~ ln.HNF_Simpson + ln.Bac_Biom
+    ln.Bac_Biom ~ ln.HNF_Biom + ln.HNF_Simpson
     ln.HNF_Biom ~ ln.Bac_SR
-    ln.HNF_Shannon ~ ln.HNF_Biom
+    ln.HNF_Simpson ~ ln.HNF_Biom
 '
-Bacq0_HNFq1_mod1.29 <- '
+Bacq0_HNFq2_mod1.29 <- '
   # regressions
-    ln.Bac_SR ~ ln.HNF_Shannon + ln.Bac_Biom + ln.HNF_Biom
-    ln.Bac_Biom ~ ln.HNF_Biom + ln.HNF_Shannon
-    ln.HNF_Shannon ~ ln.HNF_Biom
+    ln.Bac_SR ~ ln.HNF_Simpson + ln.Bac_Biom + ln.HNF_Biom
+    ln.Bac_Biom ~ ln.HNF_Biom + ln.HNF_Simpson
+    ln.HNF_Simpson ~ ln.HNF_Biom
 '
-Bacq0_HNFq1_mod1.30 <- '
+Bacq0_HNFq2_mod1.30 <- '
   # regressions
-    ln.Bac_SR ~ ln.HNF_Shannon + ln.Bac_Biom
+    ln.Bac_SR ~ ln.HNF_Simpson + ln.Bac_Biom
     ln.Bac_Biom ~ ln.HNF_Biom
     ln.HNF_Biom ~ ln.Bac_SR
-    ln.HNF_Shannon ~ ln.Bac_Biom + ln.HNF_Biom
+    ln.HNF_Simpson ~ ln.Bac_Biom + ln.HNF_Biom
 '
-Bacq0_HNFq1_mod1.31 <- '
+Bacq0_HNFq2_mod1.31 <- '
   # regressions
-    ln.Bac_SR ~ ln.HNF_Shannon + ln.Bac_Biom + ln.HNF_Biom
+    ln.Bac_SR ~ ln.HNF_Simpson + ln.Bac_Biom + ln.HNF_Biom
     ln.Bac_Biom ~ ln.HNF_Biom
-    ln.HNF_Shannon ~ ln.Bac_Biom + ln.HNF_Biom
+    ln.HNF_Simpson ~ ln.Bac_Biom + ln.HNF_Biom
 '
-Bacq0_HNFq1_mod1.32 <- '
+Bacq0_HNFq2_mod1.32 <- '
   # regressions
-    ln.Bac_Biom ~ ln.Bac_SR + ln.HNF_Shannon
-    ln.HNF_Biom ~ ln.Bac_Biom + ln.Bac_SR + ln.HNF_Shannon
-    ln.HNF_Shannon ~ ln.Bac_SR
+    ln.Bac_Biom ~ ln.Bac_SR + ln.HNF_Simpson
+    ln.HNF_Biom ~ ln.Bac_Biom + ln.Bac_SR + ln.HNF_Simpson
+    ln.HNF_Simpson ~ ln.Bac_SR
 '
-Bacq0_HNFq1_mod1.33 <- '
+Bacq0_HNFq2_mod1.33 <- '
   # regressions
     ln.Bac_SR ~ ln.HNF_Biom
-    ln.Bac_Biom ~ ln.Bac_SR + ln.HNF_Shannon
-    ln.HNF_Biom ~ ln.Bac_Biom + ln.HNF_Shannon
-    ln.HNF_Shannon ~ ln.Bac_SR
+    ln.Bac_Biom ~ ln.Bac_SR + ln.HNF_Simpson
+    ln.HNF_Biom ~ ln.Bac_Biom + ln.HNF_Simpson
+    ln.HNF_Simpson ~ ln.Bac_SR
 '
-Bacq0_HNFq1_mod1.34 <- '
+Bacq0_HNFq2_mod1.34 <- '
   # regressions
     ln.Bac_Biom ~ ln.Bac_SR
-    ln.HNF_Biom ~ ln.Bac_Biom + ln.Bac_SR + ln.HNF_Shannon
-    ln.HNF_Shannon ~ ln.Bac_SR + ln.Bac_Biom
+    ln.HNF_Biom ~ ln.Bac_Biom + ln.Bac_SR + ln.HNF_Simpson
+    ln.HNF_Simpson ~ ln.Bac_SR + ln.Bac_Biom
 '
-Bacq0_HNFq1_mod1.35 <- '
-  # regressions
-    ln.Bac_SR ~ ln.HNF_Biom
-    ln.Bac_Biom ~ ln.Bac_SR
-    ln.HNF_Biom ~ ln.Bac_Biom + ln.HNF_Shannon
-    ln.HNF_Shannon ~ ln.Bac_SR + ln.Bac_Biom
-'
-Bacq0_HNFq1_mod1.36 <- '
-  # regressions
-    ln.Bac_Biom ~ ln.HNF_Biom + ln.Bac_SR + ln.HNF_Shannon
-    ln.HNF_Biom ~ ln.Bac_SR + ln.HNF_Shannon
-    ln.HNF_Shannon ~ ln.Bac_SR
-'
-Bacq0_HNFq1_mod1.37 <- '
-  # regressions
-    ln.Bac_SR ~ ln.HNF_Biom
-    ln.Bac_Biom ~ ln.HNF_Biom + ln.Bac_SR + ln.HNF_Shannon
-    ln.HNF_Biom ~ ln.HNF_Shannon
-    ln.HNF_Shannon ~ ln.Bac_SR
-'
-Bacq0_HNFq1_mod1.38 <- '
-  # regressions
-    ln.Bac_Biom ~ ln.HNF_Biom + ln.Bac_SR
-    ln.HNF_Biom ~ ln.Bac_SR + ln.HNF_Shannon
-    ln.HNF_Shannon ~ ln.Bac_SR + ln.Bac_Biom
-'
-Bacq0_HNFq1_mod1.39 <- '
-  # regressions
-    ln.Bac_SR ~ ln.HNF_Biom
-    ln.Bac_Biom ~ ln.HNF_Biom + ln.Bac_SR
-    ln.HNF_Biom ~ ln.HNF_Shannon
-    ln.HNF_Shannon ~ ln.Bac_SR + ln.Bac_Biom
-'
-Bacq0_HNFq1_mod1.40 <- '
-  # regressions
-    ln.Bac_SR ~ ln.Bac_Biom
-    ln.Bac_Biom ~ ln.HNF_Shannon
-    ln.HNF_Biom ~ ln.Bac_Biom + ln.Bac_SR + ln.HNF_Shannon
-    ln.HNF_Shannon ~ ln.Bac_SR
-'
-Bacq0_HNFq1_mod1.41 <- '
-  # regressions
-    ln.Bac_SR ~ ln.Bac_Biom + ln.HNF_Biom
-    ln.Bac_Biom ~ ln.HNF_Shannon
-    ln.HNF_Biom ~ ln.Bac_Biom + ln.HNF_Shannon
-    ln.HNF_Shannon ~ ln.Bac_SR
-'
-Bacq0_HNFq1_mod1.42 <- '
-  # regressions
-    ln.Bac_SR ~ ln.Bac_Biom
-    ln.HNF_Biom ~ ln.Bac_Biom + ln.Bac_SR + ln.HNF_Shannon
-    ln.HNF_Shannon ~ ln.Bac_SR + ln.Bac_Biom
-'
-Bacq0_HNFq1_mod1.43 <- '
-  # regressions
-    ln.Bac_SR ~ ln.Bac_Biom + ln.HNF_Biom
-    ln.HNF_Biom ~ ln.Bac_Biom + ln.HNF_Shannon
-    ln.HNF_Shannon ~ ln.Bac_SR + ln.Bac_Biom
-'
-Bacq0_HNFq1_mod1.44 <- '
-  # regressions
-    ln.Bac_SR ~ ln.Bac_Biom
-    ln.Bac_Biom ~ ln.HNF_Biom + ln.HNF_Shannon
-    ln.HNF_Biom ~ ln.Bac_SR + ln.HNF_Shannon
-    ln.HNF_Shannon ~ ln.Bac_SR
-'
-Bacq0_HNFq1_mod1.45 <- '
-  # regressions
-    ln.Bac_SR ~ ln.Bac_Biom + ln.HNF_Biom
-    ln.Bac_Biom ~ ln.HNF_Biom + ln.HNF_Shannon
-    ln.HNF_Biom ~ ln.HNF_Shannon
-    ln.HNF_Shannon ~ ln.Bac_SR
-'
-Bacq0_HNFq1_mod1.46 <- '
-  # regressions
-    ln.Bac_SR ~ ln.Bac_Biom
-    ln.Bac_Biom ~ ln.HNF_Biom
-    ln.HNF_Biom ~ ln.Bac_SR + ln.HNF_Shannon
-    ln.HNF_Shannon ~ ln.Bac_SR + ln.Bac_Biom
-'
-Bacq0_HNFq1_mod1.47 <- '
-  # regressions
-    ln.Bac_SR ~ ln.Bac_Biom + ln.HNF_Biom
-    ln.Bac_Biom ~ ln.HNF_Biom
-    ln.HNF_Biom ~ ln.HNF_Shannon
-    ln.HNF_Shannon ~ ln.Bac_SR + ln.Bac_Biom
-'
-Bacq0_HNFq1_mod1.48 <- '
-  # regressions
-    ln.Bac_Biom ~ ln.Bac_SR + ln.HNF_Shannon
-    ln.HNF_Biom ~ ln.Bac_Biom + ln.Bac_SR
-    ln.HNF_Shannon ~ ln.Bac_SR + ln.HNF_Biom
-'
-Bacq0_HNFq1_mod1.49 <- '
-  # regressions
-    ln.Bac_SR ~ ln.HNF_Biom
-    ln.Bac_Biom ~ ln.Bac_SR + ln.HNF_Shannon
-    ln.HNF_Biom ~ ln.Bac_Biom
-    ln.HNF_Shannon ~ ln.Bac_SR + ln.HNF_Biom
-'
-Bacq0_HNFq1_mod1.50 <- '
-  # regressions
-    ln.Bac_Biom ~ ln.Bac_SR
-    ln.HNF_Biom ~ ln.Bac_Biom + ln.Bac_SR
-    ln.HNF_Shannon ~ ln.Bac_SR + ln.Bac_Biom + ln.HNF_Biom
-'
-Bacq0_HNFq1_mod1.51 <- '
+Bacq0_HNFq2_mod1.35 <- '
   # regressions
     ln.Bac_SR ~ ln.HNF_Biom
     ln.Bac_Biom ~ ln.Bac_SR
-    ln.HNF_Biom ~ ln.Bac_Biom
-    ln.HNF_Shannon ~ ln.Bac_SR + ln.Bac_Biom + ln.HNF_Biom
+    ln.HNF_Biom ~ ln.Bac_Biom + ln.HNF_Simpson
+    ln.HNF_Simpson ~ ln.Bac_SR + ln.Bac_Biom
 '
-Bacq0_HNFq1_mod1.52 <- '
+Bacq0_HNFq2_mod1.36 <- '
   # regressions
-    ln.Bac_Biom ~ ln.HNF_Biom + ln.Bac_SR + ln.HNF_Shannon
-    ln.HNF_Biom ~ ln.Bac_SR
-    ln.HNF_Shannon ~ ln.Bac_SR + ln.HNF_Biom
+    ln.Bac_Biom ~ ln.HNF_Biom + ln.Bac_SR + ln.HNF_Simpson
+    ln.HNF_Biom ~ ln.Bac_SR + ln.HNF_Simpson
+    ln.HNF_Simpson ~ ln.Bac_SR
 '
-Bacq0_HNFq1_mod1.53 <- '
+Bacq0_HNFq2_mod1.37 <- '
   # regressions
     ln.Bac_SR ~ ln.HNF_Biom
-    ln.Bac_Biom ~ ln.HNF_Biom + ln.Bac_SR + ln.HNF_Shannon
-    ln.HNF_Shannon ~ ln.Bac_SR + ln.HNF_Biom
+    ln.Bac_Biom ~ ln.HNF_Biom + ln.Bac_SR + ln.HNF_Simpson
+    ln.HNF_Biom ~ ln.HNF_Simpson
+    ln.HNF_Simpson ~ ln.Bac_SR
 '
-Bacq0_HNFq1_mod1.54 <- '
+Bacq0_HNFq2_mod1.38 <- '
+  # regressions
+    ln.Bac_Biom ~ ln.HNF_Biom + ln.Bac_SR
+    ln.HNF_Biom ~ ln.Bac_SR + ln.HNF_Simpson
+    ln.HNF_Simpson ~ ln.Bac_SR + ln.Bac_Biom
+'
+Bacq0_HNFq2_mod1.39 <- '
+  # regressions
+    ln.Bac_SR ~ ln.HNF_Biom
+    ln.Bac_Biom ~ ln.HNF_Biom + ln.Bac_SR
+    ln.HNF_Biom ~ ln.HNF_Simpson
+    ln.HNF_Simpson ~ ln.Bac_SR + ln.Bac_Biom
+'
+Bacq0_HNFq2_mod1.40 <- '
+  # regressions
+    ln.Bac_SR ~ ln.Bac_Biom
+    ln.Bac_Biom ~ ln.HNF_Simpson
+    ln.HNF_Biom ~ ln.Bac_Biom + ln.Bac_SR + ln.HNF_Simpson
+    ln.HNF_Simpson ~ ln.Bac_SR
+'
+Bacq0_HNFq2_mod1.41 <- '
+  # regressions
+    ln.Bac_SR ~ ln.Bac_Biom + ln.HNF_Biom
+    ln.Bac_Biom ~ ln.HNF_Simpson
+    ln.HNF_Biom ~ ln.Bac_Biom + ln.HNF_Simpson
+    ln.HNF_Simpson ~ ln.Bac_SR
+'
+Bacq0_HNFq2_mod1.42 <- '
+  # regressions
+    ln.Bac_SR ~ ln.Bac_Biom
+    ln.HNF_Biom ~ ln.Bac_Biom + ln.Bac_SR + ln.HNF_Simpson
+    ln.HNF_Simpson ~ ln.Bac_SR + ln.Bac_Biom
+'
+Bacq0_HNFq2_mod1.43 <- '
+  # regressions
+    ln.Bac_SR ~ ln.Bac_Biom + ln.HNF_Biom
+    ln.HNF_Biom ~ ln.Bac_Biom + ln.HNF_Simpson
+    ln.HNF_Simpson ~ ln.Bac_SR + ln.Bac_Biom
+'
+Bacq0_HNFq2_mod1.44 <- '
+  # regressions
+    ln.Bac_SR ~ ln.Bac_Biom
+    ln.Bac_Biom ~ ln.HNF_Biom + ln.HNF_Simpson
+    ln.HNF_Biom ~ ln.Bac_SR + ln.HNF_Simpson
+    ln.HNF_Simpson ~ ln.Bac_SR
+'
+Bacq0_HNFq2_mod1.45 <- '
+  # regressions
+    ln.Bac_SR ~ ln.Bac_Biom + ln.HNF_Biom
+    ln.Bac_Biom ~ ln.HNF_Biom + ln.HNF_Simpson
+    ln.HNF_Biom ~ ln.HNF_Simpson
+    ln.HNF_Simpson ~ ln.Bac_SR
+'
+Bacq0_HNFq2_mod1.46 <- '
+  # regressions
+    ln.Bac_SR ~ ln.Bac_Biom
+    ln.Bac_Biom ~ ln.HNF_Biom
+    ln.HNF_Biom ~ ln.Bac_SR + ln.HNF_Simpson
+    ln.HNF_Simpson ~ ln.Bac_SR + ln.Bac_Biom
+'
+Bacq0_HNFq2_mod1.47 <- '
+  # regressions
+    ln.Bac_SR ~ ln.Bac_Biom + ln.HNF_Biom
+    ln.Bac_Biom ~ ln.HNF_Biom
+    ln.HNF_Biom ~ ln.HNF_Simpson
+    ln.HNF_Simpson ~ ln.Bac_SR + ln.Bac_Biom
+'
+Bacq0_HNFq2_mod1.48 <- '
+  # regressions
+    ln.Bac_Biom ~ ln.Bac_SR + ln.HNF_Simpson
+    ln.HNF_Biom ~ ln.Bac_Biom + ln.Bac_SR
+    ln.HNF_Simpson ~ ln.Bac_SR + ln.HNF_Biom
+'
+Bacq0_HNFq2_mod1.49 <- '
+  # regressions
+    ln.Bac_SR ~ ln.HNF_Biom
+    ln.Bac_Biom ~ ln.Bac_SR + ln.HNF_Simpson
+    ln.HNF_Biom ~ ln.Bac_Biom
+    ln.HNF_Simpson ~ ln.Bac_SR + ln.HNF_Biom
+'
+Bacq0_HNFq2_mod1.50 <- '
+  # regressions
+    ln.Bac_Biom ~ ln.Bac_SR
+    ln.HNF_Biom ~ ln.Bac_Biom + ln.Bac_SR
+    ln.HNF_Simpson ~ ln.Bac_SR + ln.Bac_Biom + ln.HNF_Biom
+'
+Bacq0_HNFq2_mod1.51 <- '
+  # regressions
+    ln.Bac_SR ~ ln.HNF_Biom
+    ln.Bac_Biom ~ ln.Bac_SR
+    ln.HNF_Biom ~ ln.Bac_Biom
+    ln.HNF_Simpson ~ ln.Bac_SR + ln.Bac_Biom + ln.HNF_Biom
+'
+Bacq0_HNFq2_mod1.52 <- '
+  # regressions
+    ln.Bac_Biom ~ ln.HNF_Biom + ln.Bac_SR + ln.HNF_Simpson
+    ln.HNF_Biom ~ ln.Bac_SR
+    ln.HNF_Simpson ~ ln.Bac_SR + ln.HNF_Biom
+'
+Bacq0_HNFq2_mod1.53 <- '
+  # regressions
+    ln.Bac_SR ~ ln.HNF_Biom
+    ln.Bac_Biom ~ ln.HNF_Biom + ln.Bac_SR + ln.HNF_Simpson
+    ln.HNF_Simpson ~ ln.Bac_SR + ln.HNF_Biom
+'
+Bacq0_HNFq2_mod1.54 <- '
   # regressions
     ln.Bac_Biom ~ ln.HNF_Biom + ln.Bac_SR
     ln.HNF_Biom ~ ln.Bac_SR
-    ln.HNF_Shannon ~ ln.Bac_SR + ln.Bac_Biom + ln.HNF_Biom
+    ln.HNF_Simpson ~ ln.Bac_SR + ln.Bac_Biom + ln.HNF_Biom
 '
-Bacq0_HNFq1_mod1.55 <- '
+Bacq0_HNFq2_mod1.55 <- '
   # regressions
     ln.Bac_SR ~ ln.HNF_Biom
     ln.Bac_Biom ~ ln.HNF_Biom + ln.Bac_SR
-    ln.HNF_Shannon ~ ln.Bac_SR + ln.Bac_Biom + ln.HNF_Biom
+    ln.HNF_Simpson ~ ln.Bac_SR + ln.Bac_Biom + ln.HNF_Biom
 '
-Bacq0_HNFq1_mod1.56 <- '
+Bacq0_HNFq2_mod1.56 <- '
   # regressions
     ln.Bac_SR ~ ln.Bac_Biom
-    ln.Bac_Biom ~ ln.HNF_Shannon
+    ln.Bac_Biom ~ ln.HNF_Simpson
     ln.HNF_Biom ~ ln.Bac_Biom + ln.Bac_SR
-    ln.HNF_Shannon ~ ln.Bac_SR + ln.HNF_Biom
+    ln.HNF_Simpson ~ ln.Bac_SR + ln.HNF_Biom
 '
-Bacq0_HNFq1_mod1.57 <- '
+Bacq0_HNFq2_mod1.57 <- '
   # regressions
     ln.Bac_SR ~ ln.Bac_Biom + ln.HNF_Biom
-    ln.Bac_Biom ~ ln.HNF_Shannon
+    ln.Bac_Biom ~ ln.HNF_Simpson
     ln.HNF_Biom ~ ln.Bac_Biom
-    ln.HNF_Shannon ~ ln.Bac_SR + ln.HNF_Biom
+    ln.HNF_Simpson ~ ln.Bac_SR + ln.HNF_Biom
 '
-Bacq0_HNFq1_mod1.58 <- '
+Bacq0_HNFq2_mod1.58 <- '
   # regressions
     ln.Bac_SR ~ ln.Bac_Biom
     ln.HNF_Biom ~ ln.Bac_Biom + ln.Bac_SR
-    ln.HNF_Shannon ~ ln.Bac_SR + ln.Bac_Biom + ln.HNF_Biom
+    ln.HNF_Simpson ~ ln.Bac_SR + ln.Bac_Biom + ln.HNF_Biom
 '
-Bacq0_HNFq1_mod1.59 <- '
+Bacq0_HNFq2_mod1.59 <- '
   # regressions
     ln.Bac_SR ~ ln.Bac_Biom + ln.HNF_Biom
     ln.HNF_Biom ~ ln.Bac_Biom
-    ln.HNF_Shannon ~ ln.Bac_SR + ln.Bac_Biom + ln.HNF_Biom
+    ln.HNF_Simpson ~ ln.Bac_SR + ln.Bac_Biom + ln.HNF_Biom
 '
-Bacq0_HNFq1_mod1.60 <- '
+Bacq0_HNFq2_mod1.60 <- '
   # regressions
     ln.Bac_SR ~ ln.Bac_Biom
-    ln.Bac_Biom ~ ln.HNF_Biom + ln.HNF_Shannon
+    ln.Bac_Biom ~ ln.HNF_Biom + ln.HNF_Simpson
     ln.HNF_Biom ~ ln.Bac_SR
-    ln.HNF_Shannon ~ ln.Bac_SR + ln.HNF_Biom
+    ln.HNF_Simpson ~ ln.Bac_SR + ln.HNF_Biom
 '
-Bacq0_HNFq1_mod1.61 <- '
+Bacq0_HNFq2_mod1.61 <- '
   # regressions
     ln.Bac_SR ~ ln.Bac_Biom + ln.HNF_Biom
-    ln.Bac_Biom ~ ln.HNF_Biom + ln.HNF_Shannon
-    ln.HNF_Shannon ~ ln.Bac_SR + ln.HNF_Biom
+    ln.Bac_Biom ~ ln.HNF_Biom + ln.HNF_Simpson
+    ln.HNF_Simpson ~ ln.Bac_SR + ln.HNF_Biom
 '
-Bacq0_HNFq1_mod1.62 <- '
+Bacq0_HNFq2_mod1.62 <- '
   # regressions
     ln.Bac_SR ~ ln.Bac_Biom
     ln.Bac_Biom ~ ln.HNF_Biom
     ln.HNF_Biom ~ ln.Bac_SR
-    ln.HNF_Shannon ~ ln.Bac_SR + ln.Bac_Biom + ln.HNF_Biom
+    ln.HNF_Simpson ~ ln.Bac_SR + ln.Bac_Biom + ln.HNF_Biom
 '
-Bacq0_HNFq1_mod1.63 <- '
+Bacq0_HNFq2_mod1.63 <- '
   # regressions
     ln.Bac_SR ~ ln.Bac_Biom + ln.HNF_Biom
     ln.Bac_Biom ~ ln.HNF_Biom
-    ln.HNF_Shannon ~ ln.Bac_SR + ln.Bac_Biom + ln.HNF_Biom
+    ln.HNF_Simpson ~ ln.Bac_SR + ln.Bac_Biom + ln.HNF_Biom
 '
 
 
-Bacq0_HNFq1_lavaan1.0 <- sem(Bacq0_HNFq1_mod1.0, data = HNF_Bac_A)#, se = "bootstrap")
-Bacq0_HNFq1_lavaan1.1 <- sem(Bacq0_HNFq1_mod1.1, data = HNF_Bac_A)
-Bacq0_HNFq1_lavaan1.2 <- sem(Bacq0_HNFq1_mod1.2, data = HNF_Bac_A)
-Bacq0_HNFq1_lavaan1.3 <- sem(Bacq0_HNFq1_mod1.3, data = HNF_Bac_A)
-Bacq0_HNFq1_lavaan1.4 <- sem(Bacq0_HNFq1_mod1.4, data = HNF_Bac_A)
-Bacq0_HNFq1_lavaan1.5 <- sem(Bacq0_HNFq1_mod1.5, data = HNF_Bac_A)
-Bacq0_HNFq1_lavaan1.6 <- sem(Bacq0_HNFq1_mod1.6, data = HNF_Bac_A)
-Bacq0_HNFq1_lavaan1.7 <- sem(Bacq0_HNFq1_mod1.7, data = HNF_Bac_A)
-Bacq0_HNFq1_lavaan1.8 <- sem(Bacq0_HNFq1_mod1.8, data = HNF_Bac_A)
-Bacq0_HNFq1_lavaan1.9 <- sem(Bacq0_HNFq1_mod1.9, data = HNF_Bac_A)
-Bacq0_HNFq1_lavaan1.10 <- sem(Bacq0_HNFq1_mod1.10, data = HNF_Bac_A)
-Bacq0_HNFq1_lavaan1.11 <- sem(Bacq0_HNFq1_mod1.11, data = HNF_Bac_A)
-Bacq0_HNFq1_lavaan1.12 <- sem(Bacq0_HNFq1_mod1.12, data = HNF_Bac_A)
-Bacq0_HNFq1_lavaan1.13 <- sem(Bacq0_HNFq1_mod1.13, data = HNF_Bac_A)
-Bacq0_HNFq1_lavaan1.14 <- sem(Bacq0_HNFq1_mod1.14, data = HNF_Bac_A)
-Bacq0_HNFq1_lavaan1.15 <- sem(Bacq0_HNFq1_mod1.15, data = HNF_Bac_A)
-Bacq0_HNFq1_lavaan1.16 <- sem(Bacq0_HNFq1_mod1.16, data = HNF_Bac_A)
-Bacq0_HNFq1_lavaan1.17 <- sem(Bacq0_HNFq1_mod1.17, data = HNF_Bac_A)
-Bacq0_HNFq1_lavaan1.18 <- sem(Bacq0_HNFq1_mod1.18, data = HNF_Bac_A)
-Bacq0_HNFq1_lavaan1.19 <- sem(Bacq0_HNFq1_mod1.19, data = HNF_Bac_A)
-Bacq0_HNFq1_lavaan1.20 <- sem(Bacq0_HNFq1_mod1.20, data = HNF_Bac_A)
-Bacq0_HNFq1_lavaan1.21 <- sem(Bacq0_HNFq1_mod1.21, data = HNF_Bac_A)
-Bacq0_HNFq1_lavaan1.22 <- sem(Bacq0_HNFq1_mod1.22, data = HNF_Bac_A)
-Bacq0_HNFq1_lavaan1.23 <- sem(Bacq0_HNFq1_mod1.23, data = HNF_Bac_A)
-Bacq0_HNFq1_lavaan1.24 <- sem(Bacq0_HNFq1_mod1.24, data = HNF_Bac_A)
-Bacq0_HNFq1_lavaan1.25 <- sem(Bacq0_HNFq1_mod1.25, data = HNF_Bac_A)
-Bacq0_HNFq1_lavaan1.26 <- sem(Bacq0_HNFq1_mod1.26, data = HNF_Bac_A)
-Bacq0_HNFq1_lavaan1.27 <- sem(Bacq0_HNFq1_mod1.27, data = HNF_Bac_A)
-Bacq0_HNFq1_lavaan1.28 <- sem(Bacq0_HNFq1_mod1.28, data = HNF_Bac_A)
-Bacq0_HNFq1_lavaan1.29 <- sem(Bacq0_HNFq1_mod1.29, data = HNF_Bac_A)
-Bacq0_HNFq1_lavaan1.30 <- sem(Bacq0_HNFq1_mod1.30, data = HNF_Bac_A)
-Bacq0_HNFq1_lavaan1.31 <- sem(Bacq0_HNFq1_mod1.31, data = HNF_Bac_A)
-Bacq0_HNFq1_lavaan1.32 <- sem(Bacq0_HNFq1_mod1.32, data = HNF_Bac_A)#, se = "bootstrap")
-Bacq0_HNFq1_lavaan1.33 <- sem(Bacq0_HNFq1_mod1.33, data = HNF_Bac_A)
-Bacq0_HNFq1_lavaan1.34 <- sem(Bacq0_HNFq1_mod1.34, data = HNF_Bac_A)
-Bacq0_HNFq1_lavaan1.35 <- sem(Bacq0_HNFq1_mod1.35, data = HNF_Bac_A)
-Bacq0_HNFq1_lavaan1.36 <- sem(Bacq0_HNFq1_mod1.36, data = HNF_Bac_A)
-Bacq0_HNFq1_lavaan1.37 <- sem(Bacq0_HNFq1_mod1.37, data = HNF_Bac_A)
-Bacq0_HNFq1_lavaan1.38 <- sem(Bacq0_HNFq1_mod1.38, data = HNF_Bac_A)
-Bacq0_HNFq1_lavaan1.39 <- sem(Bacq0_HNFq1_mod1.39, data = HNF_Bac_A)
-Bacq0_HNFq1_lavaan1.40 <- sem(Bacq0_HNFq1_mod1.40, data = HNF_Bac_A)
-Bacq0_HNFq1_lavaan1.41 <- sem(Bacq0_HNFq1_mod1.41, data = HNF_Bac_A)
-Bacq0_HNFq1_lavaan1.42 <- sem(Bacq0_HNFq1_mod1.42, data = HNF_Bac_A)
-Bacq0_HNFq1_lavaan1.43 <- sem(Bacq0_HNFq1_mod1.43, data = HNF_Bac_A)
-Bacq0_HNFq1_lavaan1.44 <- sem(Bacq0_HNFq1_mod1.44, data = HNF_Bac_A)
-Bacq0_HNFq1_lavaan1.45 <- sem(Bacq0_HNFq1_mod1.45, data = HNF_Bac_A)
-Bacq0_HNFq1_lavaan1.46 <- sem(Bacq0_HNFq1_mod1.46, data = HNF_Bac_A)
-Bacq0_HNFq1_lavaan1.47 <- sem(Bacq0_HNFq1_mod1.47, data = HNF_Bac_A)
-Bacq0_HNFq1_lavaan1.48 <- sem(Bacq0_HNFq1_mod1.48, data = HNF_Bac_A)
-Bacq0_HNFq1_lavaan1.49 <- sem(Bacq0_HNFq1_mod1.49, data = HNF_Bac_A)
-Bacq0_HNFq1_lavaan1.50 <- sem(Bacq0_HNFq1_mod1.50, data = HNF_Bac_A)
-Bacq0_HNFq1_lavaan1.51 <- sem(Bacq0_HNFq1_mod1.51, data = HNF_Bac_A)
-Bacq0_HNFq1_lavaan1.52 <- sem(Bacq0_HNFq1_mod1.52, data = HNF_Bac_A)
-Bacq0_HNFq1_lavaan1.53 <- sem(Bacq0_HNFq1_mod1.53, data = HNF_Bac_A)
-Bacq0_HNFq1_lavaan1.54 <- sem(Bacq0_HNFq1_mod1.54, data = HNF_Bac_A)
-Bacq0_HNFq1_lavaan1.55 <- sem(Bacq0_HNFq1_mod1.55, data = HNF_Bac_A)
-Bacq0_HNFq1_lavaan1.56 <- sem(Bacq0_HNFq1_mod1.56, data = HNF_Bac_A)
-Bacq0_HNFq1_lavaan1.57 <- sem(Bacq0_HNFq1_mod1.57, data = HNF_Bac_A)
-Bacq0_HNFq1_lavaan1.58 <- sem(Bacq0_HNFq1_mod1.58, data = HNF_Bac_A)
-Bacq0_HNFq1_lavaan1.59 <- sem(Bacq0_HNFq1_mod1.59, data = HNF_Bac_A)
-Bacq0_HNFq1_lavaan1.60 <- sem(Bacq0_HNFq1_mod1.60, data = HNF_Bac_A)
-Bacq0_HNFq1_lavaan1.61 <- sem(Bacq0_HNFq1_mod1.61, data = HNF_Bac_A)
-Bacq0_HNFq1_lavaan1.62 <- sem(Bacq0_HNFq1_mod1.62, data = HNF_Bac_A)
-Bacq0_HNFq1_lavaan1.63 <- sem(Bacq0_HNFq1_mod1.63, data = HNF_Bac_A)
+Bacq0_HNFq2_lavaan1.0 <- sem(Bacq0_HNFq2_mod1.0, data = HNF_Bac_A)#, se = "bootstrap")
+Bacq0_HNFq2_lavaan1.1 <- sem(Bacq0_HNFq2_mod1.1, data = HNF_Bac_A)
+Bacq0_HNFq2_lavaan1.2 <- sem(Bacq0_HNFq2_mod1.2, data = HNF_Bac_A)
+Bacq0_HNFq2_lavaan1.3 <- sem(Bacq0_HNFq2_mod1.3, data = HNF_Bac_A)
+Bacq0_HNFq2_lavaan1.4 <- sem(Bacq0_HNFq2_mod1.4, data = HNF_Bac_A)
+Bacq0_HNFq2_lavaan1.5 <- sem(Bacq0_HNFq2_mod1.5, data = HNF_Bac_A)
+Bacq0_HNFq2_lavaan1.6 <- sem(Bacq0_HNFq2_mod1.6, data = HNF_Bac_A)
+Bacq0_HNFq2_lavaan1.7 <- sem(Bacq0_HNFq2_mod1.7, data = HNF_Bac_A)
+Bacq0_HNFq2_lavaan1.8 <- sem(Bacq0_HNFq2_mod1.8, data = HNF_Bac_A)
+Bacq0_HNFq2_lavaan1.9 <- sem(Bacq0_HNFq2_mod1.9, data = HNF_Bac_A)
+Bacq0_HNFq2_lavaan1.10 <- sem(Bacq0_HNFq2_mod1.10, data = HNF_Bac_A)
+Bacq0_HNFq2_lavaan1.11 <- sem(Bacq0_HNFq2_mod1.11, data = HNF_Bac_A)
+Bacq0_HNFq2_lavaan1.12 <- sem(Bacq0_HNFq2_mod1.12, data = HNF_Bac_A)
+Bacq0_HNFq2_lavaan1.13 <- sem(Bacq0_HNFq2_mod1.13, data = HNF_Bac_A)
+Bacq0_HNFq2_lavaan1.14 <- sem(Bacq0_HNFq2_mod1.14, data = HNF_Bac_A)
+Bacq0_HNFq2_lavaan1.15 <- sem(Bacq0_HNFq2_mod1.15, data = HNF_Bac_A)
+Bacq0_HNFq2_lavaan1.16 <- sem(Bacq0_HNFq2_mod1.16, data = HNF_Bac_A)
+Bacq0_HNFq2_lavaan1.17 <- sem(Bacq0_HNFq2_mod1.17, data = HNF_Bac_A)
+Bacq0_HNFq2_lavaan1.18 <- sem(Bacq0_HNFq2_mod1.18, data = HNF_Bac_A)
+Bacq0_HNFq2_lavaan1.19 <- sem(Bacq0_HNFq2_mod1.19, data = HNF_Bac_A)
+Bacq0_HNFq2_lavaan1.20 <- sem(Bacq0_HNFq2_mod1.20, data = HNF_Bac_A)
+Bacq0_HNFq2_lavaan1.21 <- sem(Bacq0_HNFq2_mod1.21, data = HNF_Bac_A)
+Bacq0_HNFq2_lavaan1.22 <- sem(Bacq0_HNFq2_mod1.22, data = HNF_Bac_A)
+Bacq0_HNFq2_lavaan1.23 <- sem(Bacq0_HNFq2_mod1.23, data = HNF_Bac_A)
+Bacq0_HNFq2_lavaan1.24 <- sem(Bacq0_HNFq2_mod1.24, data = HNF_Bac_A)
+Bacq0_HNFq2_lavaan1.25 <- sem(Bacq0_HNFq2_mod1.25, data = HNF_Bac_A)
+Bacq0_HNFq2_lavaan1.26 <- sem(Bacq0_HNFq2_mod1.26, data = HNF_Bac_A)
+Bacq0_HNFq2_lavaan1.27 <- sem(Bacq0_HNFq2_mod1.27, data = HNF_Bac_A)
+Bacq0_HNFq2_lavaan1.28 <- sem(Bacq0_HNFq2_mod1.28, data = HNF_Bac_A)
+Bacq0_HNFq2_lavaan1.29 <- sem(Bacq0_HNFq2_mod1.29, data = HNF_Bac_A)
+Bacq0_HNFq2_lavaan1.30 <- sem(Bacq0_HNFq2_mod1.30, data = HNF_Bac_A)
+Bacq0_HNFq2_lavaan1.31 <- sem(Bacq0_HNFq2_mod1.31, data = HNF_Bac_A)
+Bacq0_HNFq2_lavaan1.32 <- sem(Bacq0_HNFq2_mod1.32, data = HNF_Bac_A)#, se = "bootstrap")
+Bacq0_HNFq2_lavaan1.33 <- sem(Bacq0_HNFq2_mod1.33, data = HNF_Bac_A)
+Bacq0_HNFq2_lavaan1.34 <- sem(Bacq0_HNFq2_mod1.34, data = HNF_Bac_A)
+Bacq0_HNFq2_lavaan1.35 <- sem(Bacq0_HNFq2_mod1.35, data = HNF_Bac_A)
+Bacq0_HNFq2_lavaan1.36 <- sem(Bacq0_HNFq2_mod1.36, data = HNF_Bac_A)
+Bacq0_HNFq2_lavaan1.37 <- sem(Bacq0_HNFq2_mod1.37, data = HNF_Bac_A)
+Bacq0_HNFq2_lavaan1.38 <- sem(Bacq0_HNFq2_mod1.38, data = HNF_Bac_A)
+Bacq0_HNFq2_lavaan1.39 <- sem(Bacq0_HNFq2_mod1.39, data = HNF_Bac_A)
+Bacq0_HNFq2_lavaan1.40 <- sem(Bacq0_HNFq2_mod1.40, data = HNF_Bac_A)
+Bacq0_HNFq2_lavaan1.41 <- sem(Bacq0_HNFq2_mod1.41, data = HNF_Bac_A)
+Bacq0_HNFq2_lavaan1.42 <- sem(Bacq0_HNFq2_mod1.42, data = HNF_Bac_A)
+Bacq0_HNFq2_lavaan1.43 <- sem(Bacq0_HNFq2_mod1.43, data = HNF_Bac_A)
+Bacq0_HNFq2_lavaan1.44 <- sem(Bacq0_HNFq2_mod1.44, data = HNF_Bac_A)
+Bacq0_HNFq2_lavaan1.45 <- sem(Bacq0_HNFq2_mod1.45, data = HNF_Bac_A)
+Bacq0_HNFq2_lavaan1.46 <- sem(Bacq0_HNFq2_mod1.46, data = HNF_Bac_A)
+Bacq0_HNFq2_lavaan1.47 <- sem(Bacq0_HNFq2_mod1.47, data = HNF_Bac_A)
+Bacq0_HNFq2_lavaan1.48 <- sem(Bacq0_HNFq2_mod1.48, data = HNF_Bac_A)
+Bacq0_HNFq2_lavaan1.49 <- sem(Bacq0_HNFq2_mod1.49, data = HNF_Bac_A)
+Bacq0_HNFq2_lavaan1.50 <- sem(Bacq0_HNFq2_mod1.50, data = HNF_Bac_A)
+Bacq0_HNFq2_lavaan1.51 <- sem(Bacq0_HNFq2_mod1.51, data = HNF_Bac_A)
+Bacq0_HNFq2_lavaan1.52 <- sem(Bacq0_HNFq2_mod1.52, data = HNF_Bac_A)
+Bacq0_HNFq2_lavaan1.53 <- sem(Bacq0_HNFq2_mod1.53, data = HNF_Bac_A)
+Bacq0_HNFq2_lavaan1.54 <- sem(Bacq0_HNFq2_mod1.54, data = HNF_Bac_A)
+Bacq0_HNFq2_lavaan1.55 <- sem(Bacq0_HNFq2_mod1.55, data = HNF_Bac_A)
+Bacq0_HNFq2_lavaan1.56 <- sem(Bacq0_HNFq2_mod1.56, data = HNF_Bac_A)
+Bacq0_HNFq2_lavaan1.57 <- sem(Bacq0_HNFq2_mod1.57, data = HNF_Bac_A)
+Bacq0_HNFq2_lavaan1.58 <- sem(Bacq0_HNFq2_mod1.58, data = HNF_Bac_A)
+Bacq0_HNFq2_lavaan1.59 <- sem(Bacq0_HNFq2_mod1.59, data = HNF_Bac_A)
+Bacq0_HNFq2_lavaan1.60 <- sem(Bacq0_HNFq2_mod1.60, data = HNF_Bac_A)
+Bacq0_HNFq2_lavaan1.61 <- sem(Bacq0_HNFq2_mod1.61, data = HNF_Bac_A)
+Bacq0_HNFq2_lavaan1.62 <- sem(Bacq0_HNFq2_mod1.62, data = HNF_Bac_A)
+Bacq0_HNFq2_lavaan1.63 <- sem(Bacq0_HNFq2_mod1.63, data = HNF_Bac_A)
 
-AICstep1 <- AIC(Bacq0_HNFq1_lavaan1.0, Bacq0_HNFq1_lavaan1.1, Bacq0_HNFq1_lavaan1.2, Bacq0_HNFq1_lavaan1.3,
-                Bacq0_HNFq1_lavaan1.4, Bacq0_HNFq1_lavaan1.5, Bacq0_HNFq1_lavaan1.6, Bacq0_HNFq1_lavaan1.7,
-                Bacq0_HNFq1_lavaan1.8, Bacq0_HNFq1_lavaan1.9, Bacq0_HNFq1_lavaan1.10, Bacq0_HNFq1_lavaan1.11,
-                Bacq0_HNFq1_lavaan1.12, Bacq0_HNFq1_lavaan1.13, Bacq0_HNFq1_lavaan1.14, Bacq0_HNFq1_lavaan1.15,
-                Bacq0_HNFq1_lavaan1.16, Bacq0_HNFq1_lavaan1.17, Bacq0_HNFq1_lavaan1.18, Bacq0_HNFq1_lavaan1.19,
-                Bacq0_HNFq1_lavaan1.20, Bacq0_HNFq1_lavaan1.21, Bacq0_HNFq1_lavaan1.22, Bacq0_HNFq1_lavaan1.23,
-                Bacq0_HNFq1_lavaan1.24, Bacq0_HNFq1_lavaan1.25, Bacq0_HNFq1_lavaan1.26, Bacq0_HNFq1_lavaan1.27,
-                Bacq0_HNFq1_lavaan1.28, Bacq0_HNFq1_lavaan1.29, Bacq0_HNFq1_lavaan1.30, Bacq0_HNFq1_lavaan1.31, 
-                Bacq0_HNFq1_lavaan1.32, Bacq0_HNFq1_lavaan1.33, Bacq0_HNFq1_lavaan1.34, Bacq0_HNFq1_lavaan1.35,
-                Bacq0_HNFq1_lavaan1.36, Bacq0_HNFq1_lavaan1.37, Bacq0_HNFq1_lavaan1.38, Bacq0_HNFq1_lavaan1.39,
-                Bacq0_HNFq1_lavaan1.40, Bacq0_HNFq1_lavaan1.41, Bacq0_HNFq1_lavaan1.42, Bacq0_HNFq1_lavaan1.43,
-                Bacq0_HNFq1_lavaan1.44, Bacq0_HNFq1_lavaan1.45, Bacq0_HNFq1_lavaan1.46, Bacq0_HNFq1_lavaan1.47,
-                Bacq0_HNFq1_lavaan1.48, Bacq0_HNFq1_lavaan1.49, Bacq0_HNFq1_lavaan1.50, Bacq0_HNFq1_lavaan1.51,
-                Bacq0_HNFq1_lavaan1.52, Bacq0_HNFq1_lavaan1.53, Bacq0_HNFq1_lavaan1.54, Bacq0_HNFq1_lavaan1.55,
-                Bacq0_HNFq1_lavaan1.56, Bacq0_HNFq1_lavaan1.57, Bacq0_HNFq1_lavaan1.58, Bacq0_HNFq1_lavaan1.59,
-                Bacq0_HNFq1_lavaan1.60, Bacq0_HNFq1_lavaan1.61, Bacq0_HNFq1_lavaan1.62, Bacq0_HNFq1_lavaan1.63)
+AICstep1 <- AIC(Bacq0_HNFq2_lavaan1.0, Bacq0_HNFq2_lavaan1.1, Bacq0_HNFq2_lavaan1.2, Bacq0_HNFq2_lavaan1.3,
+                Bacq0_HNFq2_lavaan1.4, Bacq0_HNFq2_lavaan1.5, Bacq0_HNFq2_lavaan1.6, Bacq0_HNFq2_lavaan1.7,
+                Bacq0_HNFq2_lavaan1.8, Bacq0_HNFq2_lavaan1.9, Bacq0_HNFq2_lavaan1.10, Bacq0_HNFq2_lavaan1.11,
+                Bacq0_HNFq2_lavaan1.12, Bacq0_HNFq2_lavaan1.13, Bacq0_HNFq2_lavaan1.14, Bacq0_HNFq2_lavaan1.15,
+                Bacq0_HNFq2_lavaan1.16, Bacq0_HNFq2_lavaan1.17, Bacq0_HNFq2_lavaan1.18, Bacq0_HNFq2_lavaan1.19,
+                Bacq0_HNFq2_lavaan1.20, Bacq0_HNFq2_lavaan1.21, Bacq0_HNFq2_lavaan1.22, Bacq0_HNFq2_lavaan1.23,
+                Bacq0_HNFq2_lavaan1.24, Bacq0_HNFq2_lavaan1.25, Bacq0_HNFq2_lavaan1.26, Bacq0_HNFq2_lavaan1.27,
+                Bacq0_HNFq2_lavaan1.28, Bacq0_HNFq2_lavaan1.29, Bacq0_HNFq2_lavaan1.30, Bacq0_HNFq2_lavaan1.31, 
+                Bacq0_HNFq2_lavaan1.32, Bacq0_HNFq2_lavaan1.33, Bacq0_HNFq2_lavaan1.34, Bacq0_HNFq2_lavaan1.35,
+                Bacq0_HNFq2_lavaan1.36, Bacq0_HNFq2_lavaan1.37, Bacq0_HNFq2_lavaan1.38, Bacq0_HNFq2_lavaan1.39,
+                Bacq0_HNFq2_lavaan1.40, Bacq0_HNFq2_lavaan1.41, Bacq0_HNFq2_lavaan1.42, Bacq0_HNFq2_lavaan1.43,
+                Bacq0_HNFq2_lavaan1.44, Bacq0_HNFq2_lavaan1.45, Bacq0_HNFq2_lavaan1.46, Bacq0_HNFq2_lavaan1.47,
+                Bacq0_HNFq2_lavaan1.48, Bacq0_HNFq2_lavaan1.49, Bacq0_HNFq2_lavaan1.50, Bacq0_HNFq2_lavaan1.51,
+                Bacq0_HNFq2_lavaan1.52, Bacq0_HNFq2_lavaan1.53, Bacq0_HNFq2_lavaan1.54, Bacq0_HNFq2_lavaan1.55,
+                Bacq0_HNFq2_lavaan1.56, Bacq0_HNFq2_lavaan1.57, Bacq0_HNFq2_lavaan1.58, Bacq0_HNFq2_lavaan1.59,
+                Bacq0_HNFq2_lavaan1.60, Bacq0_HNFq2_lavaan1.61, Bacq0_HNFq2_lavaan1.62, Bacq0_HNFq2_lavaan1.63)
 AICstep1 <- AICstep1 %>% cbind(row.names(AICstep1)) %>%
   arrange(AIC)
 # AICstep1[1:10,]
-moreFitIndices(Bacq0_HNFq1_lavaan1.21, fit.measures = "all", nPrior = 1)
-moreFitIndices(Bacq0_HNFq1_lavaan1.23, fit.measures = "all", nPrior = 1)
-moreFitIndices(Bacq0_HNFq1_lavaan1.29, fit.measures = "all", nPrior = 1)
-moreFitIndices(Bacq0_HNFq1_lavaan1.31, fit.measures = "all", nPrior = 1)
-moreFitIndices(Bacq0_HNFq1_lavaan1.53, fit.measures = "all", nPrior = 1)
-moreFitIndices(Bacq0_HNFq1_lavaan1.55, fit.measures = "all", nPrior = 1)
-moreFitIndices(Bacq0_HNFq1_lavaan1.61, fit.measures = "all", nPrior = 1)
-moreFitIndices(Bacq0_HNFq1_lavaan1.63, fit.measures = "all", nPrior = 1)
+moreFitIndices(Bacq0_HNFq2_lavaan1.21, fit.measures = "all", nPrior = 1)
+moreFitIndices(Bacq0_HNFq2_lavaan1.23, fit.measures = "all", nPrior = 1)
+moreFitIndices(Bacq0_HNFq2_lavaan1.29, fit.measures = "all", nPrior = 1)
+moreFitIndices(Bacq0_HNFq2_lavaan1.31, fit.measures = "all", nPrior = 1)
+moreFitIndices(Bacq0_HNFq2_lavaan1.53, fit.measures = "all", nPrior = 1)
+moreFitIndices(Bacq0_HNFq2_lavaan1.55, fit.measures = "all", nPrior = 1)
+moreFitIndices(Bacq0_HNFq2_lavaan1.61, fit.measures = "all", nPrior = 1)
+moreFitIndices(Bacq0_HNFq2_lavaan1.63, fit.measures = "all", nPrior = 1)
 
-Bacq0_HNFq1_mod1.53 <- '
+Bacq0_HNFq2_mod1.53 <- '
   # regressions
     ln.Bac_SR ~ ln.HNF_Biom
-    ln.Bac_Biom ~ ln.HNF_Biom + ln.Bac_SR + ln.HNF_Shannon
-    ln.HNF_Shannon ~ ln.Bac_SR + ln.HNF_Biom
+    ln.Bac_Biom ~ ln.HNF_Biom + ln.Bac_SR + ln.HNF_Simpson
+    ln.HNF_Simpson ~ ln.Bac_SR + ln.HNF_Biom
 '
-Bacq0_HNFq1_lavaan1.53 <- sem(Bacq0_HNFq1_mod1.53, data = HNF_Bac_A)
-summary(Bacq0_HNFq1_lavaan1.53)
+Bacq0_HNFq2_lavaan1.53 <- sem(Bacq0_HNFq2_mod1.53, data = HNF_Bac_A)
+summary(Bacq0_HNFq2_lavaan1.53)
 ### Step 2 : include selection processes as the interaction terms and grouping variables (random effects)
 HNF_Bac_A <- HNF_Bac_A %>%
   mutate(Bac_Bac_int = ln.Bac_SR * Bac_select,
          Bac_HNF_int = ln.Bac_SR * HNF_select)
 HNF_Bac_A <- as.data.frame(HNF_Bac_A)
 
-Bacq0_HNFq1_mod2.Cr <- psem(
+Bacq0_HNFq2_mod2.Cr <- psem(
   lme(ln.Bac_SR ~ ln.HNF_Biom + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
       random = ~ 1 | Cruise, data = HNF_Bac_A),
-  lme(ln.Bac_Biom ~ ln.HNF_Biom + ln.Bac_SR + ln.HNF_Shannon + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
+  lme(ln.Bac_Biom ~ ln.HNF_Biom + ln.Bac_SR + ln.HNF_Simpson + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
       random = ~ 1 | Cruise, data = HNF_Bac_A),
-  lme(ln.HNF_Shannon ~ ln.Bac_SR + ln.HNF_Biom + Bac_Bac_int + Bac_HNF_int + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
+  lme(ln.HNF_Simpson ~ ln.Bac_SR + ln.HNF_Biom + Bac_Bac_int + Bac_HNF_int + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
       random = ~ 1 | Cruise, data = HNF_Bac_A),
   lme(ln.HNF_Biom ~ ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
       random = ~ 1 | Cruise, data = HNF_Bac_A),
   data = HNF_Bac_A
 )
-Bacq0_HNFq1_mod2.Season <- psem(
+Bacq0_HNFq2_mod2.Season <- psem(
   lme(ln.Bac_SR ~ ln.HNF_Biom + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
       random = ~ 1 | Season, data = HNF_Bac_A),
-  lme(ln.Bac_Biom ~ ln.HNF_Biom + ln.Bac_SR + ln.HNF_Shannon + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
+  lme(ln.Bac_Biom ~ ln.HNF_Biom + ln.Bac_SR + ln.HNF_Simpson + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
       random = ~ 1 | Season, data = HNF_Bac_A),
-  lme(ln.HNF_Shannon ~ ln.Bac_SR + ln.HNF_Biom + Bac_Bac_int + Bac_HNF_int + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
+  lme(ln.HNF_Simpson ~ ln.Bac_SR + ln.HNF_Biom + Bac_Bac_int + Bac_HNF_int + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
       random = ~ 1 | Season, data = HNF_Bac_A),
   lme(ln.HNF_Biom ~ ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
       random = ~ 1 | Season, data = HNF_Bac_A),
   data = HNF_Bac_A
 )
-Bacq0_HNFq1_mod2.St <- psem(
+Bacq0_HNFq2_mod2.St <- psem(
   lme(ln.Bac_SR ~ ln.HNF_Biom + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
       random = ~ 1 | Station, data = HNF_Bac_A),
-  lme(ln.Bac_Biom ~ ln.HNF_Biom + ln.Bac_SR + ln.HNF_Shannon + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
+  lme(ln.Bac_Biom ~ ln.HNF_Biom + ln.Bac_SR + ln.HNF_Simpson + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
       random = ~ 1 | Station, data = HNF_Bac_A),
-  lme(ln.HNF_Shannon ~ ln.Bac_SR + ln.HNF_Biom + Bac_Bac_int + Bac_HNF_int + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
+  lme(ln.HNF_Simpson ~ ln.Bac_SR + ln.HNF_Biom + Bac_Bac_int + Bac_HNF_int + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
       random = ~ 1 | Station, data = HNF_Bac_A),
   lme(ln.HNF_Biom ~ ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
       random = ~ 1 | Season, data = HNF_Bac_A),
   data = HNF_Bac_A
 )
 
-AIC(Bacq0_HNFq1_mod2.Cr)
-AIC(Bacq0_HNFq1_mod2.Season)
-AIC(Bacq0_HNFq1_mod2.St)
+AIC(Bacq0_HNFq2_mod2.Cr)
+AIC(Bacq0_HNFq2_mod2.Season)
+AIC(Bacq0_HNFq2_mod2.St)
 
-summary(Bacq0_HNFq1_mod2.Cr)
-summary(Bacq0_HNFq1_mod2.Season)
-summary(Bacq0_HNFq1_mod2.St)
+summary(Bacq0_HNFq2_mod2.Cr)
+summary(Bacq0_HNFq2_mod2.Season)
+summary(Bacq0_HNFq2_mod2.St)
 ##### Path model analysis : Bac_q0 vs HNF_q0 ##########
 
 
-##### Univariate HNF-Bac A diversity relationship ##########
-### Plotting
-p_ADiv_BacSelect <- HNF_Bac_A %>% 
+##### Plotting HNF-Bac A diversity relationship with selection as color code ##########
+community.labs <- c("Selection on bacteria community", "Selection on HNF community")
+names(community.labs) <- c("Bac_select", "HNF_select")
+
+p_ADiv_Select <- HNF_Bac_A %>% 
+  select(Bac_SR, HNF_Simpson, Bac_select, HNF_select) %>%
+  gather(key = "community", value = "Selection", -c(Bac_SR, HNF_Simpson)) %>%
   ggplot() + 
-  geom_point(aes(x = Bac_Shannon, y = HNF_Shannon, color = Bac_select), size = 3) + 
-  scale_colour_viridis(alpha = 0.7)
-p_ADiv_BacSelect
-#ggsave(p_ADiv_BacSelect, file = "D:/Research/PdPy_Div_Results/p_ADiv_BacSelect.jpeg")
-p_ADiv_HNFSelect <- HNF_Bac_A %>% 
-  ggplot() + 
-  geom_point(aes(x = Bac_Shannon, y = HNF_Shannon, color = HNF_select), size = 3) + 
-  scale_colour_viridis(alpha = 0.7)
-p_ADiv_HNFSelect
-#ggsave(p_ADiv_HNFSelect, file = "D:/Research/PdPy_Div_Results/p_ADiv_HNFSelect.jpeg")
-### Plotting
-
-
-##### Univariate HNF-Bac A diversity relationship ##########
-
+  geom_point(aes(x = Bac_SR, y = HNF_Simpson, color = Selection), size = 3) + 
+  facet_grid(~ community, labeller = labeller(community = community.labs)) +  
+  scale_colour_viridis(alpha = 0.7) + 
+  labs(x = expression("Bacteria species richness (q = 0)"),
+       y = expression("HNF Shannon diversity (q = 1)"),
+       colour = expression(paste("\U03B2", "NTI"))) + 
+  theme(
+    strip.text.x = element_text(size = 12, face = "bold"),
+    
+  )
+p_ADiv_Select
+ggsave(p_ADiv_Select, file = "D:/Research/PdPy_Div_Results/p_ADiv_Bacq0_HNFq2_Select.jpeg",
+       dpi = 600, width = 34, height = 28, units = "cm")
+##### Plotting HNF-Bac A diversity relationship with selection as color code ##########
 
 
 ##### Analyzing ##########
