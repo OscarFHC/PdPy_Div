@@ -278,7 +278,7 @@ Bac_A <- iNEXT(t(Bac_comm), q = 0, datatype = "abundance", size = max(colSums(Ba
 HNF_A <- iNEXT(t(HNF_comm), q = 0, datatype = "abundance", size = max(colSums(HNF_comm)) + 100000)$AsyEst %>% 
   select(Site, Diversity, Estimator) %>% 
   spread(Diversity, Estimator) %>%
-  rename(HNF_q1 = "Species richness", HNF_q1 = "Shannon diversity", HNF_q2 = "Simpson diversity") %>%
+  rename(HNF_q0 = "Species richness", HNF_q1 = "Shannon diversity", HNF_q2 = "Simpson diversity") %>%
   mutate(Site = rownames(HNF_comm))
 
 Bac_selec <- Bac_MNTD %>%
@@ -1062,15 +1062,9 @@ AICstep1 <- AIC(Bacq0_HNFq2_lavaan1.0, Bacq0_HNFq2_lavaan1.1, Bacq0_HNFq2_lavaan
                 Bacq0_HNFq2_lavaan1.60, Bacq0_HNFq2_lavaan1.61, Bacq0_HNFq2_lavaan1.62, Bacq0_HNFq2_lavaan1.63)
 AICstep1 <- AICstep1 %>% cbind(row.names(AICstep1)) %>%
   arrange(AIC)
-# AICstep1[1:10,]
-moreFitIndices(Bacq0_HNFq2_lavaan1.21, fit.measures = "all", nPrior = 1)
-moreFitIndices(Bacq0_HNFq2_lavaan1.23, fit.measures = "all", nPrior = 1)
-moreFitIndices(Bacq0_HNFq2_lavaan1.29, fit.measures = "all", nPrior = 1)
-moreFitIndices(Bacq0_HNFq2_lavaan1.31, fit.measures = "all", nPrior = 1)
-moreFitIndices(Bacq0_HNFq2_lavaan1.53, fit.measures = "all", nPrior = 1)
-moreFitIndices(Bacq0_HNFq2_lavaan1.55, fit.measures = "all", nPrior = 1)
-moreFitIndices(Bacq0_HNFq2_lavaan1.61, fit.measures = "all", nPrior = 1)
-moreFitIndices(Bacq0_HNFq2_lavaan1.63, fit.measures = "all", nPrior = 1)
+AICstep1[1:10,]
+# moreFitIndices(Bacq0_HNFq2_lavaan1.21, fit.measures = "all", nPrior = 1)
+
 ##### Step 1: Specify and run models #####
 
 Bacq0_HNFq2_mod1.61 <- '
@@ -1093,9 +1087,9 @@ Bacq0_HNFq2_mod2.Cr <- psem(
       random = ~ 1 | Cruise, data = HNF_Bac_A),
   lme(ln.Bac_Biom ~ ln.HNF_Biom + ln.HNF_q2 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
       random = ~ 1 | Cruise, data = HNF_Bac_A),
-  lme(Bac_select ~ ln.HNF_q2 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
+  lme(Bac_select ~ ln.HNF_q2, # + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
       random = ~ 1 | Cruise, data = HNF_Bac_A),
-  lme(HNF_select ~ ln.Bac_q0 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
+  lme(HNF_select ~ ln.Bac_q0, # + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
       random = ~ 1 | Cruise, data = HNF_Bac_A),
   
   data = HNF_Bac_A
@@ -1107,9 +1101,9 @@ Bacq0_HNFq2_mod2.Season <- psem(
       random = ~ 1 | Season, data = HNF_Bac_A),
   lme(ln.Bac_Biom ~ ln.HNF_Biom + ln.HNF_q2 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
       random = ~ 1 | Season, data = HNF_Bac_A),
-  lme(Bac_select ~ ln.HNF_q2 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
+  lme(Bac_select ~ ln.HNF_q2, # + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
       random = ~ 1 | Season, data = HNF_Bac_A),
-  lme(HNF_select ~ ln.Bac_q0 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
+  lme(HNF_select ~ ln.Bac_q0, # + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
       random = ~ 1 | Season, data = HNF_Bac_A),
   
   data = HNF_Bac_A
@@ -1121,9 +1115,9 @@ Bacq0_HNFq2_mod2.St <- psem(
       random = ~ 1 | Station, data = HNF_Bac_A),
   lme(ln.Bac_Biom ~ ln.HNF_Biom + ln.HNF_q2 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
       random = ~ 1 | Station, data = HNF_Bac_A),
-  lme(Bac_select ~ ln.HNF_q2 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
+  lme(Bac_select ~ ln.HNF_q2, # + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
       random = ~ 1 | Station, data = HNF_Bac_A),
-  lme(HNF_select ~ ln.Bac_q0 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
+  lme(HNF_select ~ ln.Bac_q0, # + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
       random = ~ 1 | Station, data = HNF_Bac_A),
   
   data = HNF_Bac_A
