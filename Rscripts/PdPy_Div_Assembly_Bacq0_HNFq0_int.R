@@ -398,7 +398,7 @@ p_Adiv_pairs
 ##### Pair-wise plot of bio-variables ##########
 
 ##### Path model analysis : Bac_q0 vs HNF_q0 ##########
-### Step 1 
+##### Step 1: Specify and run models #####
 Bacq0_HNFq0_mod1.0 <- '
   # regressions
     ln.Bac_SR ~ ln.HNF_SR
@@ -909,7 +909,7 @@ moreFitIndices(Bacq0_HNFq0_lavaan1.53, fit.measures = "all", nPrior = 1)
 moreFitIndices(Bacq0_HNFq0_lavaan1.55, fit.measures = "all", nPrior = 1)
 moreFitIndices(Bacq0_HNFq0_lavaan1.61, fit.measures = "all", nPrior = 1)
 moreFitIndices(Bacq0_HNFq0_lavaan1.63, fit.measures = "all", nPrior = 1)
-
+##### Step 1: Specify and run models #####
 Bacq0_HNFq0_mod1.53 <- '
   # regressions
     ln.Bac_SR ~ ln.HNF_Biom
@@ -919,8 +919,7 @@ Bacq0_HNFq0_mod1.53 <- '
 Bacq0_HNFq0_lavaan1.53 <- sem(Bacq0_HNFq0_mod1.53, data = HNF_Bac_A)
 summary(Bacq0_HNFq0_lavaan1.53)
 
-
-### Step 2 : include selection processes as the interaction terms and grouping variables (random effects)
+##### Step 2 : include selection processes as the interaction terms and grouping variables (random effects) #####
 HNF_Bac_A <- HNF_Bac_A %>%
   mutate(Bac_Bac_int = ln.Bac_SR * Bac_select,
          Bac_HNF_int = ln.Bac_SR * HNF_select)
@@ -967,6 +966,7 @@ AIC(Bacq0_HNFq0_mod2.St)
 summary(Bacq0_HNFq0_mod2.Cr)
 summary(Bacq0_HNFq0_mod2.Season)
 summary(Bacq0_HNFq0_mod2.St)
+##### Step 2 : include selection processes as the interaction terms and grouping variables (random effects) #####
 ##### Path model analysis : Bac_q0 vs HNF_q0 ##########
 
 ##### Plotting HNF-Bac A diversity relationship with selection as color code ##########

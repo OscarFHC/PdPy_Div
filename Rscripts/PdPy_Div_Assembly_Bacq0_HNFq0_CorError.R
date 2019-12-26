@@ -1078,6 +1078,18 @@ Bacq0_HNFq0_mod1.61 <- '
 '
 Bacq0_HNFq0_lavaan1.61 <- sem(Bacq0_HNFq0_mod1.61, data = HNF_Bac_A)
 summary(Bacq0_HNFq0_lavaan1.61)
+
+Bacq0_HNFq0_psem0 <- psem(
+  lm(ln.Bac_q0 ~ Bac_select, data = HNF_Bac_A),
+  lm(ln.HNF_q0 ~ HNF_select, data = HNF_Bac_A),
+  lm(Bac_select ~ ln.HNF_q0, data = HNF_Bac_A),
+  lm(HNF_select ~ ln.Bac_q0, data = HNF_Bac_A),
+  
+  ln.Bac_q0 %~~% ln.HNF_q0
+)
+
+summary(Bacq0_HNFq0_psem0)
+
 ##### Step 2 : include selection processes as the interaction terms and grouping variables (random effects) #####
 Bacq0_HNFq0_mod2.Cr <- psem(
   lme(ln.Bac_q0 ~ ln.Bac_Biom + ln.HNF_Biom + Bac_select + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
