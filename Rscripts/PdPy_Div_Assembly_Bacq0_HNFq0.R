@@ -1064,13 +1064,7 @@ AICstep1 <- AICstep1 %>% cbind(row.names(AICstep1)) %>%
   arrange(AIC)
 # AICstep1[1:10,]
 moreFitIndices(Bacq0_HNFq0_lavaan1.21, fit.measures = "all", nPrior = 1)
-moreFitIndices(Bacq0_HNFq0_lavaan1.23, fit.measures = "all", nPrior = 1)
-moreFitIndices(Bacq0_HNFq0_lavaan1.29, fit.measures = "all", nPrior = 1)
-moreFitIndices(Bacq0_HNFq0_lavaan1.31, fit.measures = "all", nPrior = 1)
-moreFitIndices(Bacq0_HNFq0_lavaan1.53, fit.measures = "all", nPrior = 1)
-moreFitIndices(Bacq0_HNFq0_lavaan1.55, fit.measures = "all", nPrior = 1)
-moreFitIndices(Bacq0_HNFq0_lavaan1.61, fit.measures = "all", nPrior = 1)
-moreFitIndices(Bacq0_HNFq0_lavaan1.63, fit.measures = "all", nPrior = 1)
+
 ##### Step 1: Specify and run models #####
 
 Bacq0_HNFq0_mod1.61 <- '
@@ -1093,9 +1087,9 @@ Bacq0_HNFq0_mod2.Cr <- psem(
       random = ~ 1 | Cruise, data = HNF_Bac_A),
   lme(ln.Bac_Biom ~ ln.HNF_Biom + ln.HNF_q0 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
       random = ~ 1 | Cruise, data = HNF_Bac_A),
-  lme(Bac_select ~ ln.HNF_q0 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
+  lme(Bac_select ~ ln.HNF_q0, # + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
       random = ~ 1 | Cruise, data = HNF_Bac_A),
-  lme(HNF_select ~ ln.Bac_q0 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
+  lme(HNF_select ~ ln.Bac_q0, # + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
       random = ~ 1 | Cruise, data = HNF_Bac_A),
   
   data = HNF_Bac_A
@@ -1107,9 +1101,9 @@ Bacq0_HNFq0_mod2.Season <- psem(
       random = ~ 1 | Season, data = HNF_Bac_A),
   lme(ln.Bac_Biom ~ ln.HNF_Biom + ln.HNF_q0 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
       random = ~ 1 | Season, data = HNF_Bac_A),
-  lme(Bac_select ~ ln.HNF_q0 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
+  lme(Bac_select ~ ln.HNF_q0, # + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
       random = ~ 1 | Season, data = HNF_Bac_A),
-  lme(HNF_select ~ ln.Bac_q0 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
+  lme(HNF_select ~ ln.Bac_q0, # + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
       random = ~ 1 | Season, data = HNF_Bac_A),
   
   data = HNF_Bac_A
@@ -1121,9 +1115,9 @@ Bacq0_HNFq0_mod2.St <- psem(
       random = ~ 1 | Station, data = HNF_Bac_A),
   lme(ln.Bac_Biom ~ ln.HNF_Biom + ln.HNF_q0 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
       random = ~ 1 | Station, data = HNF_Bac_A),
-  lme(Bac_select ~ ln.HNF_q0 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
+  lme(Bac_select ~ ln.HNF_q0, # + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
       random = ~ 1 | Station, data = HNF_Bac_A),
-  lme(HNF_select ~ ln.Bac_q0 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
+  lme(HNF_select ~ ln.Bac_q0, # + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
       random = ~ 1 | Station, data = HNF_Bac_A),
   
   data = HNF_Bac_A
@@ -1162,7 +1156,7 @@ ggsave(p_ADiv_Select, file = "D:/Research/PdPy_Div_Results/p_ADiv_Bacq0_HNFq0_Se
        dpi = 600, width = 34, height = 28, units = "cm")
 ##### Plotting HNF-Bac A diversity relationship with selection as color code ##########
 
-gam0 <- gam(ln.Bac_Shannon ~ Bac_select + HNF_select + s(Bac_select) + s(HNF_select), data = HNF_Bac_A)
+gam0 <- gam(ln.Bac_Shannon ~ s(Bac_select) + s(HNF_select), data = HNF_Bac_A)
 summary(gam0)
 ###############################################################################################
 ##### Alpha level analyses ####################################################################
