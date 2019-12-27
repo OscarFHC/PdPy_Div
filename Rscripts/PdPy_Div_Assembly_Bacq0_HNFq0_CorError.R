@@ -400,7 +400,7 @@ p_Adiv_pairs
 ##### Pair-wise plot of bio-variables ##########
 
 ##### Path model analysis : Bac_q0 vs HNF_q0 ##########
-##### Step 1: Specify and run models #####
+##### Step 1: no random effects #####
 Bacq0_HNFq0_mod1.0 <- '
   # regressions
     ln.Bac_q0 ~ Bac_select
@@ -573,7 +573,7 @@ AICstep1 <- AIC(Bacq0_HNFq0_lavaan1.0, Bacq0_HNFq0_lavaan1.1, Bacq0_HNFq0_lavaan
 AICstep1 <- AICstep1 %>% cbind(row.names(AICstep1)) %>%
   arrange(AIC)
 AICstep1
-
+##### Step 1: no random effects #####
 Bacq0_HNFq0_mod1.11 <- '
   ln.Bac_q0 ~ Bac_select + ln.HNF_Biom
   ln.HNF_q0 ~ HNF_select + ln.Bac_Biom
@@ -586,19 +586,81 @@ Bacq0_HNFq0_mod1.11 <- '
 '
 Bacq0_HNFq0_lavaan1.11 <- sem(Bacq0_HNFq0_mod1.11, data = HNF_Bac_A)
 summary(Bacq0_HNFq0_lavaan1.11, fit.measures = TRUE)
-
-Bacq0_HNFq0_psem1.11 <- psem(
-  lm(ln.Bac_q0 ~ Bac_select + ln.HNF_Biom, data = HNF_Bac_A),
-  lm(ln.HNF_q0 ~ HNF_select + ln.Bac_Biom, data = HNF_Bac_A),
-  lm(Bac_select ~ ln.HNF_q0, data = HNF_Bac_A),
-  lm(ln.HNF_select ~ ln.Bac_q0, data = HNF_Bac_A),
+##### Step 2 : include grouping variables (random effects) and environmental variables #####
+Bacq0_HNFq0_psem2.0 <- psem(
+  lm(ln.Bac_q0 ~ Bac_select + ln.HNF_Biom+ ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
+      data = HNF_Bac_A),
+  lm(ln.HNF_q0 ~ HNF_select + ln.Bac_Biom+ ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
+      data = HNF_Bac_A),
+  lm(Bac_select ~ ln.HNF_q0+ ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
+      data = HNF_Bac_A),
+  lm(ln.HNF_select ~ ln.Bac_q0+ ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
+      data = HNF_Bac_A),
   
-  lm(ln.Bac_Biom ~ ln.HNF_Biom, data = HNF_Bac_A),
-  lm(ln.HNF_Biom ~ ln.HNF_q0, data = HNF_Bac_A),
+  # lm(ln.Bac_Biom ~ ln.Bac_q0 + ln.HNF_Biom+ ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
+  #     data = HNF_Bac_A),
+  lm(ln.HNF_Biom ~ ln.HNF_q0+ ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
+      data = HNF_Bac_A),
   
   ln.Bac_q0 %~~% ln.HNF_q0
 )
-summary(Bacq0_HNFq0_psem1.11)
+Bacq0_HNFq0_psem2.Cr <- psem(
+  lme(ln.Bac_q0 ~ Bac_select + ln.HNF_Biom+ ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
+      random = ~ 1 | Cruise, data = HNF_Bac_A),
+  lme(ln.HNF_q0 ~ HNF_select + ln.Bac_Biom+ ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
+      random = ~ 1 | Cruise, data = HNF_Bac_A),
+  lme(Bac_select ~ ln.HNF_q0+ ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
+      random = ~ 1 | Cruise, data = HNF_Bac_A),
+  lme(ln.HNF_select ~ ln.Bac_q0+ ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
+      random = ~ 1 | Cruise, data = HNF_Bac_A),
+  
+  # lme(ln.Bac_Biom ~ ln.Bac_q0 + ln.HNF_Biom+ ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
+  #     random = ~ 1 | Cruise, data = HNF_Bac_A),
+  lme(ln.HNF_Biom ~ ln.HNF_q0+ ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
+      random = ~ 1 | Cruise, data = HNF_Bac_A),
+  
+  ln.Bac_q0 %~~% ln.HNF_q0
+)
+Bacq0_HNFq0_psem2.Season <- psem(
+  lme(ln.Bac_q0 ~ Bac_select + ln.HNF_Biom+ ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
+      random = ~ 1 | Season, data = HNF_Bac_A),
+  lme(ln.HNF_q0 ~ HNF_select + ln.Bac_Biom+ ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
+      random = ~ 1 | Season, data = HNF_Bac_A),
+  lme(Bac_select ~ ln.HNF_q0+ ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
+      random = ~ 1 | Season, data = HNF_Bac_A),
+  lme(ln.HNF_select ~ ln.Bac_q0+ ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
+      random = ~ 1 | Season, data = HNF_Bac_A),
+  
+  # lme(ln.Bac_Biom ~ ln.Bac_q0 + ln.HNF_Biom+ ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
+  #     random = ~ 1 | Season, data = HNF_Bac_A),
+  lme(ln.HNF_Biom ~ ln.HNF_q0+ ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
+      random = ~ 1 | Season, data = HNF_Bac_A),
+  
+  ln.Bac_q0 %~~% ln.HNF_q0
+)
+Bacq0_HNFq0_psem2.St <- psem(
+  lme(ln.Bac_q0 ~ Bac_select + ln.HNF_Biom+ ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
+      random = ~ 1 | Station, data = HNF_Bac_A),
+  lme(ln.HNF_q0 ~ HNF_select + ln.Bac_Biom+ ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
+      random = ~ 1 | Station, data = HNF_Bac_A),
+  lme(Bac_select ~ ln.HNF_q0+ ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
+      random = ~ 1 | Station, data = HNF_Bac_A),
+  lme(ln.HNF_select ~ ln.Bac_q0+ ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
+      random = ~ 1 | Station, data = HNF_Bac_A),
+  
+  # lme(ln.Bac_Biom ~ ln.Bac_q0 + ln.HNF_Biom+ ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
+  #     random = ~ 1 | Station, data = HNF_Bac_A),
+  lme(ln.HNF_Biom ~ ln.HNF_q0+ ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
+      random = ~ 1 | Station, data = HNF_Bac_A),
+  
+  ln.Bac_q0 %~~% ln.HNF_q0
+)
+
+anova(Bacq0_HNFq0_psem2.0, Bacq0_HNFq0_psem2.Cr, Bacq0_HNFq0_psem2.Season, Bacq0_HNFq0_psem2.St)
+
+summary(Bacq0_HNFq0_psem2.Cr)
+##### Step 2 : include grouping variables (random effects) and environmental variables #####
+
 
 
 
