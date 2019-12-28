@@ -597,13 +597,14 @@ Bacq0_HNFq0_psem2.0 <- psem(
   lm(ln.HNF_select ~ ln.Bac_q0+ ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
       data = HNF_Bac_A),
   
-  # lm(ln.Bac_Biom ~ ln.Bac_q0 + ln.HNF_Biom+ ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
+  # lm(ln.Bac_Biom ~ ln.Bac_q0 + ln.HNF_Biom+ ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla,
   #     data = HNF_Bac_A),
   lm(ln.HNF_Biom ~ ln.HNF_q0+ ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
       data = HNF_Bac_A),
   
   ln.Bac_q0 %~~% ln.HNF_q0
 )
+summary(Bacq0_HNFq0_psem2.0)
 Bacq0_HNFq0_psem2.Cr <- psem(
   lme(ln.Bac_q0 ~ Bac_select + ln.HNF_Biom+ ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
       random = ~ 1 | Cruise, data = HNF_Bac_A),
