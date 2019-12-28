@@ -21,11 +21,6 @@ if (!require(vegan)) {
   library(vegan)
 }else{library(vegan)}
 
-if (!require(mgcv)) {
-  install.packages("mgcv", dependencies=TRUE, repos = 'http://cran.us.r-project.org')
-  library(mgcv)
-}else{library(mgcv)}
-
 if (!require(ape)) {
   install.packages("ape", dependencies=TRUE, repos = 'http://cran.us.r-project.org')
   library(ape)
@@ -283,7 +278,7 @@ Bac_A <- iNEXT(t(Bac_comm), q = 0, datatype = "abundance", size = max(colSums(Ba
 HNF_A <- iNEXT(t(HNF_comm), q = 0, datatype = "abundance", size = max(colSums(HNF_comm)) + 100000)$AsyEst %>% 
   select(Site, Diversity, Estimator) %>% 
   spread(Diversity, Estimator) %>%
-  rename(HNF_q0 = "Species richness", HNF_q1 = "Shannon diversity", HNF_q2 = "Simpson diversity") %>%
+  rename(HNF_q1 = "Species richness", HNF_q1 = "Shannon diversity", HNF_q2 = "Simpson diversity") %>%
   mutate(Site = rownames(HNF_comm))
 
 Bac_selec <- Bac_MNTD %>%
@@ -404,286 +399,288 @@ p_Adiv_pairs
 
 ##### Pair-wise plot of bio-variables ##########
 
-##### Path model analysis : Bac_q0 vs HNF_q0 ##########
+##### Path model analysis : Bac_q0 vs HNF_q1 ##########
 ##### Step 1: no random effects #####
-Bacq0_HNFq0_mod1.0 <- '
+Bacq0_HNFq2_mod1.0 <- '
   # regressions
     ln.Bac_q0 ~ Bac_select
-    ln.HNF_q0 ~ HNF_select
-    Bac_select ~ ln.HNF_q0
+    ln.HNF_q2 ~ HNF_select
+    Bac_select ~ ln.HNF_q2
     HNF_select ~ ln.Bac_q0
   
   # correlated error
-    ln.Bac_q0 ~~ ln.HNF_q0
+    ln.Bac_q0 ~~ ln.HNF_q2
 '
 
-Bacq0_HNFq0_mod1.1 <- '
+Bacq0_HNFq2_mod1.1 <- '
   # regressions
     ln.Bac_q0 ~ Bac_select
-    ln.HNF_q0 ~ HNF_select
-    Bac_select ~ ln.HNF_q0
+    ln.HNF_q2 ~ HNF_select
+    Bac_select ~ ln.HNF_q2
     HNF_select ~ ln.Bac_q0
-    ln.Bac_Biom ~ ln.Bac_q0 + ln.HNF_q0
-    ln.HNF_Biom ~ ln.HNF_q0 + ln.Bac_q0
+    ln.Bac_Biom ~ ln.Bac_q0 + ln.HNF_q2
+    ln.HNF_Biom ~ ln.HNF_q2 + ln.Bac_q0
   
   # correlated error
-    ln.Bac_q0 ~~ ln.HNF_q0
+    ln.Bac_q0 ~~ ln.HNF_q2
     ln.Bac_Biom ~~ ln.HNF_Biom
 '
 
-Bacq0_HNFq0_mod1.2 <- '
+Bacq0_HNFq2_mod1.2 <- '
   # regressions
     ln.Bac_q0 ~ Bac_select
-    ln.HNF_q0 ~ HNF_select + ln.Bac_Biom
-    Bac_select ~ ln.HNF_q0
+    ln.HNF_q2 ~ HNF_select + ln.Bac_Biom
+    Bac_select ~ ln.HNF_q2
     HNF_select ~ ln.Bac_q0
     ln.Bac_Biom ~ ln.Bac_q0
-    ln.HNF_Biom ~ ln.HNF_q0 + ln.Bac_q0
+    ln.HNF_Biom ~ ln.HNF_q2 + ln.Bac_q0
   
   # correlated error  
-    ln.Bac_q0 ~~ ln.HNF_q0
+    ln.Bac_q0 ~~ ln.HNF_q2
     ln.Bac_Biom ~~ ln.HNF_Biom
 '
 
-Bacq0_HNFq0_mod1.3 <- '
+Bacq0_HNFq2_mod1.3 <- '
   # regressions
     ln.Bac_q0 ~ Bac_select + ln.HNF_Biom
-    ln.HNF_q0 ~ HNF_select + ln.Bac_Biom
-    Bac_select ~ ln.HNF_q0
+    ln.HNF_q2 ~ HNF_select + ln.Bac_Biom
+    Bac_select ~ ln.HNF_q2
     HNF_select ~ ln.Bac_q0
     ln.Bac_Biom ~ ln.Bac_q0
-    ln.HNF_Biom ~ ln.HNF_q0
+    ln.HNF_Biom ~ ln.HNF_q2
   
   # correlated error
-    ln.Bac_q0 ~~ ln.HNF_q0
+    ln.Bac_q0 ~~ ln.HNF_q2
     ln.Bac_Biom ~~ ln.HNF_Biom
 '
 
-Bacq0_HNFq0_mod1.4 <- '
+Bacq0_HNFq2_mod1.4 <- '
   # regressions
     ln.Bac_q0 ~ Bac_select + ln.HNF_Biom
-    ln.HNF_q0 ~ HNF_select
-    Bac_select ~ ln.HNF_q0
+    ln.HNF_q2 ~ HNF_select
+    Bac_select ~ ln.HNF_q2
     HNF_select ~ ln.Bac_q0
-    ln.Bac_Biom ~ ln.Bac_q0 + ln.HNF_q0
-    ln.HNF_Biom ~ ln.HNF_q0
+    ln.Bac_Biom ~ ln.Bac_q0 + ln.HNF_q2
+    ln.HNF_Biom ~ ln.HNF_q2
   
   # correlated error
-    ln.Bac_q0 ~~ ln.HNF_q0
+    ln.Bac_q0 ~~ ln.HNF_q2
     ln.Bac_Biom ~~ ln.HNF_Biom
 '
 
-Bacq0_HNFq0_mod1.5 <- '
+Bacq0_HNFq2_mod1.5 <- '
   # regressions
     ln.Bac_q0 ~ Bac_select
-    ln.HNF_q0 ~ HNF_select
-    Bac_select ~ ln.HNF_q0
+    ln.HNF_q2 ~ HNF_select
+    Bac_select ~ ln.HNF_q2
     HNF_select ~ ln.Bac_q0
-    ln.Bac_Biom ~ ln.Bac_q0 + ln.HNF_q0
-    ln.HNF_Biom ~ ln.HNF_q0 + ln.Bac_q0 + ln.Bac_Biom
+    ln.Bac_Biom ~ ln.Bac_q0 + ln.HNF_q2
+    ln.HNF_Biom ~ ln.HNF_q2 + ln.Bac_q0 + ln.Bac_Biom
     
   # correlated error
-    ln.Bac_q0 ~~ ln.HNF_q0
+    ln.Bac_q0 ~~ ln.HNF_q2
 '
 
-Bacq0_HNFq0_mod1.6 <- '
+Bacq0_HNFq2_mod1.6 <- '
   # regressions
     ln.Bac_q0 ~ Bac_select
-    ln.HNF_q0 ~ HNF_select + ln.Bac_Biom
-    Bac_select ~ ln.HNF_q0
+    ln.HNF_q2 ~ HNF_select + ln.Bac_Biom
+    Bac_select ~ ln.HNF_q2
     HNF_select ~ ln.Bac_q0
     ln.Bac_Biom ~ ln.Bac_q0
-    ln.HNF_Biom ~ ln.HNF_q0 + ln.Bac_q0 + ln.Bac_Biom
-    
-  # correlated error
-    ln.Bac_q0 ~~ ln.HNF_q0
+    ln.HNF_Biom ~ ln.HNF_q2 + ln.Bac_q0 + ln.Bac_Biom
+  
+  # correlated error  
+    ln.Bac_q0 ~~ ln.HNF_q2
 '
 
-Bacq0_HNFq0_mod1.7 <- '
+Bacq0_HNFq2_mod1.7 <- '
   # regressions
     ln.Bac_q0 ~ Bac_select + ln.HNF_Biom
-    ln.HNF_q0 ~ HNF_select + ln.Bac_Biom
-    Bac_select ~ ln.HNF_q0
+    ln.HNF_q2 ~ HNF_select + ln.Bac_Biom
+    Bac_select ~ ln.HNF_q2
     HNF_select ~ ln.Bac_q0
     ln.Bac_Biom ~ ln.Bac_q0
-    ln.HNF_Biom ~ ln.HNF_q0 + ln.Bac_Biom
-    
+    ln.HNF_Biom ~ ln.HNF_q2 + ln.Bac_Biom
+  
   # correlated error
-    ln.Bac_q0 ~~ ln.HNF_q0
+    ln.Bac_q0 ~~ ln.HNF_q2
 '
 
-Bacq0_HNFq0_mod1.8 <- '
+Bacq0_HNFq2_mod1.8 <- '
   # regressions
     ln.Bac_q0 ~ Bac_select + ln.HNF_Biom
-    ln.HNF_q0 ~ HNF_select
-    Bac_select ~ ln.HNF_q0
+    ln.HNF_q2 ~ HNF_select
+    Bac_select ~ ln.HNF_q2
     HNF_select ~ ln.Bac_q0
-    ln.Bac_Biom ~ ln.Bac_q0 + ln.HNF_q0
-    ln.HNF_Biom ~ ln.HNF_q0 + ln.Bac_Biom
-    
+    ln.Bac_Biom ~ ln.Bac_q0 + ln.HNF_q2
+    ln.HNF_Biom ~ ln.HNF_q2 + ln.Bac_Biom
+  
   # correlated error
-    ln.Bac_q0 ~~ ln.HNF_q0
+    ln.Bac_q0 ~~ ln.HNF_q2
 '
 
-Bacq0_HNFq0_mod1.9 <- '
+Bacq0_HNFq2_mod1.9 <- '
   # regressions
     ln.Bac_q0 ~ Bac_select
-    ln.HNF_q0 ~ HNF_select
-    Bac_select ~ ln.HNF_q0
+    ln.HNF_q2 ~ HNF_select
+    Bac_select ~ ln.HNF_q2
     HNF_select ~ ln.Bac_q0
-    ln.Bac_Biom ~ ln.Bac_q0 + ln.HNF_q0 + ln.HNF_Biom
-    ln.HNF_Biom ~ ln.HNF_q0 + ln.Bac_q0
-    
+    ln.Bac_Biom ~ ln.Bac_q0 + ln.HNF_q2 + ln.HNF_Biom
+    ln.HNF_Biom ~ ln.HNF_q2 + ln.Bac_q0
+  
   # correlated error
-    ln.Bac_q0 ~~ ln.HNF_q0
+    ln.Bac_q0 ~~ ln.HNF_q2
 '
 
-Bacq0_HNFq0_mod1.10 <- '
+Bacq0_HNFq2_mod1.10 <- '
   # regressions
     ln.Bac_q0 ~ Bac_select
-    ln.HNF_q0 ~ HNF_select + ln.Bac_Biom
-    Bac_select ~ ln.HNF_q0
+    ln.HNF_q2 ~ HNF_select + ln.Bac_Biom
+    Bac_select ~ ln.HNF_q2
     HNF_select ~ ln.Bac_q0
     ln.Bac_Biom ~ ln.Bac_q0 + ln.HNF_Biom
-    ln.HNF_Biom ~ ln.HNF_q0 + ln.Bac_q0
-    
+    ln.HNF_Biom ~ ln.HNF_q2 + ln.Bac_q0
+  
   # correlated error
-    ln.Bac_q0 ~~ ln.HNF_q0
+    ln.Bac_q0 ~~ ln.HNF_q2
 '
 
-Bacq0_HNFq0_mod1.11 <- '
+Bacq0_HNFq2_mod1.11 <- '
   # regressions
     ln.Bac_q0 ~ Bac_select + ln.HNF_Biom
-    ln.HNF_q0 ~ HNF_select + ln.Bac_Biom
-    Bac_select ~ ln.HNF_q0
+    ln.HNF_q2 ~ HNF_select + ln.Bac_Biom
+    Bac_select ~ ln.HNF_q2
     HNF_select ~ ln.Bac_q0
     ln.Bac_Biom ~ ln.Bac_q0 + ln.HNF_Biom
-    ln.HNF_Biom ~ ln.HNF_q0
-    
+    ln.HNF_Biom ~ ln.HNF_q2
+  
   # correlated error
-    ln.Bac_q0 ~~ ln.HNF_q0
+    ln.Bac_q0 ~~ ln.HNF_q2
 '
 
-Bacq0_HNFq0_mod1.12 <- '
+Bacq0_HNFq2_mod1.12 <- '
   # regressions
     ln.Bac_q0 ~ Bac_select + ln.HNF_Biom
-    ln.HNF_q0 ~ HNF_select
-    Bac_select ~ ln.HNF_q0
+    ln.HNF_q2 ~ HNF_select
+    Bac_select ~ ln.HNF_q2
     HNF_select ~ ln.Bac_q0
-    ln.Bac_Biom ~ ln.Bac_q0 + ln.HNF_q0 + ln.HNF_Biom
-    ln.HNF_Biom ~ ln.HNF_q0
-    
-  # correlated error
-    ln.Bac_q0 ~~ ln.HNF_q0
+    ln.Bac_Biom ~ ln.Bac_q0 + ln.HNF_q2 + ln.HNF_Biom
+    ln.HNF_Biom ~ ln.HNF_q2
+  
+  # correlated error    
+    ln.Bac_q0 ~~ ln.HNF_q2
 '
-Bacq0_HNFq0_lavaan1.0 <- sem(Bacq0_HNFq0_mod1.0, data = HNF_Bac_A)#, se = "bootstrap")
-Bacq0_HNFq0_lavaan1.1 <- sem(Bacq0_HNFq0_mod1.1, data = HNF_Bac_A)
-Bacq0_HNFq0_lavaan1.2 <- sem(Bacq0_HNFq0_mod1.2, data = HNF_Bac_A)
-Bacq0_HNFq0_lavaan1.3 <- sem(Bacq0_HNFq0_mod1.3, data = HNF_Bac_A)
-Bacq0_HNFq0_lavaan1.4 <- sem(Bacq0_HNFq0_mod1.4, data = HNF_Bac_A)
-Bacq0_HNFq0_lavaan1.5 <- sem(Bacq0_HNFq0_mod1.5, data = HNF_Bac_A)
-Bacq0_HNFq0_lavaan1.6 <- sem(Bacq0_HNFq0_mod1.6, data = HNF_Bac_A)
-Bacq0_HNFq0_lavaan1.7 <- sem(Bacq0_HNFq0_mod1.7, data = HNF_Bac_A)
-Bacq0_HNFq0_lavaan1.8 <- sem(Bacq0_HNFq0_mod1.8, data = HNF_Bac_A)
-Bacq0_HNFq0_lavaan1.9 <- sem(Bacq0_HNFq0_mod1.9, data = HNF_Bac_A)
-Bacq0_HNFq0_lavaan1.10 <- sem(Bacq0_HNFq0_mod1.10, data = HNF_Bac_A)
-Bacq0_HNFq0_lavaan1.11 <- sem(Bacq0_HNFq0_mod1.11, data = HNF_Bac_A)
-Bacq0_HNFq0_lavaan1.12 <- sem(Bacq0_HNFq0_mod1.12, data = HNF_Bac_A)
+Bacq0_HNFq2_lavaan1.0 <- sem(Bacq0_HNFq2_mod1.0, data = HNF_Bac_A)#, se = "bootstrap")
+Bacq0_HNFq2_lavaan1.1 <- sem(Bacq0_HNFq2_mod1.1, data = HNF_Bac_A)
+Bacq0_HNFq2_lavaan1.2 <- sem(Bacq0_HNFq2_mod1.2, data = HNF_Bac_A)
+Bacq0_HNFq2_lavaan1.3 <- sem(Bacq0_HNFq2_mod1.3, data = HNF_Bac_A)
+Bacq0_HNFq2_lavaan1.4 <- sem(Bacq0_HNFq2_mod1.4, data = HNF_Bac_A)
+Bacq0_HNFq2_lavaan1.5 <- sem(Bacq0_HNFq2_mod1.5, data = HNF_Bac_A)
+Bacq0_HNFq2_lavaan1.6 <- sem(Bacq0_HNFq2_mod1.6, data = HNF_Bac_A)
+Bacq0_HNFq2_lavaan1.7 <- sem(Bacq0_HNFq2_mod1.7, data = HNF_Bac_A)
+Bacq0_HNFq2_lavaan1.8 <- sem(Bacq0_HNFq2_mod1.8, data = HNF_Bac_A)
+Bacq0_HNFq2_lavaan1.9 <- sem(Bacq0_HNFq2_mod1.9, data = HNF_Bac_A)
+Bacq0_HNFq2_lavaan1.10 <- sem(Bacq0_HNFq2_mod1.10, data = HNF_Bac_A)
+Bacq0_HNFq2_lavaan1.11 <- sem(Bacq0_HNFq2_mod1.11, data = HNF_Bac_A)
+Bacq0_HNFq2_lavaan1.12 <- sem(Bacq0_HNFq2_mod1.12, data = HNF_Bac_A)
 
-AICstep1 <- AIC(Bacq0_HNFq0_lavaan1.0, Bacq0_HNFq0_lavaan1.1, Bacq0_HNFq0_lavaan1.2, Bacq0_HNFq0_lavaan1.3,
-                Bacq0_HNFq0_lavaan1.4, Bacq0_HNFq0_lavaan1.5, Bacq0_HNFq0_lavaan1.6, Bacq0_HNFq0_lavaan1.7,
-                Bacq0_HNFq0_lavaan1.8, Bacq0_HNFq0_lavaan1.9, Bacq0_HNFq0_lavaan1.10, Bacq0_HNFq0_lavaan1.11,
-                Bacq0_HNFq0_lavaan1.12)
+AICstep1 <- AIC(Bacq0_HNFq2_lavaan1.0, Bacq0_HNFq2_lavaan1.1, Bacq0_HNFq2_lavaan1.2, Bacq0_HNFq2_lavaan1.3,
+                Bacq0_HNFq2_lavaan1.4, Bacq0_HNFq2_lavaan1.5, Bacq0_HNFq2_lavaan1.6, Bacq0_HNFq2_lavaan1.7,
+                Bacq0_HNFq2_lavaan1.8, Bacq0_HNFq2_lavaan1.9, Bacq0_HNFq2_lavaan1.10, Bacq0_HNFq2_lavaan1.11,
+                Bacq0_HNFq2_lavaan1.12)
 AICstep1 <- AICstep1 %>% cbind(row.names(AICstep1)) %>%
   arrange(AIC)
 AICstep1
 ##### Step 1: no random effects #####
-Bacq0_HNFq0_mod1.11 <- '
-  ln.Bac_q0 ~ Bac_select + ln.HNF_Biom
-  ln.HNF_q0 ~ HNF_select + ln.Bac_Biom
-  Bac_select ~ ln.HNF_q0
-  HNF_select ~ ln.Bac_q0
-  ln.Bac_Biom ~ ln.Bac_q0 + ln.HNF_Biom
-  ln.HNF_Biom ~ ln.HNF_q0
-  
-  ln.Bac_q0 ~~ ln.HNF_q0
+Bacq0_HNFq2_mod1.11 <- '
+  # regressions
+    ln.Bac_q0 ~ Bac_select + ln.HNF_Biom
+    ln.HNF_q2 ~ HNF_select + ln.Bac_Biom
+    Bac_select ~ ln.HNF_q2
+    HNF_select ~ ln.Bac_q0
+    ln.Bac_Biom ~ ln.Bac_q0 + ln.HNF_Biom
+    ln.HNF_Biom ~ ln.HNF_q2
+    
+  # correlated error    
+    ln.Bac_q0 ~~ ln.HNF_q2
 '
-Bacq0_HNFq0_lavaan1.11 <- sem(Bacq0_HNFq0_mod1.11, data = HNF_Bac_A)
-summary(Bacq0_HNFq0_lavaan1.11, fit.measures = TRUE)
+Bacq0_HNFq2_lavaan1.11 <- sem(Bacq0_HNFq2_mod1.11, data = HNF_Bac_A)
+summary(Bacq0_HNFq2_lavaan1.11, fit.measures = TRUE)
 ##### Step 2 : include grouping variables (random effects) and environmental variables #####
-Bacq0_HNFq0_psem2.0 <- psem(
+Bacq0_HNFq2_psem2.0 <- psem(
   lm(ln.Bac_q0 ~ Bac_select + ln.HNF_Biom + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
       data = HNF_Bac_A),
-  lm(ln.HNF_q0 ~ HNF_select + ln.Bac_Biom + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
+  lm(ln.HNF_q2 ~ HNF_select + ln.Bac_Biom + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
       data = HNF_Bac_A),
-  lm(Bac_select ~ ln.HNF_q0+ ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
+  lm(Bac_select ~ ln.HNF_q2 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
       data = HNF_Bac_A),
-  lm(ln.HNF_select ~ ln.Bac_q0+ ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
+  lm(ln.HNF_select ~ ln.Bac_q0 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
       data = HNF_Bac_A),
   
   # lm(ln.Bac_Biom ~ ln.Bac_q0 + ln.HNF_Biom + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla,
   #     data = HNF_Bac_A),
-  lm(ln.HNF_Biom ~ ln.HNF_q0+ ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
+  lm(ln.HNF_Biom ~ ln.HNF_q2 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
       data = HNF_Bac_A),
   
-  ln.Bac_q0 %~~% ln.HNF_q0
+  ln.Bac_q0 %~~% ln.HNF_q2
 )
-summary(Bacq0_HNFq0_psem2.0)
-Bacq0_HNFq0_psem2.Cr <- psem(
+summary(Bacq0_HNFq2_psem2.0)
+Bacq0_HNFq2_psem2.Cr <- psem(
   lme(ln.Bac_q0 ~ Bac_select + ln.HNF_Biom + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
       random = ~ 1 | Cruise, data = HNF_Bac_A),
-  lme(ln.HNF_q0 ~ HNF_select + ln.Bac_Biom + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
+  lme(ln.HNF_q2 ~ HNF_select + ln.Bac_Biom + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
       random = ~ 1 | Cruise, data = HNF_Bac_A),
-  lme(Bac_select ~ ln.HNF_q0+ ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
+  lme(Bac_select ~ ln.HNF_q2 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
       random = ~ 1 | Cruise, data = HNF_Bac_A),
-  lme(ln.HNF_select ~ ln.Bac_q0+ ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
+  lme(ln.HNF_select ~ ln.Bac_q0 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
       random = ~ 1 | Cruise, data = HNF_Bac_A),
   
   # lme(ln.Bac_Biom ~ ln.Bac_q0 + ln.HNF_Biom + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
   #     random = ~ 1 | Cruise, data = HNF_Bac_A),
-  lme(ln.HNF_Biom ~ ln.HNF_q0+ ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
+  lme(ln.HNF_Biom ~ ln.HNF_q2 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
       random = ~ 1 | Cruise, data = HNF_Bac_A),
   
-  ln.Bac_q0 %~~% ln.HNF_q0
+  ln.Bac_q0 %~~% ln.HNF_q2
 )
-Bacq0_HNFq0_psem2.Season <- psem(
+Bacq0_HNFq2_psem2.Season <- psem(
   lme(ln.Bac_q0 ~ Bac_select + ln.HNF_Biom + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
       random = ~ 1 | Season, data = HNF_Bac_A),
-  lme(ln.HNF_q0 ~ HNF_select + ln.Bac_Biom + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
+  lme(ln.HNF_q2 ~ HNF_select + ln.Bac_Biom + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
       random = ~ 1 | Season, data = HNF_Bac_A),
-  lme(Bac_select ~ ln.HNF_q0+ ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
+  lme(Bac_select ~ ln.HNF_q2 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
       random = ~ 1 | Season, data = HNF_Bac_A),
-  lme(ln.HNF_select ~ ln.Bac_q0+ ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
+  lme(ln.HNF_select ~ ln.Bac_q0 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
       random = ~ 1 | Season, data = HNF_Bac_A),
   
   # lme(ln.Bac_Biom ~ ln.Bac_q0 + ln.HNF_Biom + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
   #     random = ~ 1 | Season, data = HNF_Bac_A),
-  lme(ln.HNF_Biom ~ ln.HNF_q0+ ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
+  lme(ln.HNF_Biom ~ ln.HNF_q2 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
       random = ~ 1 | Season, data = HNF_Bac_A),
   
-  ln.Bac_q0 %~~% ln.HNF_q0
+  ln.Bac_q0 %~~% ln.HNF_q2
 )
-Bacq0_HNFq0_psem2.St <- psem(
+Bacq0_HNFq2_psem2.St <- psem(
   lme(ln.Bac_q0 ~ Bac_select + ln.HNF_Biom + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
       random = ~ 1 | Station, data = HNF_Bac_A),
-  lme(ln.HNF_q0 ~ HNF_select + ln.Bac_Biom + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
+  lme(ln.HNF_q2 ~ HNF_select + ln.Bac_Biom + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
       random = ~ 1 | Station, data = HNF_Bac_A),
-  lme(Bac_select ~ ln.HNF_q0+ ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
+  lme(Bac_select ~ ln.HNF_q2 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
       random = ~ 1 | Station, data = HNF_Bac_A),
-  lme(ln.HNF_select ~ ln.Bac_q0+ ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
+  lme(ln.HNF_select ~ ln.Bac_q0 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
       random = ~ 1 | Station, data = HNF_Bac_A),
   
-  # lme(ln.Bac_Biom ~ ln.Bac_q0 + ln.HNF_Biom + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
+  # lme(ln.Bac_Biom ~ ln.Bac_q0 + ln.HNF_Biom+ ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
   #     random = ~ 1 | Station, data = HNF_Bac_A),
-  lme(ln.HNF_Biom ~ ln.HNF_q0+ ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
+  lme(ln.HNF_Biom ~ ln.HNF_q2 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
       random = ~ 1 | Station, data = HNF_Bac_A),
   
-  ln.Bac_q0 %~~% ln.HNF_q0
+  ln.Bac_q0 %~~% ln.HNF_q2
 )
 
-anova(Bacq0_HNFq0_psem2.0, Bacq0_HNFq0_psem2.Cr, Bacq0_HNFq0_psem2.Season, Bacq0_HNFq0_psem2.St)
+anova(Bacq0_HNFq2_psem2.0, Bacq0_HNFq2_psem2.Cr, Bacq0_HNFq2_psem2.Season, Bacq0_HNFq2_psem2.St)
 
-summary(Bacq0_HNFq0_psem2.Cr)
+summary(Bacq0_HNFq2_psem2.Cr)
 ##### Step 2 : include grouping variables (random effects) and environmental variables #####
 
 
@@ -692,38 +689,38 @@ community.labs <- c("Colored by selection on bacteria community", "Colored by se
 names(community.labs) <- c("Bac_select", "HNF_select")
 
 p_ADiv_Select <- HNF_Bac_A %>% 
-  select(ln.Bac_q0, ln.HNF_q0, Bac_select, HNF_select) %>%
-  gather(key = "community", value = "Selection", -c(ln.Bac_q0, ln.HNF_q0)) %>%
-  ggplot(aes(x = ln.Bac_q0, y = ln.HNF_q0, color = Selection)) + 
+  select(ln.Bac_q0, ln.HNF_q2, Bac_select, HNF_select) %>%
+  gather(key = "community", value = "Selection", -c(ln.Bac_q0, ln.HNF_q2)) %>%
+  ggplot(aes(x = ln.Bac_q0, y = ln.HNF_q2, color = Selection)) + 
     geom_point(size = 3) + 
     geom_smooth(formula = y ~ x, method = "lm", se = TRUE) + 
     geom_smooth(method = mgcv::gam, formula = y ~ s(x), se = TRUE, color = "red") + 
     facet_grid(~ community, labeller = labeller(community = community.labs)) +  
     scale_colour_viridis(alpha = 0.7) + 
     labs(x = expression("Log[ Bacteria species richness (Hill number = 0) ]"),
-         y = expression("Log[ HNF species richness (Hill number = 0) ]"),
+         y = expression("Log[ HNF Simpson diversity index (Hill number = 2) ]"),
          colour = expression(paste("\U03B2", "NTI"))) + 
     theme(
       strip.text.x = element_text(size = 12, face = "bold")
     )
 p_ADiv_Select
-ggsave(p_ADiv_Select, file = "D:/Research/PdPy_Div_Results/p_ADiv_Bacq0_HNFq0_Select.jpeg",
+ggsave(p_ADiv_Select, file = "D:/Research/PdPy_Div_Results/p_ADiv_Bacq0_HNFq2_Select.jpeg",
        dpi = 600, width = 34, height = 28, units = "cm")
-##### Plotting HNF and Bac alppha diversity relationship with selection as color code ##########
+##### Plotting HNF-Bac A diversity relationship with selection as color code ##########
 
 ##### Statistical check on non-linear relationship between Bac and HNF alpha diversity ##########
-gam0 <- gam(ln.HNF_q0 ~ ln.Bac_q0, data = HNF_Bac_A)
-gam1 <- gam(ln.HNF_q0 ~ s(ln.Bac_q0), data = HNF_Bac_A)
+gam0 <- gam(ln.HNF_q2 ~ ln.Bac_q0, data = HNF_Bac_A)
+gam1 <- gam(ln.HNF_q2 ~ s(ln.Bac_q0), data = HNF_Bac_A)
 anova(gam0, gam1, test = "F")
 ##### Statistical check on non-linear relationship between Bac and HNF alpha diversity ##########
 
 ##### Statistical check the interaction between Bacq0 and selection ##########
-HNFq0_Bacq0_0 <- glm(ln.HNF_q0 ~ ln.Bac_q0 + HNF_select + Bac_select, data = HNF_Bac_A)
-HNFq0_Bacq0_1 <- glm(ln.HNF_q0 ~ ln.Bac_q0 * HNF_select + ln.Bac_q0 * Bac_select, data = HNF_Bac_A)
-anova(HNFq0_Bacq0_0, HNFq0_Bacq0_1, test = "F")
+HNFq2_Bacq0_0 <- glm(ln.HNF_q2 ~ ln.Bac_q0 + HNF_select + Bac_select, data = HNF_Bac_A)
+HNFq2_Bacq0_1 <- glm(ln.HNF_q2 ~ ln.Bac_q0 * HNF_select + ln.Bac_q0 * Bac_select, data = HNF_Bac_A)
+anova(HNFq2_Bacq0_0, HNFq2_Bacq0_1, test = "F")
 
-summary(HNFq0_Bacq0_0)
-summary(HNFq0_Bacq0_1)
+summary(HNFq2_Bacq0_0)
+summary(HNFq2_Bacq0_1)
 ##### Statistical check the interaction between Bacq0 and selection ##########
 ###############################################################################################
 ##### Alpha level analyses ####################################################################
