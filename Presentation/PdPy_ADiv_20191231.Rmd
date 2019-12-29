@@ -320,7 +320,7 @@ HNF_Bac_A <- as.data.frame(HNF_Bac_A)
 
 Is predator-prey diversity relationship driven by selection processes?
 
-![](D:/Research/PdPy_Div_Results/Presentation/ResearchQ.jpeg")
+![](ResearchQ.jpeg")
 
 
 
