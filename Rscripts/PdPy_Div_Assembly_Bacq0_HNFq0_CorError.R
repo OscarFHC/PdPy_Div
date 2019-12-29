@@ -287,12 +287,12 @@ HNF_A <- iNEXT(t(HNF_comm), q = 0, datatype = "abundance", size = max(colSums(HN
   mutate(Site = rownames(HNF_comm))
 
 Bac_selec <- Bac_MNTD %>%
-  filter(Bac_select_p < 0.05) %>%
+  #filter(Bac_select_p < 0.05) %>%
   group_by(Var2) %>%
   summarize(Bac_select = mean(Bac_select_strength, na.rm = TRUE))
 
 HNF_selec <- HNF_MNTD %>%
-  filter(HNF_select_p < 0.05) %>%
+  #filter(HNF_select_p < 0.05) %>%
   group_by(Var2) %>%
   summarize(HNF_select = mean(HNF_select_strength, na.rm = TRUE))
 
