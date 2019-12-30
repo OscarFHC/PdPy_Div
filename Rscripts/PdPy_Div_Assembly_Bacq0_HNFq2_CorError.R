@@ -282,12 +282,12 @@ HNF_A <- iNEXT(t(HNF_comm), q = 0, datatype = "abundance", size = max(colSums(HN
   mutate(Site = rownames(HNF_comm))
 
 Bac_selec <- Bac_MNTD %>%
-  #filter(Bac_select_p < 0.05) %>%
+  # filter(Bac_select_p < 0.05) %>%
   group_by(Var2) %>%
   summarize(Bac_select = mean(Bac_select_strength, na.rm = TRUE))
 
 HNF_selec <- HNF_MNTD %>%
-  #filter(HNF_select_p < 0.05) %>%
+  # filter(HNF_select_p < 0.05) %>%
   group_by(Var2) %>%
   summarize(HNF_select = mean(HNF_select_strength, na.rm = TRUE))
 
@@ -615,17 +615,16 @@ Bacq0_HNFq2_psem2.0 <- psem(
       data = HNF_Bac_A),
   lm(Bac_select ~ ln.HNF_q2 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
       data = HNF_Bac_A),
-  lm(ln.HNF_select ~ ln.Bac_q0 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
-      data = HNF_Bac_A),
-  
-  # lm(ln.Bac_Biom ~ ln.Bac_q0 + ln.HNF_Biom + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla,
+  # lm(ln.HNF_select ~ ln.Bac_q0 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
   #     data = HNF_Bac_A),
+  # 
+  # lm(ln.Bac_Biom ~ ln.Bac_q0 + ln.HNF_Biom + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla,
+  #    data = HNF_Bac_A),
   lm(ln.HNF_Biom ~ ln.HNF_q2 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
       data = HNF_Bac_A),
   
   ln.Bac_q0 %~~% ln.HNF_q2
 )
-summary(Bacq0_HNFq2_psem2.0)
 Bacq0_HNFq2_psem2.Cr <- psem(
   lme(ln.Bac_q0 ~ Bac_select + ln.HNF_Biom + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
       random = ~ 1 | Cruise, data = HNF_Bac_A),
@@ -633,10 +632,10 @@ Bacq0_HNFq2_psem2.Cr <- psem(
       random = ~ 1 | Cruise, data = HNF_Bac_A),
   lme(Bac_select ~ ln.HNF_q2 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
       random = ~ 1 | Cruise, data = HNF_Bac_A),
-  lme(ln.HNF_select ~ ln.Bac_q0 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
-      random = ~ 1 | Cruise, data = HNF_Bac_A),
-  
-  # lme(ln.Bac_Biom ~ ln.Bac_q0 + ln.HNF_Biom + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
+  # lme(ln.HNF_select ~ ln.Bac_q0 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
+  #     random = ~ 1 | Cruise, data = HNF_Bac_A),
+  # 
+  # lme(ln.Bac_Biom ~ ln.Bac_q0 + ln.HNF_Biom + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla,
   #     random = ~ 1 | Cruise, data = HNF_Bac_A),
   lme(ln.HNF_Biom ~ ln.HNF_q2 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
       random = ~ 1 | Cruise, data = HNF_Bac_A),
@@ -650,10 +649,10 @@ Bacq0_HNFq2_psem2.Season <- psem(
       random = ~ 1 | Season, data = HNF_Bac_A),
   lme(Bac_select ~ ln.HNF_q2 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
       random = ~ 1 | Season, data = HNF_Bac_A),
-  lme(ln.HNF_select ~ ln.Bac_q0 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
-      random = ~ 1 | Season, data = HNF_Bac_A),
-  
-  # lme(ln.Bac_Biom ~ ln.Bac_q0 + ln.HNF_Biom + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
+  # lme(ln.HNF_select ~ ln.Bac_q0 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
+  #     random = ~ 1 | Season, data = HNF_Bac_A),
+  # 
+  # lme(ln.Bac_Biom ~ ln.Bac_q0 + ln.HNF_Biom + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla,
   #     random = ~ 1 | Season, data = HNF_Bac_A),
   lme(ln.HNF_Biom ~ ln.HNF_q2 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
       random = ~ 1 | Season, data = HNF_Bac_A),
@@ -667,17 +666,16 @@ Bacq0_HNFq2_psem2.St <- psem(
       random = ~ 1 | Station, data = HNF_Bac_A),
   lme(Bac_select ~ ln.HNF_q2 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
       random = ~ 1 | Station, data = HNF_Bac_A),
-  lme(ln.HNF_select ~ ln.Bac_q0 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
-      random = ~ 1 | Station, data = HNF_Bac_A),
-  
-  # lme(ln.Bac_Biom ~ ln.Bac_q0 + ln.HNF_Biom+ ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
+  # lme(ln.HNF_select ~ ln.Bac_q0 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
+  #     random = ~ 1 | Station, data = HNF_Bac_A),
+  # 
+  # lme(ln.Bac_Biom ~ ln.Bac_q0 + ln.HNF_Biom+ ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla,
   #     random = ~ 1 | Station, data = HNF_Bac_A),
   lme(ln.HNF_Biom ~ ln.HNF_q2 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
       random = ~ 1 | Station, data = HNF_Bac_A),
   
   ln.Bac_q0 %~~% ln.HNF_q2
 )
-
 anova(Bacq0_HNFq2_psem2.0, Bacq0_HNFq2_psem2.Cr, Bacq0_HNFq2_psem2.Season, Bacq0_HNFq2_psem2.St)
 
 summary(Bacq0_HNFq2_psem2.Cr)
