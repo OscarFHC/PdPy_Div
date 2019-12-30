@@ -399,6 +399,80 @@ p_Adiv_pairs
 
 ##### Pair-wise plot of bio-variables ##########
 
+##### species richness (Bacq0, HNFq2) vs selection ##########
+p_Bacq0_HNFSelect <- HNF_Bac_A %>% 
+  select(ln.Bac_q0, ln.HNF_q0, Bac_select, HNF_select, Cruise) %>%
+  ggplot(aes(x = ln.Bac_q0, y = HNF_select)) + 
+  geom_point(aes(color = Cruise), size = 3) + 
+  geom_smooth(formula = y ~ x, method = "lm", se = TRUE, linetype = "dotted") + 
+  geom_smooth(method = mgcv::gam, formula = y ~ s(x), se = TRUE, color = "red", linetype = "dotted") + 
+  scale_colour_viridis(alpha = 0.7, discrete=TRUE) + 
+  labs(x = expression("Log[ Bacteria species richness (Hill number = 0) ]"),
+       y = expression(paste("Deterministic assembly processes (", "\U03B2", "NTI) ", "of HNF community "))) + 
+  theme(axis.text = element_text(size = 12),
+        axis.title = element_text(size = 16))
+
+p_HNFq2_BacSelect <- HNF_Bac_A %>% 
+  select(ln.Bac_q0, ln.HNF_q2, Bac_select, HNF_select, Cruise) %>%
+  ggplot(aes(x = ln.HNF_q2, y = Bac_select)) + 
+  geom_point(aes(color = Cruise), size = 3) + 
+  geom_smooth(formula = y ~ x, method = "lm", se = TRUE, linetype = "dotted") + 
+  geom_smooth(method = mgcv::gam, formula = y ~ s(x), se = TRUE, color = "red", linetype = "dotted") + 
+  scale_colour_viridis(alpha = 0.7, discrete=TRUE) + 
+  labs(x = expression("Log[ HNF Simpson diversity (Hill number = 2) ]"),
+       y = expression(paste("Deterministic assembly processes (", "\U03B2", "NTI) ", "of Bacteria community "))) + 
+  theme(axis.text = element_text(size = 12),
+        axis.title = element_text(size = 16))
+
+legend <- get_legend(
+  p_Bacq0_HNFSelect + theme(legend.box.margin = margin(0, 0, 0, 12))
+)
+p_Bacq0_HNFq2_Select <- plot_grid(
+  plot_grid(p_Bacq0_HNFSelect + theme(legend.position="none"),
+            p_HNFq2_BacSelect + theme(legend.position="none")),
+  legend, rel_widths = c(3, .4))
+p_Bacq0_HNFq2_Select
+ggsave(p_Bacq0_HNFq2_Select, file = "D:/Research/PdPy_Div_Results/p_Bacq0_HNFq2_Select.jpeg",
+       dpi = 600, width = 34, height = 28, units = "cm")
+##### species richness (Bacq0, HNFq2) vs selection ##########
+
+##### selection vs species richness (Bacq0, HNFq2) ##########
+p_BacSelect_Bacq0 <- HNF_Bac_A %>% 
+  select(ln.Bac_q0, ln.HNF_q2, Bac_select, HNF_select, Cruise) %>%
+  ggplot(aes(x = Bac_select, y = ln.Bac_q0)) + 
+  geom_point(aes(color = Cruise), size = 3) + 
+  geom_smooth(formula = y ~ x, method = "lm", se = TRUE, linetype = "dotted") + 
+  geom_smooth(method = mgcv::gam, formula = y ~ s(x), se = TRUE, color = "red", linetype = "dotted") + 
+  scale_colour_viridis(alpha = 0.7, discrete=TRUE) + 
+  labs(x = expression(atop(paste("Deterministic assembly processes (\U03B2", "NTI)"), "of Bacteria community ")),
+       y = expression("Log[ Bacteria species richness (Hill number = 0) ]")) + 
+  theme(axis.text = element_text(size = 12),
+        axis.title = element_text(size = 16))
+
+p_HNFSelect_HNFq2 <- HNF_Bac_A %>% 
+  select(ln.Bac_q0, ln.HNF_q2, Bac_select, HNF_select, Cruise) %>%
+  ggplot(aes(x = HNF_select, y = ln.HNF_q2)) + 
+  geom_point(aes(color = Cruise), size = 3) + 
+  geom_smooth(formula = y ~ x, method = "lm", se = TRUE, linetype = "dotted") + 
+  geom_smooth(method = mgcv::gam, formula = y ~ s(x), se = TRUE, color = "red", linetype = "dotted") + 
+  scale_colour_viridis(alpha = 0.7, discrete=TRUE) + 
+  labs(x = expression(atop(paste("Deterministic assembly processes (\U03B2", "NTI)"), "of HNF community ")),
+       y = expression("Log[ HNF Simpson diversity (Hill number = 2) ]")) + 
+  theme(axis.text = element_text(size = 12),
+        axis.title = element_text(size = 16))
+
+legend <- get_legend(
+  p_BacSelect_Bacq0 + theme(legend.box.margin = margin(0, 0, 0, 12))
+)
+p_Select_Bacq0_HNFq2 <- plot_grid(
+  plot_grid(p_BacSelect_Bacq0 + theme(legend.position="none"),
+            p_HNFSelect_HNFq2 + theme(legend.position="none")),
+  legend, rel_widths = c(3, .4))
+p_Select_Bacq0_HNFq2
+ggsave(p_Select_Bacq0_HNFq2, file = "D:/Research/PdPy_Div_Results/p_Select_Bacq0_HNFq2.jpeg",
+       dpi = 600, width = 34, height = 28, units = "cm")
+##### selection vs species richness (Bacq0, HNFq2) ##########
+
 ##### Path model analysis : Bac_q0 vs HNF_q1 ##########
 ##### Step 1: no random effects #####
 Bacq0_HNFq2_mod1.0 <- '

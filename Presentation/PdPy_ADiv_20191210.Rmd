@@ -24,6 +24,8 @@ editor_options:
 knitr::opts_chunk$set(fig.width=10, fig.height=10)
 ```
 
+![](ResearchQ.jpg)
+
 ```{r, library loading, echo = FALSE, message = FALSE}
 if (!require(tidyverse)) {
   install.packages("tidyverse", dependencies=TRUE, repos = 'http://cran.us.r-project.org')
