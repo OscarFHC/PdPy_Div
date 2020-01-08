@@ -419,7 +419,7 @@ HNF_Bac_A %>%
 
 ```
 
-# Bacteria diversity $\rightarrow$ HNF $\beta NTI$ $\rightarrow$ HNF diversity
+# HNF diversity $\rightarrow$ bacteria $\beta NTI$ $\rightarrow$ bacteria diversity
 
 ```{r, fig.width = 16, fig.height = 8.5}
 p_HNFq0_BacSelect <- HNF_Bac_A %>% 
@@ -456,7 +456,8 @@ p_HNFq0_BacSelect_Bacq0 <- plot_grid(
 p_HNFq0_BacSelect_Bacq0
 ``` 
 
-# HNF diversity $\rightarrow$ bacteria $\beta NTI$ $\rightarrow$ bacteria diversity
+# Bacteria diversity $\rightarrow$ HNF $\beta NTI$ $\rightarrow$ HNF diversity
+
 
 ```{r, fig.width = 16, fig.height = 8.5}
 p_Bacq0_HNFSelect <- HNF_Bac_A %>% 
@@ -499,7 +500,7 @@ p_Select_Bacq0_HNFq0
 include_graphics("SEM_q0_Select_q0.png")
 ``` 
 
-# $\beta NTI$ might be more informative to $\beta$ diversity
+# $\beta NTI$ might be more informative to $\beta$ diversity...future work
 
 ```{r, fig.cap = "", fig.align = 'center', out.width = "75%"}
 include_graphics("Hypo_BDiv.png")
