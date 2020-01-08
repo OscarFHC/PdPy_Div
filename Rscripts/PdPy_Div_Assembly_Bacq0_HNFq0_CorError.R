@@ -368,14 +368,14 @@ p_Adiv_pairs <- HNF_Bac_A %>%
           columnLabels = c("Bacteria\nspecies\nrichness", "HNF\nspecies\nrichness",
                            "Bacteria\nShannon\ndiversity", "HNF\nShannon\ndiversity", 
                            "Bacteria\nSimpson\ndiversity", "HNF\nSimpson\ndiversity", 
-                           "log(Bacteria\nbiomass)", "log(HNF\nbiomass)", "Bacteria\nselection", "HNF\nselection"),
+                           "log(Bacteria\nbiomass)", "log(HNF\nbiomass)", "Bacteria\nbNTI", "HNF\nbNTI"),
           #mapping = ggplot2::aes(colour = Cruise),
           upper = list(continuous = cor_fun),
           lower = list(continuous = fit_fun)) +
   theme(strip.text.x = element_text(color = "black", size = 14),
         strip.text.y = element_text(angle = 45, color = "black", size = 14))
 p_Adiv_pairs
-# ggsave(p_Adiv_pairs, file = "D:/Research/PdPy_Div_Results/p_ADiv_pairs_ln.jpeg",
+# ggsave(p_Adiv_pairs, file = "D:/Research/PdPy_Div_Results/Figs/p_ADiv_pairs_ln.jpeg",
 #        dpi = 600, width = 34, height = 28, units = "cm")
 
 # zooming 
@@ -384,14 +384,14 @@ p_Adiv_pairs <- HNF_Bac_A %>%
                       "ln.Bac_Biom", "ln.HNF_Biom", "Bac_select", "HNF_select"),
           columnLabels = c("Bacteria\nspecies\nrichness", 
                            "HNF\nspecies\nrichness", "HNF\nShannon\ndiversity", "HNF\nSimpson\ndiversity", 
-                           "log(Bacteria\nbiomass)", "log(HNF\nbiomass)", "Bacteria\nselection", "HNF\nselection"),
+                           "log(Bacteria\nbiomass)", "log(HNF\nbiomass)", "Bacteria\nbNTI", "HNF\nbNTI"),
           #mapping = ggplot2::aes(colour = Cruise),
           upper = list(continuous = cor_fun),
           lower = list(continuous = fit_fun)) +
   theme(strip.text.x = element_text(color = "black", size = 14),
         strip.text.y = element_text(angle = 45, color = "black", size = 14))
 p_Adiv_pairs
-# ggsave(p_Adiv_pairs, file = "D:/Research/PdPy_Div_Results/p_ADiv_pairsZoomIn_ln.jpeg",
+# ggsave(p_Adiv_pairs, file = "D:/Research/PdPy_Div_Results/Figs/p_ADiv_pairsZoomIn_ln.jpeg",
 #        dpi = 600, width = 34, height = 28, units = "cm")
 
 ##### Pair-wise plot of bio-variables ##########
@@ -518,8 +518,8 @@ p_HNFq0_BacSelect_Bacq0 <- plot_grid(
             p_BacSelect_Bacq0 + theme(legend.position = "none")),
   legend, rel_widths = c(3, .4))
 p_HNFq0_BacSelect_Bacq0
-# ggsave(p_HNFq0_BacSelect_Bacq0, file = "D:/Research/PdPy_Div_Results/Figs/p_HNFq0_BacSelect_Bacq0.jpeg",
-#        dpi = 600, width = 34, height = 28, units = "cm")
+# ggsave(p_HNFq0_BacSelect_Bacq0, file = "D:/Research/PdPy_Div/Presentation/20200110_NTOU/p_HNFq0_BacSelect_Bacq0.png",
+#        dpi = 600, width = 56, height = 28, units = "cm")
 ##### HNFq0 -> Bac selection -> Bacq0 ##########
 
 ##### Bacq0 -> Bac selection ->  HNFq0 ##########
@@ -573,8 +573,8 @@ p_Select_Bacq0_HNFq0 <- plot_grid(
             p_HNFSelect_HNFq0 + theme(legend.position="none")),
   legend, rel_widths = c(3, .4))
 p_Select_Bacq0_HNFq0
-# ggsave(p_Select_Bacq0_HNFq0, file = "D:/Research/PdPy_Div_Results/Figs/p_Bacq0_HNFSelect_HNFq0.jpeg",
-#        dpi = 600, width = 34, height = 28, units = "cm")
+# ggsave(p_Select_Bacq0_HNFq0, file = "D:/Research/PdPy_Div/Presentation/20200110_NTOU/p_Bacq0_HNFSelect_HNFq0.png",
+#        dpi = 600, width = 56, height = 28, units = "cm")
 ##### Bacq0 -> Bac selection ->  HNFq0 ##########
 
 ##### Path model analysis : Bac_q0 vs HNF_q0 ##########

@@ -16,13 +16,9 @@ editor_options:
   chunk_output_type: console
 ---
 
-```{r, set global theme, include=FALSE}
-knitr::opts_chunk$set()
-```
-
 ```{r, global setup, include=FALSE}
 library(knitr)
-opts_chunk$set(echo = FALSE, fig.width = 16, fig.height = 16)
+opts_chunk$set(echo = FALSE)
 ```
 
 ```{r, library loading, echo = FALSE, message = FALSE}
@@ -331,13 +327,13 @@ HNF_Bac_A <- as.data.frame(HNF_Bac_A)
 }
 </style>
 
-```{r positiveBEF, fig.cap = "Cardinale et al. 2012 @ Nature", fig.align = 'center'}
+```{r positiveBEF, fig.cap = "Cardinale et al. 2012 @ Nature", fig.align = 'center', out.width = "75%"}
 include_graphics("positiveBEF.png")
 ``` 
 
 #
 
-```{r consumerBEF, fig.cap = "Griffin et al. 2013 @ Ecology", fig.align = 'center'}
+```{r consumerBEF, fig.cap = "Griffin et al. 2013 @ Ecology", fig.align = 'center', out.width = "75%"}
 include_graphics("consumerBEF.png")
 ``` 
 
@@ -345,7 +341,7 @@ include_graphics("consumerBEF.png")
 
 The effects of **predator diversity** and **prey diversity** are coufounded
 
-```{r PdPyDiv_EF, fig.align = 'center'}
+```{r PdPyDiv_EF, fig.align = 'center', out.width = "75%"}
 include_graphics("PdPyDiv_EF.png")
 ``` 
 
@@ -355,7 +351,33 @@ Hypothesis:
 
 The predator-prey diversity relationship would be driven by **the strength of deterministic assembly processes**.
 
-```{r Hypo, fig.align = 'center'}
+- Predator : hetero-trophic nano-flagellate
+- Predator : bacteria
+
+```{r, message=FALSE, fig.width = 7, fig.height = 5}
+St_sECS = read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/raw/St_Location.csv", 
+                     header = T, fill = T, sep = ",")
+library(ggmap)
+library(mapproj)
+bbox <- ggmap::make_bbox(Lon, Lat, St_sECS, f = 0.1)
+map <- get_map(
+  location = bbox #c(lon=-85, lat=44) # google search string
+  #, zoom = 7 # larger is closer
+  #, maptype = "terrian" # map type
+  , source = "google"
+)
+p = ggmap(map) + 
+  geom_point(data = St_sECS[1:7,], aes(x = Lon, y = Lat), size = 4) + 
+  labs(x="Longitude", y="Latitude") + 
+  geom_text(data = St_sECS[1:7,], aes(x = Lon, y = Lat, label = Station), hjust = -0.4, vjust = -0.3, size = 4) + 
+  theme(axis.title = element_text(size = 18),
+        axis.text = element_text(size = 14))
+p
+```
+
+#
+
+```{r Hypo, fig.align = 'center', out.width = "75%"}
 include_graphics("Hypo.png")
 ``` 
 
@@ -371,64 +393,72 @@ include_graphics("Hypo.png")
   
 $$\beta NTI = \frac{\beta MNTD_{obs} - \overline{\beta MNTD_{null}}}{sd(\beta MNTD_{null})}$$,  where $\beta MNTD_{null}$ is the null distribution of between-assemblage mean nearest taxon distance.
 
-```{r bNTI, fig.cap = "Stegen et al. 2012 @ ISME", fig.align = 'center'}
+```{r bNTI, fig.cap = "Stegen et al. 2012 @ ISME", fig.align = 'center', out.width = "75%"}
 include_graphics("bNTI_explain.png")
 ``` 
 
 - The more $\beta NTI$ deviated from the null, the stronger the deterministic assembly processes is. 
 
-#
+# Bacteria-HNF diversity relationships
 
-```{r bNTI, fig.cap = "Stegen et al. 2012 @ ISME", fig.align = 'center'}
-include_graphics("bNTI_explain.png")
+```{r, fig.width = 14, fig.height = 8.5}
+Div.labs <- c("HNF\nspecies\nrichness", "HNF\nShannon\ndiversity", "HNF\nSimpson\ndiversity")
+names(Div.labs) <- c("ln.HNF_q0", "ln.HNF_q1", "ln.HNF_q2")
+HNF_Bac_A %>%
+  select(ln.Bac_q0, ln.HNF_q0, ln.HNF_q1, ln.HNF_q2, Bac_select, HNF_select) %>%
+  gather(key = "Div_index", value = "HNF_div", -c(ln.Bac_q0, Bac_select, HNF_select)) %>%
+  ggplot(aes(x = ln.Bac_q0, y = HNF_div)) + 
+    geom_point(size = 3) + 
+    facet_grid(~ Div_index, labeller = labeller(Div_index = Div.labs)) +
+    geom_smooth(formula = y ~ x, method = "lm", se = TRUE) + 
+    labs(x = expression("Log[ Bacteria species richness (Hill number = 0) ]"),
+         y = expression("Log[ HNF diversity index ]")) + 
+    theme(strip.text.x = element_text(size = 12, face = "bold"),
+          axis.text = element_text(size = 12),
+          axis.title = element_text(size = 16))
+
+```
+
+# Bacteria diversity $\rightarrow$ HNF $\beta NTI$ $\rightarrow$ HNF diversity
+
+```{r, fig.width = 16, fig.height = 8.5}
+p_HNFq0_BacSelect <- HNF_Bac_A %>% 
+  select(ln.Bac_q0, ln.HNF_q0, Bac_select, HNF_select, Cruise) %>%
+  ggplot(aes(x = ln.HNF_q0, y = Bac_select)) + 
+  geom_point(aes(color = Cruise), size = 3) + 
+  geom_smooth(formula = y ~ x, method = "lm", se = TRUE, linetype = "dotted") + 
+  geom_smooth(method = mgcv::gam, formula = y ~ s(x), se = TRUE, color = "red", linetype = "dotted") + 
+  scale_colour_viridis(alpha = 0.7, discrete=TRUE) + 
+  labs(x = expression("Log[ HNF species richness (Hill number = 0) ]"),
+       y = expression("Deterministic assembly processes ( \U03B2NTI) of Bacteria community ")) + 
+  theme(axis.text = element_text(size = 12),
+        axis.title = element_text(size = 16))
+
+p_BacSelect_Bacq0 <- HNF_Bac_A %>% 
+  select(ln.Bac_q0, ln.HNF_q0, Bac_select, HNF_select, Cruise) %>%
+  ggplot(aes(x = Bac_select, y = ln.Bac_q0)) + 
+  geom_point(aes(color = Cruise), size = 3) + 
+  geom_smooth(formula = y ~ x, method = "lm", se = TRUE, linetype = "dotted") + 
+  geom_smooth(method = mgcv::gam, formula = y ~ s(x), se = TRUE, color = "red", linetype = "solid") + 
+  scale_colour_viridis(alpha = 0.7, discrete=TRUE) + 
+  labs(x = expression("Deterministic assembly processes ( \U03B2NTI) of Bacteria community "),
+       y = expression("Log[ Bacteria species richness (Hill number = 0) ]")) + 
+  theme(axis.text = element_text(size = 12),
+        axis.title = element_text(size = 16))
+
+legend <- get_legend(
+  p_HNFq0_BacSelect + theme(legend.box.margin = margin(0, 0, 0, 12))
+)
+p_HNFq0_BacSelect_Bacq0 <- plot_grid(
+  plot_grid(p_HNFq0_BacSelect + theme(legend.position = "none"),
+            p_BacSelect_Bacq0 + theme(legend.position = "none")),
+  legend, rel_widths = c(3, .4))
+p_HNFq0_BacSelect_Bacq0
 ``` 
 
+# HNF diversity $\rightarrow$ bacteria $\beta NTI$ $\rightarrow$ bacteria diversity
 
-
-# EXploratory Data analyses
-
-## Pairwise predator (HNF)-prey (bacteria) diversity relationship
-
-```{r, Diversity pairs, echo = FALSE}
-p_Adiv_pairs <- HNF_Bac_A %>%
-  ggpairs(columns = c("ln.Bac_q0", "ln.HNF_q0", "ln.Bac_q1", "ln.HNF_q1", "ln.Bac_q2", "ln.HNF_q2"),
-                      #"ln.Bac_Biom", "ln.HNF_Biom", "Bac_select", "HNF_select"),
-          columnLabels = c("Bacteria\nspecies\nrichness", "HNF\nspecies\nrichness",
-                           "Bacteria\nShannon\ndiversity", "HNF\nShannon\ndiversity", 
-                           "Bacteria\nSimpson\ndiversity", "HNF\nSimpson\ndiversity"), 
-                           #"log(Bacteria\nbiomass)", "log(HNF\nbiomass)", "Bacteria\nselection", "HNF\nselection"),
-          #mapping = ggplot2::aes(colour = Cruise),
-          upper = list(continuous = cor_fun),
-          lower = list(continuous = fit_fun)) +
-  theme(strip.text.x = element_text(color = "black", size = 14),
-        strip.text.y = element_text(angle = 45, color = "black", size = 14))
-p_Adiv_pairs
-```
-
-Bacteria species richness (*BacSR*) is positively related to all three HNF diversity indices and those relationships seem to be non-linear. However, Bacteria Shannon and Simpson diversity are not significantly related to any diversity indices of HNF so could be omitted from the following analyses. 
-
-## Predator-prey diversity indices V.S. $\beta NTI$
-
-```{r, Diversity selection biomass, echo = FALSE}
-p_Adiv_pairs_select <- HNF_Bac_A %>%
-  ggpairs(columns = c("ln.Bac_q0", "ln.HNF_q0", "ln.HNF_q1", "ln.HNF_q2",  
-                      "ln.Bac_Biom", "ln.HNF_Biom", "Bac_select", "HNF_select"),
-          columnLabels = c("Bacteria\nspecies\nrichness", 
-                           "HNF\nspecies\nrichness", "HNF\nShannon\ndiversity", "HNF\nSimpson\ndiversity", 
-                           "log(Bacteria\nbiomass)", "log(HNF\nbiomass)", "Bacteria\nselection", "HNF\nselection"),
-          #mapping = ggplot2::aes(colour = Cruise),
-          upper = list(continuous = cor_fun),
-          lower = list(continuous = fit_fun)) +
-  theme(strip.text.x = element_text(color = "black", size = 14),
-        strip.text.y = element_text(angle = 45, color = "black", size = 14))
-p_Adiv_pairs_select
-```
-
-# HNF species richness V.S. Bacteria species richness
-
-## Linear model
-
-```{r, echo = FALSE}
+```{r, fig.width = 16, fig.height = 8.5}
 p_Bacq0_HNFSelect <- HNF_Bac_A %>% 
   select(ln.Bac_q0, ln.HNF_q0, Bac_select, HNF_select, Cruise) %>%
   ggplot(aes(x = ln.Bac_q0, y = HNF_select)) + 
@@ -437,43 +467,7 @@ p_Bacq0_HNFSelect <- HNF_Bac_A %>%
   geom_smooth(method = mgcv::gam, formula = y ~ s(x), se = TRUE, color = "red", linetype = "dotted") + 
   scale_colour_viridis(alpha = 0.7, discrete=TRUE) + 
   labs(x = expression("Log[ Bacteria species richness (Hill number = 0) ]"),
-       y = expression(paste("Deterministic assembly processes (", "\U03B2", "NTI) ", "of HNF community "))) + 
-  theme(axis.text = element_text(size = 12),
-        axis.title = element_text(size = 16))
-
-p_HNFq1_BacSelect <- HNF_Bac_A %>% 
-  select(ln.Bac_q0, ln.HNF_q1, Bac_select, HNF_select, Cruise) %>%
-  ggplot(aes(x = ln.HNF_q1, y = Bac_select)) + 
-  geom_point(aes(color = Cruise), size = 3) + 
-  geom_smooth(formula = y ~ x, method = "lm", se = TRUE, linetype = "dotted") + 
-  geom_smooth(method = mgcv::gam, formula = y ~ s(x), se = TRUE, color = "red", linetype = "dotted") + 
-  scale_colour_viridis(alpha = 0.7, discrete=TRUE) + 
-  labs(x = expression("Log[ HNF species richness (Hill number = 0) ]"),
-       y = expression(paste("Deterministic assembly processes (", "\U03B2", "NTI) ", "of Bacteria community "))) + 
-  theme(axis.text = element_text(size = 12),
-        axis.title = element_text(size = 16))
-
-legend <- get_legend(
-  p_Bacq0_HNFSelect + theme(legend.box.margin = margin(0, 0, 0, 12))
-)
-
-p_Bacq1_HNFq0_Select <- plot_grid(
-  plot_grid(p_Bacq0_HNFSelect + theme(legend.position="none"),
-            p_HNFq1_BacSelect + theme(legend.position="none")),
-  legend, rel_widths = c(3, .4))
-p_Bacq1_HNFq0_Select
-```
-
-```{r, echo = FALSE}
-p_BacSelect_Bacq0 <- HNF_Bac_A %>% 
-  select(ln.Bac_q0, ln.HNF_q0, Bac_select, HNF_select, Cruise) %>%
-  ggplot(aes(x = Bac_select, y = ln.Bac_q0)) + 
-  geom_point(aes(color = Cruise), size = 3) + 
-  geom_smooth(formula = y ~ x, method = "lm", se = TRUE, linetype = "dotted") + 
-  geom_smooth(method = mgcv::gam, formula = y ~ s(x), se = TRUE, color = "red", linetype = "dotted") + 
-  scale_colour_viridis(alpha = 0.7, discrete=TRUE) + 
-  labs(x = expression(atop(paste("Deterministic assembly processes (\U03B2", "NTI)"), "of Bacteria community ")),
-       y = expression("Log[ Bacteria species richness (Hill number = 0) ]")) + 
+       y = expression("Deterministic assembly processes ( \U03B2NTI) of HNF community ")) + 
   theme(axis.text = element_text(size = 12),
         axis.title = element_text(size = 16))
 
@@ -482,365 +476,34 @@ p_HNFSelect_HNFq0 <- HNF_Bac_A %>%
   ggplot(aes(x = HNF_select, y = ln.HNF_q0)) + 
   geom_point(aes(color = Cruise), size = 3) + 
   geom_smooth(formula = y ~ x, method = "lm", se = TRUE, linetype = "dotted") + 
-  geom_smooth(method = mgcv::gam, formula = y ~ s(x), se = TRUE, color = "red", linetype = "dotted") + 
+  geom_smooth(method = mgcv::gam, formula = y ~ s(x), se = TRUE, color = "red", linetype = "solid") + 
   scale_colour_viridis(alpha = 0.7, discrete=TRUE) + 
-  labs(x = expression(atop(paste("Deterministic assembly processes (\U03B2", "NTI)"), "of HNF community ")),
+  labs(x = expression("Deterministic assembly processes ( \U03B2NTI) of HNF community "),
        y = expression("Log[ HNF species richness (Hill number = 0) ]")) + 
   theme(axis.text = element_text(size = 12),
         axis.title = element_text(size = 16))
 
 legend <- get_legend(
-  p_BacSelect_Bacq0 + theme(legend.box.margin = margin(0, 0, 0, 12))
+  p_Bacq0_HNFSelect + theme(legend.box.margin = margin(0, 0, 0, 12))
 )
 p_Select_Bacq0_HNFq0 <- plot_grid(
-  plot_grid(p_BacSelect_Bacq0 + theme(legend.position="none"),
+  plot_grid(p_Bacq0_HNFSelect + theme(legend.position="none"),
             p_HNFSelect_HNFq0 + theme(legend.position="none")),
   legend, rel_widths = c(3, .4))
 p_Select_Bacq0_HNFq0
-```
+``` 
 
+# Path model
 
-## Path analyses to include bacteria and HNF biomass and other environmental variables
+```{r, fig.cap = "", fig.align = 'center', out.width = "90%"}
+include_graphics("SEM_q0_Select_q0.png")
+``` 
 
-![](q0_Select_q0_1.jpg)
+# $\beta NTI$ might be more informative to $\beta$ diversity
 
-![](q0_Select_q0_2.jpg)
-
-![](q0_Select_q0_3.jpg)
-
-# HNF Shannon diversity V.S. Bacteria species richness
-
-## Linear model
-
-```{r, echo = FALSE}
-p_Bacq0_HNFSelect <- HNF_Bac_A %>% 
-  select(ln.Bac_q0, ln.HNF_q0, Bac_select, HNF_select, Cruise) %>%
-  ggplot(aes(x = ln.Bac_q0, y = HNF_select)) + 
-  geom_point(aes(color = Cruise), size = 3) + 
-  geom_smooth(formula = y ~ x, method = "lm", se = TRUE, linetype = "dotted") + 
-  geom_smooth(method = mgcv::gam, formula = y ~ s(x), se = TRUE, color = "red", linetype = "dotted") + 
-  scale_colour_viridis(alpha = 0.7, discrete=TRUE) + 
-  labs(x = expression("Log[ Bacteria species richness (Hill number = 0) ]"),
-       y = expression(paste("Deterministic assembly processes (", "\U03B2", "NTI) ", "of HNF community "))) + 
-  theme(axis.text = element_text(size = 12),
-        axis.title = element_text(size = 16))
-
-p_HNFq1_BacSelect <- HNF_Bac_A %>% 
-  select(ln.Bac_q0, ln.HNF_q1, Bac_select, HNF_select, Cruise) %>%
-  ggplot(aes(x = ln.HNF_q1, y = Bac_select)) + 
-  geom_point(aes(color = Cruise), size = 3) + 
-  geom_smooth(formula = y ~ x, method = "lm", se = TRUE, linetype = "dotted") + 
-  geom_smooth(method = mgcv::gam, formula = y ~ s(x), se = TRUE, color = "red", linetype = "dotted") + 
-  scale_colour_viridis(alpha = 0.7, discrete=TRUE) + 
-  labs(x = expression("Log[ HNF Shannon diversity (Hill number = 1) ]"),
-       y = expression(paste("Deterministic assembly processes (", "\U03B2", "NTI) ", "of Bacteria community "))) + 
-  theme(axis.text = element_text(size = 12),
-        axis.title = element_text(size = 16))
-
-legend <- get_legend(
-  p_Bacq0_HNFSelect + theme(legend.box.margin = margin(0, 0, 0, 12))
-)
-
-p_Bacq0_HNFq1_Select <- plot_grid(
-  plot_grid(p_Bacq0_HNFSelect + theme(legend.position="none"),
-            p_HNFq1_BacSelect + theme(legend.position="none")),
-  legend, rel_widths = c(3, .4))
-p_Bacq0_HNFq1_Select
-```
-
-```{r, echo = FALSE}
-p_BacSelect_Bacq0 <- HNF_Bac_A %>% 
-  select(ln.Bac_q0, ln.HNF_q1, Bac_select, HNF_select, Cruise) %>%
-  ggplot(aes(x = Bac_select, y = ln.Bac_q0)) + 
-  geom_point(aes(color = Cruise), size = 3) + 
-  geom_smooth(formula = y ~ x, method = "lm", se = TRUE, linetype = "dotted") + 
-  geom_smooth(method = mgcv::gam, formula = y ~ s(x), se = TRUE, color = "red", linetype = "dotted") + 
-  scale_colour_viridis(alpha = 0.7, discrete=TRUE) + 
-  labs(x = expression(atop(paste("Deterministic assembly processes (\U03B2", "NTI)"), "of Bacteria community ")),
-       y = expression("Log[ Bacteria species richness (Hill number = 0) ]")) + 
-  theme(axis.text = element_text(size = 12),
-        axis.title = element_text(size = 16))
-
-p_HNFSelect_HNFq1 <- HNF_Bac_A %>% 
-  select(ln.Bac_q0, ln.HNF_q1, Bac_select, HNF_select, Cruise) %>%
-  ggplot(aes(x = HNF_select, y = ln.HNF_q1)) + 
-  geom_point(aes(color = Cruise), size = 3) + 
-  geom_smooth(formula = y ~ x, method = "lm", se = TRUE, linetype = "dotted") + 
-  geom_smooth(method = mgcv::gam, formula = y ~ s(x), se = TRUE, color = "red", linetype = "dotted") + 
-  scale_colour_viridis(alpha = 0.7, discrete=TRUE) + 
-  labs(x = expression(atop(paste("Deterministic assembly processes (\U03B2", "NTI)"), "of HNF community ")),
-       y = expression("Log[ HNF Shannon diversity (Hill number = 1) ]")) + 
-  theme(axis.text = element_text(size = 12),
-        axis.title = element_text(size = 16))
-
-legend <- get_legend(
-  p_BacSelect_Bacq0 + theme(legend.box.margin = margin(0, 0, 0, 12))
-)
-
-p_Select_Bacq0_HNFq1 <- plot_grid(
-  plot_grid(p_BacSelect_Bacq0 + theme(legend.position="none"),
-            p_HNFSelect_HNFq1 + theme(legend.position="none")),
-  legend, rel_widths = c(3, .4))
-p_Select_Bacq0_HNFq1
-```
-
-## Path analyses to include bacteria and HNF biomass and other environmental variables
-
-![](q0_Select_q1_1.jpg)
-
-![](q0_Select_q1_2.jpg)
-
-![](q0_Select_q1_3.jpg)
-
-# HNF Simpson diversity V.S. Bacteria species richness
-
-## Linear model
-
-```{r, echo = FALSE}
-p_Bacq0_HNFSelect <- HNF_Bac_A %>% 
-  select(ln.Bac_q0, ln.HNF_q0, Bac_select, HNF_select, Cruise) %>%
-  ggplot(aes(x = ln.Bac_q0, y = HNF_select)) + 
-  geom_point(aes(color = Cruise), size = 3) + 
-  geom_smooth(formula = y ~ x, method = "lm", se = TRUE, linetype = "dotted") + 
-  geom_smooth(method = mgcv::gam, formula = y ~ s(x), se = TRUE, color = "red", linetype = "dotted") + 
-  scale_colour_viridis(alpha = 0.7, discrete=TRUE) + 
-  labs(x = expression("Log[ Bacteria species richness (Hill number = 0) ]"),
-       y = expression(paste("Deterministic assembly processes (", "\U03B2", "NTI) ", "of HNF community "))) + 
-  theme(axis.text = element_text(size = 12),
-        axis.title = element_text(size = 16))
-
-p_HNFq2_BacSelect <- HNF_Bac_A %>% 
-  select(ln.Bac_q0, ln.HNF_q2, Bac_select, HNF_select, Cruise) %>%
-  ggplot(aes(x = ln.HNF_q2, y = Bac_select)) + 
-  geom_point(aes(color = Cruise), size = 3) + 
-  geom_smooth(formula = y ~ x, method = "lm", se = TRUE, linetype = "dotted") + 
-  geom_smooth(method = mgcv::gam, formula = y ~ s(x), se = TRUE, color = "red", linetype = "dotted") + 
-  scale_colour_viridis(alpha = 0.7, discrete=TRUE) + 
-  labs(x = expression("Log[ HNF Simpson diversity (Hill number = 2) ]"),
-       y = expression(paste("Deterministic assembly processes (", "\U03B2", "NTI) ", "of Bacteria community "))) + 
-  theme(axis.text = element_text(size = 12),
-        axis.title = element_text(size = 16))
-
-legend <- get_legend(
-  p_Bacq0_HNFSelect + theme(legend.box.margin = margin(0, 0, 0, 12))
-)
-
-p_Bacq0_HNFq2_Select <- plot_grid(
-  plot_grid(p_Bacq0_HNFSelect + theme(legend.position="none"),
-            p_HNFq2_BacSelect + theme(legend.position="none")),
-  legend, rel_widths = c(3, .4))
-p_Bacq0_HNFq2_Select
-```
-
-```{r, echo = FALSE}
-p_BacSelect_Bacq0 <- HNF_Bac_A %>% 
-  select(ln.Bac_q0, ln.HNF_q2, Bac_select, HNF_select, Cruise) %>%
-  ggplot(aes(x = Bac_select, y = ln.Bac_q0)) + 
-  geom_point(aes(color = Cruise), size = 3) + 
-  geom_smooth(formula = y ~ x, method = "lm", se = TRUE, linetype = "dotted") + 
-  geom_smooth(method = mgcv::gam, formula = y ~ s(x), se = TRUE, color = "red", linetype = "dotted") + 
-  scale_colour_viridis(alpha = 0.7, discrete=TRUE) + 
-  labs(x = expression(atop(paste("Deterministic assembly processes (\U03B2", "NTI)"), "of Bacteria community ")),
-       y = expression("Log[ Bacteria species richness (Hill number = 0) ]")) + 
-  theme(axis.text = element_text(size = 12),
-        axis.title = element_text(size = 16))
-
-p_HNFSelect_HNFq2 <- HNF_Bac_A %>% 
-  select(ln.Bac_q0, ln.HNF_q2, Bac_select, HNF_select, Cruise) %>%
-  ggplot(aes(x = HNF_select, y = ln.HNF_q2)) + 
-  geom_point(aes(color = Cruise), size = 3) + 
-  geom_smooth(formula = y ~ x, method = "lm", se = TRUE, linetype = "dotted") + 
-  geom_smooth(method = mgcv::gam, formula = y ~ s(x), se = TRUE, color = "red", linetype = "dotted") + 
-  scale_colour_viridis(alpha = 0.7, discrete=TRUE) + 
-  labs(x = expression(atop(paste("Deterministic assembly processes (\U03B2", "NTI)"), "of HNF community ")),
-       y = expression("Log[ HNF Simpson diversity (Hill number = 2) ]")) + 
-  theme(axis.text = element_text(size = 12),
-        axis.title = element_text(size = 16))
-
-legend <- get_legend(
-  p_BacSelect_Bacq0 + theme(legend.box.margin = margin(0, 0, 0, 12))
-)
-
-p_Select_Bacq0_HNFq2 <- plot_grid(
-  plot_grid(p_BacSelect_Bacq0 + theme(legend.position="none"),
-            p_HNFSelect_HNFq2 + theme(legend.position="none")),
-  legend, rel_widths = c(3, .4))
-p_Select_Bacq0_HNFq2
-```
-
-
-## Path analyses to include bacteria and HNF biomass and other environmental variables
-
-![](q0_Select_q2_1.jpg)
-
-![](q0_Select_q2_2.jpg)
-
-![](q0_Select_q2_3.jpg)
-
-
-```{r, q0_select_q0, echo = FALSE}
-Bacq0_HNFq0_psem2.Cr2 <- psem(
-  lme(ln.Bac_q0 ~ Bac_select + ln.HNF_Biom + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
-      random = ~ 1 | Cruise, data = HNF_Bac_A),
-  lme(ln.HNF_q0 ~ HNF_select + ln.Bac_Biom + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
-      random = ~ 1 | Cruise, data = HNF_Bac_A),
-  lme(Bac_select ~ ln.HNF_q0 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
-      random = ~ 1 | Cruise, data = HNF_Bac_A),
-  # lme(HNF_select ~ ln.Bac_q0 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
-  #     random = ~ 1 | Cruise, data = HNF_Bac_A),
-  # 
-  # lme(ln.Bac_Biom ~ ln.Bac_q0 + ln.HNF_Biom + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
-  #    random = ~ 1 | Cruise, data = HNF_Bac_A),
-  lme(ln.HNF_Biom ~ ln.HNF_q0 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
-      random = ~ 1 | Cruise, data = HNF_Bac_A),
-  
-  ln.Bac_q0 %~~% ln.HNF_q0
-)
-#coefs(Bacq0_HNFq0_psem2.Cr2, standardize = "scale")
-
-Bacq0_HNFq0_psem2.Cr1 <- psem(
-  lme(ln.Bac_q0 ~ Bac_select + ln.HNF_Biom, 
-      random = ~ 1 | Cruise, data = HNF_Bac_A),
-  lme(ln.HNF_q0 ~ HNF_select + ln.Bac_Biom, 
-      random = ~ 1 | Cruise, data = HNF_Bac_A),
-  lme(Bac_select ~ ln.HNF_q0, 
-      random = ~ 1 | Cruise, data = HNF_Bac_A),
-  lme(HNF_select ~ ln.Bac_q0,
-      random = ~ 1 | Cruise, data = HNF_Bac_A),
-
-  lme(ln.Bac_Biom ~ ln.Bac_q0 + ln.HNF_Biom,
-     random = ~ 1 | Cruise, data = HNF_Bac_A),
-  lme(ln.HNF_Biom ~ ln.HNF_q0, 
-      random = ~ 1 | Cruise, data = HNF_Bac_A),
-  
-  ln.Bac_q0 %~~% ln.HNF_q0
-)
-#coefs(Bacq0_HNFq0_psem2.Cr1, standardize = "scale")
-
-Bacq0_HNFq0_psem2.Cr0 <- psem(
-  lme(ln.Bac_q0 ~ Bac_select, 
-      random = ~ 1 | Cruise, data = HNF_Bac_A),
-  lme(ln.HNF_q0 ~ HNF_select, 
-      random = ~ 1 | Cruise, data = HNF_Bac_A),
-  lme(Bac_select ~ ln.HNF_q0, 
-      random = ~ 1 | Cruise, data = HNF_Bac_A),
-  lme(HNF_select ~ ln.Bac_q0,
-      random = ~ 1 | Cruise, data = HNF_Bac_A),
-  
-  ln.Bac_q0 %~~% ln.HNF_q0
-)
-#coefs(Bacq0_HNFq0_psem2.Cr0, standardize = "scale")
-```
-
-```{r, q0_select_q1, echo = FALSE}
-Bacq0_HNFq1_psem2.Cr0 <- psem(
-  lme(ln.Bac_q0 ~ Bac_select, 
-      random = ~ 1 | Cruise, data = HNF_Bac_A),
-  lme(ln.HNF_q1 ~ HNF_select, 
-      random = ~ 1 | Cruise, data = HNF_Bac_A),
-  lme(Bac_select ~ ln.HNF_q1, 
-      random = ~ 1 | Cruise, data = HNF_Bac_A),
-  lme(HNF_select ~ ln.Bac_q0,
-      random = ~ 1 | Cruise, data = HNF_Bac_A),
-  
-  ln.Bac_q0 %~~% ln.HNF_q1
-)
-#coefs(Bacq0_HNFq1_psem2.Cr0, standardize = "scale")
-
-Bacq0_HNFq1_psem2.Cr1 <- psem(
-  lme(ln.Bac_q0 ~ Bac_select + ln.HNF_Biom, 
-      random = ~ 1 | Cruise, data = HNF_Bac_A),
-  lme(ln.HNF_q1 ~ HNF_select + ln.Bac_Biom, 
-      random = ~ 1 | Cruise, data = HNF_Bac_A),
-  lme(Bac_select ~ ln.HNF_q1, 
-      random = ~ 1 | Cruise, data = HNF_Bac_A),
-  lme(HNF_select ~ ln.Bac_q0,
-      random = ~ 1 | Cruise, data = HNF_Bac_A),
-
-  lme(ln.Bac_Biom ~ ln.Bac_q0 + ln.HNF_Biom,
-     random = ~ 1 | Cruise, data = HNF_Bac_A),
-  lme(ln.HNF_Biom ~ ln.HNF_q1, 
-      random = ~ 1 | Cruise, data = HNF_Bac_A),
-  
-  ln.Bac_q0 %~~% ln.HNF_q1
-)
-#coefs(Bacq0_HNFq1_psem2.Cr1, standardize = "scale")
-
-Bacq0_HNFq1_psem2.Cr2 <- psem(
-  lme(ln.Bac_q0 ~ Bac_select + ln.HNF_Biom + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
-      random = ~ 1 | Cruise, data = HNF_Bac_A),
-  lme(ln.HNF_q1 ~ HNF_select + ln.Bac_Biom + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
-      random = ~ 1 | Cruise, data = HNF_Bac_A),
-  lme(Bac_select ~ ln.HNF_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
-      random = ~ 1 | Cruise, data = HNF_Bac_A),
-  # lme(HNF_select ~ ln.Bac_q0 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
-  #     random = ~ 1 | Cruise, data = HNF_Bac_A),
-  # 
-  # lme(ln.Bac_Biom ~ ln.Bac_q0 + ln.HNF_Biom + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
-  #    random = ~ 1 | Cruise, data = HNF_Bac_A),
-  lme(ln.HNF_Biom ~ ln.HNF_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
-      random = ~ 1 | Cruise, data = HNF_Bac_A),
-  
-  ln.Bac_q0 %~~% ln.HNF_q1
-)
-#coefs(Bacq0_HNFq1_psem2.Cr2, standardize = "scale")
-```
-
-```{r, q0_select_q2, echo = FALSE}
-Bacq0_HNFq2_psem2.Cr0 <- psem(
-  lme(ln.Bac_q0 ~ Bac_select, 
-      random = ~ 1 | Cruise, data = HNF_Bac_A),
-  lme(ln.HNF_q2 ~ HNF_select, 
-      random = ~ 1 | Cruise, data = HNF_Bac_A),
-  lme(Bac_select ~ ln.HNF_q2, 
-      random = ~ 1 | Cruise, data = HNF_Bac_A),
-  lme(HNF_select ~ ln.Bac_q0,
-      random = ~ 1 | Cruise, data = HNF_Bac_A),
-  
-  ln.Bac_q0 %~~% ln.HNF_q2
-)
-#coefs(Bacq0_HNFq2_psem2.Cr0, standardize = "scale")
-
-Bacq0_HNFq2_psem2.Cr1 <- psem(
-  lme(ln.Bac_q0 ~ Bac_select + ln.HNF_Biom, 
-      random = ~ 1 | Cruise, data = HNF_Bac_A),
-  lme(ln.HNF_q2 ~ HNF_select + ln.Bac_Biom, 
-      random = ~ 1 | Cruise, data = HNF_Bac_A),
-  lme(Bac_select ~ ln.HNF_q2, 
-      random = ~ 1 | Cruise, data = HNF_Bac_A),
-  lme(HNF_select ~ ln.Bac_q0,
-      random = ~ 1 | Cruise, data = HNF_Bac_A),
-
-  lme(ln.Bac_Biom ~ ln.Bac_q0 + ln.HNF_Biom,
-     random = ~ 1 | Cruise, data = HNF_Bac_A),
-  lme(ln.HNF_Biom ~ ln.HNF_q2, 
-      random = ~ 1 | Cruise, data = HNF_Bac_A),
-  
-  ln.Bac_q0 %~~% ln.HNF_q2
-)
-#coefs(Bacq0_HNFq2_psem2.Cr1, standardize = "scale")
-
-Bacq0_HNFq2_psem2.Cr2 <- psem(
-  lme(ln.Bac_q0 ~ Bac_select + ln.HNF_Biom + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
-      random = ~ 1 | Cruise, data = HNF_Bac_A),
-  lme(ln.HNF_q2 ~ HNF_select + ln.Bac_Biom + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
-      random = ~ 1 | Cruise, data = HNF_Bac_A),
-  lme(Bac_select ~ ln.HNF_q2 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
-      random = ~ 1 | Cruise, data = HNF_Bac_A),
-  # lme(HNF_select ~ ln.Bac_q0 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
-  #     random = ~ 1 | Cruise, data = HNF_Bac_A),
-  # 
-  # lme(ln.Bac_Biom ~ ln.Bac_q0 + ln.HNF_Biom + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
-  #    random = ~ 1 | Cruise, data = HNF_Bac_A),
-  lme(ln.HNF_Biom ~ ln.HNF_q2 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + ln.Chla, 
-      random = ~ 1 | Cruise, data = HNF_Bac_A),
-  
-  ln.Bac_q0 %~~% ln.HNF_q2
-)
-#coefs(Bacq0_HNFq2_psem2.Cr2, standardize = "scale")
-```
-
-
+```{r, fig.cap = "", fig.align = 'center', out.width = "75%"}
+include_graphics("Hypo_BDiv.png")
+``` 
 
 
 

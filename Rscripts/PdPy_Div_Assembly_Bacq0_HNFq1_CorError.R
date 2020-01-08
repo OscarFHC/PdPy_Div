@@ -521,7 +521,7 @@ p_HNFq1_BacSelect_Bacq0
 #        dpi = 600, width = 34, height = 28, units = "cm")
 ##### HNFq1 -> Bac selection -> Bacq0 ##########
 
-##### Bacq0 -> Bac selection ->  HNFq1 ##########
+##### Bacq0 -> HNF selection ->  HNFq1 ##########
 ### linear model testing
 HNFS_Bacq0.0 <- lm(HNF_select ~ ln.Bac_q0, data = HNF_Bac_A)
 HNFS_Bacq0.Cr <- lme(HNF_select ~ ln.Bac_q0, random = ~ 1 | Cruise, data = HNF_Bac_A)
@@ -572,9 +572,9 @@ p_Select_Bacq0_HNFq1 <- plot_grid(
             p_HNFSelect_HNFq1 + theme(legend.position="none")),
   legend, rel_widths = c(3, .4))
 p_Select_Bacq0_HNFq1
-# ggsave(p_Select_Bacq0_HNFq1, file = "D:/Research/PdPy_Div_Results/Figs/p_Bacq0_BacSelect_HNFq1.jpeg",
+# ggsave(p_Select_Bacq0_HNFq1, file = "D:/Research/PdPy_Div_Results/Figs/p_Bacq0_HNFSelect_HNFq1.jpeg",
 #        dpi = 600, width = 34, height = 28, units = "cm")
-##### Bacq0 -> Bac selection ->  HNFq1 ##########
+##### Bacq0 -> HNF selection ->  HNFq1 ##########
 
 ##### Path model analysis : Bac_q0 vs HNF_q1 ##########
 ##### Step 1: no random effects #####
