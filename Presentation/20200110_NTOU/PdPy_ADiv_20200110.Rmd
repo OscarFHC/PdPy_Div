@@ -345,16 +345,17 @@ The effects of **predator diversity** and **prey diversity** are coufounded
 include_graphics("PdPyDiv_EF.png")
 ``` 
 
-# Why is the predator diversity and prey diversity related?
+# Why is the predator $\alpha$ diversity and prey $\alpha$ diversity related?
 
 Hypothesis:
 
-The predator-prey diversity relationship would be driven by **the strength of deterministic assembly processes**.
+The predator-prey $\alpha$ diversity relationship would be driven by **the strength of deterministic assembly processes**.
 
 - Predator : hetero-trophic nano-flagellate
 - Predator : bacteria
+- Deterministic assembly processes : non-random processes / environmental filtering and/or other species interactions (e.g. predation)
 
-```{r, message=FALSE, fig.width = 7, fig.height = 5}
+```{r, message=FALSE, fig.width = 6, fig.height = 4}
 St_sECS = read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/raw/St_Location.csv", 
                      header = T, fill = T, sep = ",")
 library(ggmap)
@@ -383,11 +384,9 @@ include_graphics("Hypo.png")
 
 # Deterministic assembly processes
 
-- Environmental filtering and/or other species interactions (e.g. predation)
+- Between community dissimilarity
 
-- Counter part of stochasticity (randomness)
-
-- Indicated by Between-assemblage **N**earest **T**axon **I**ndex ($\beta NTI$)
+- Indicated by between-assemblage **N**earest **T**axon **I**ndex ($\beta NTI$), \n which is calculated from mean nearest taxon distance ($\beta MNTD$)
 
 #
   
@@ -397,9 +396,19 @@ $$\beta NTI = \frac{\beta MNTD_{obs} - \overline{\beta MNTD_{null}}}{sd(\beta MN
 include_graphics("bNTI_explain.png")
 ``` 
 
+#
+
+```{r bNTI e.g., fig.cap = "", fig.align = 'center', out.width = "75%"}
+include_graphics("bNTI_eg.png")
+```
+
 - The more $\beta NTI$ deviated from the null, the stronger the deterministic assembly processes is. 
 
-# Bacteria-HNF diversity relationships
+- negative $\beta NTI$ implies homogeneous selection
+
+- positive $\beta NTI$ implies divergent selection
+
+# Bacteria-HNF $\alpha$ diversity relationships
 
 ```{r, fig.width = 14, fig.height = 8.5}
 Div.labs <- c("HNF\nspecies\nrichness", "HNF\nShannon\ndiversity", "HNF\nSimpson\ndiversity")
@@ -419,7 +428,7 @@ HNF_Bac_A %>%
 
 ```
 
-# HNF diversity $\rightarrow$ bacteria $\beta NTI$ $\rightarrow$ bacteria diversity
+# HNF $\alpha$ diversity $\rightarrow$ bacteria $\beta NTI$ $\rightarrow$ bacteria $\alpha$ diversity
 
 ```{r, fig.width = 16, fig.height = 8.5}
 p_HNFq0_BacSelect <- HNF_Bac_A %>% 
@@ -456,8 +465,7 @@ p_HNFq0_BacSelect_Bacq0 <- plot_grid(
 p_HNFq0_BacSelect_Bacq0
 ``` 
 
-# Bacteria diversity $\rightarrow$ HNF $\beta NTI$ $\rightarrow$ HNF diversity
-
+# Bacteria $\alpha$ diversity $\rightarrow$ HNF $\beta NTI$ $\rightarrow$ HNF $\alpha$ diversity
 
 ```{r, fig.width = 16, fig.height = 8.5}
 p_Bacq0_HNFSelect <- HNF_Bac_A %>% 
@@ -493,6 +501,12 @@ p_Select_Bacq0_HNFq0 <- plot_grid(
   legend, rel_widths = c(3, .4))
 p_Select_Bacq0_HNFq0
 ``` 
+
+# {.bigger}
+
+- Community assembly processes are not associated with the other trophic level. 
+
+- Some deterministic processes **decreases** both predator and prey $\alpha$ diversity.
 
 # Path model
 

@@ -292,7 +292,6 @@ Bac_selec <- Bac_MNTD %>%
   filter(Cr_V1 == Cr_V2) %>%
   #filter(Bac_select_p < 0.05) %>%
   group_by(Var2) %>%
-  # group_by(St, Cr) %>%
   summarize(Bac_select = mean(Bac_select_strength, na.rm = TRUE))
 
 HNF_selec <- HNF_MNTD %>%
@@ -408,6 +407,11 @@ p_Adiv_pairs
 gam0 <- gam(ln.HNF_q0 ~ ln.Bac_q0, data = HNF_Bac_A)
 gam1 <- gam(ln.HNF_q0 ~ s(ln.Bac_q0), data = HNF_Bac_A)
 anova(gam0, gam1, test = "F")
+
+gam_select <- gam(ln.HNF_q0 ~ ln.Bac_q0*Bac_select + ln.Bac_q0*HNF_select, data = HNF_Bac_A)
+summary(gam_select)
+lme_select <- lme(ln.HNF_q0 ~ ln.Bac_q0*Bac_select + ln.Bac_q0*HNF_select, random = (~1 | Cruise), data = HNF_Bac_A)
+summary(lme_select)
 ### plotting (without selection)
 p_HNFq0_Bacq0 <- HNF_Bac_A %>% 
   select(ln.Bac_q0, ln.HNF_q0, Bac_select, HNF_select) %>%
