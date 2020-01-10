@@ -1,5 +1,5 @@
 ---
-title: Why is the predator diversity and prey diversity related?
+title: Why is the predator diversity and prey diversity correlated?
 subtitle: Implications from community assembly processes
 author: | 
   | Feng-Hsun Chang
@@ -337,22 +337,20 @@ include_graphics("positiveBEF.png")
 include_graphics("consumerBEF.png")
 ``` 
 
-# 
-
-The effects of **predator diversity** and **prey diversity** are coufounded
+# The effects of **predator diversity** and **prey diversity** are coufounded
 
 ```{r PdPyDiv_EF, fig.align = 'center', out.width = "75%"}
 include_graphics("PdPyDiv_EF.png")
 ``` 
 
-# Why is the predator $\alpha$ diversity and prey $\alpha$ diversity related?
+# Why is the predator $\alpha$ diversity and prey $\alpha$ diversity correlated?
 
 Hypothesis:
 
 The predator-prey $\alpha$ diversity relationship would be driven by **the strength of deterministic assembly processes**.
 
 - Predator : hetero-trophic nano-flagellate
-- Predator : bacteria
+- Prey : bacteria
 - Deterministic assembly processes : non-random processes / environmental filtering and/or other species interactions (e.g. predation)
 
 ```{r, message=FALSE, fig.width = 6, fig.height = 4}
@@ -384,9 +382,9 @@ include_graphics("Hypo.png")
 
 # Deterministic assembly processes
 
-- Between community dissimilarity
-
 - Indicated by between-assemblage **N**earest **T**axon **I**ndex ($\beta NTI$), \n which is calculated from mean nearest taxon distance ($\beta MNTD$)
+
+- Between community dissimilarity
 
 #
   
