@@ -294,6 +294,14 @@ Bac_selec <- Bac_MNTD %>%
   group_by(Var2) %>%
   summarize(Bac_select = mean(Bac_select_strength, na.rm = TRUE))
 
+Bac_disp <- Bac_BDiv_Chao %>%
+  mutate(Cr_V1 = substr(Var1, start = 1, stop = 9),
+         Cr_V2 = substr(Var2, start = 1, stop = 9)) %>%
+  filter(Cr_V1 == Cr_V2) %>%
+  #filter(Bac_select_p < 0.05) %>%
+  group_by(Var2) %>%
+  summarize(Bac_disp = mean(Bac_disp_strength, na.rm = TRUE))
+
 HNF_selec <- HNF_MNTD %>%
   mutate(Cr_V1 = substr(Var1, start = 1, stop = 9),
          Cr_V2 = substr(Var2, start = 1, stop = 9)) %>%
