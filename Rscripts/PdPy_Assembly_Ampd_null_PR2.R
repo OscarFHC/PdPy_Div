@@ -197,7 +197,7 @@ HNFPhylo_null_func <- function(x){
 }
 nsim.list <- sapply(1:999, list)
 test <- parLapply(cl, nsim.list, HNFPhylo_null_func)
-test[[1000]] <- as.matrix(mpd(HNF_comm, cophenetic(tipShuffle(HNF_phylo)), abundance.weighted = TRUE))
+test[[1000]] <- as.matrix(mpd(HNF_comm, cophenetic(HNF_phylo), abundance.weighted = TRUE))
 
 Sys.time() - ini
 
