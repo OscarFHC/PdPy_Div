@@ -203,15 +203,15 @@ Bac_Ampd_null <- read.table(file = "D:/Research/PdPy_Div_Results/Bac_Ampd_null.c
 Bac_Amntd_null <- read.table(file = "D:/Research/PdPy_Div_Results/Bac_Amntd_null.csv", sep = ",", 
                              header = TRUE, stringsAsFactors = FALSE, fill = TRUE)
 Bac_Ampd <- Bac_Ampd_null %>% 
-  select(c(obs, Var1, Var2)) %>%
-  mutate(Ampd_null_mean = apply(Bac_Ampd_null[, !names(Bac_Ampd_null) %in% c("obs", "Var1", "Var2")], 1, mean),
-         Ampd_null_sd = apply(Bac_Ampd_null[, !names(Bac_Ampd_null) %in% c("obs", "Var1", "Var2")], 1, sd),
+  select(c(obs, Station)) %>%
+  mutate(Ampd_null_mean = apply(Bac_Ampd_null[, !names(Bac_Ampd_null) %in% c("obs", "Station")], 1, mean),
+         Ampd_null_sd = apply(Bac_Ampd_null[, !names(Bac_Ampd_null) %in% c("obs", "Station")], 1, sd),
          Bac_select_strength = (obs - Ampd_null_mean) / Ampd_null_sd,
          Bac_select_p = pnorm(-abs(Bac_select_strength), 0, 1))
 Bac_Amntd <- Bac_Amntd_null %>% 
-  select(c(obs, Var1, Var2)) %>%
-  mutate(Amntd_null_mean = apply(Bac_Amntd_null[, !names(Bac_Amntd_null) %in% c("obs", "Var1", "Var2")], 1, mean),
-         Amntd_null_sd = apply(Bac_Amntd_null[, !names(Bac_Amntd_null) %in% c("obs", "Var1", "Var2")], 1, sd),
+  select(c(obs, Station)) %>%
+  mutate(Amntd_null_mean = apply(Bac_Amntd_null[, !names(Bac_Amntd_null) %in% c("obs", "Station")], 1, mean),
+         Amntd_null_sd = apply(Bac_Amntd_null[, !names(Bac_Amntd_null) %in% c("obs", "Station")], 1, sd),
          Bac_select_strength = (obs - Amntd_null_mean) / Amntd_null_sd,
          Bac_select_p = pnorm(-abs(Bac_select_strength), 0, 1))
 
@@ -228,14 +228,14 @@ HNF_Ampd_null <- read.table(file = "D:/Research/PdPy_Div_Results/HNF_Ampd_null_P
                             header = TRUE, stringsAsFactors = FALSE, fill = TRUE)
 HNF_Amntd_null <- read.table(file = "D:/Research/PdPy_Div_Results/HNF_Amntd_null_PR2.csv", sep = ",", 
                              header = TRUE, stringsAsFactors = FALSE, fill = TRUE)
-HNF_Ampd <- HNF_Ampd_null %>% select(c(obs, Var1, Var2)) %>%
-  mutate(Ampd_null_mean = apply(HNF_Ampd_null[, !names(HNF_Ampd_null) %in% c("obs", "Var1", "Var2")], 1, mean),
-         Ampd_null_sd = apply(HNF_Ampd_null[, !names(HNF_Ampd_null) %in% c("obs", "Var1", "Var2")], 1, sd),
+HNF_Ampd <- HNF_Ampd_null %>% select(c(obs, Station)) %>%
+  mutate(Ampd_null_mean = apply(HNF_Ampd_null[, !names(HNF_Ampd_null) %in% c("obs", "Station")], 1, mean),
+         Ampd_null_sd = apply(HNF_Ampd_null[, !names(HNF_Ampd_null) %in% c("obs", "Station")], 1, sd),
          HNF_select_strength = (obs - Ampd_null_mean) / Ampd_null_sd,
          HNF_select_p = pnorm(-abs(HNF_select_strength), 0, 1))
-HNF_Amntd <- HNF_Amntd_null %>% select(c(obs, Var1, Var2)) %>%
-  mutate(Amntd_null_mean = apply(HNF_Amntd_null[, !names(HNF_Amntd_null) %in% c("obs", "Var1", "Var2")], 1, mean),
-         Amntd_null_sd = apply(HNF_Amntd_null[, !names(HNF_Amntd_null) %in% c("obs", "Var1", "Var2")], 1, sd),
+HNF_Amntd <- HNF_Amntd_null %>% select(c(obs, Station)) %>%
+  mutate(Amntd_null_mean = apply(HNF_Amntd_null[, !names(HNF_Amntd_null) %in% c("obs", "Station")], 1, mean),
+         Amntd_null_sd = apply(HNF_Amntd_null[, !names(HNF_Amntd_null) %in% c("obs", "Station")], 1, sd),
          HNF_select_strength = (obs - Amntd_null_mean) / Amntd_null_sd,
          HNF_select_p = pnorm(-abs(HNF_select_strength), 0, 1))
 HNF_Chao_null <- read.table(file = "D:/Research/PdPy_Div_Results/HNF_Chao_null_PR2.csv", sep = ",", 
@@ -301,25 +301,17 @@ fit_fun <- function(data, mapping, ...){
 ##### Envi exploratory factor analyses and  pair-wise correlations ############################
 ###############################################################################################
 ##### Preping data ##########
-Bac_A <- iNEXT(t(Bac_comm), q = 0, datatype = "abundance", size = max(colSums(Bac_comm)) + 100000)$AsyEst %>% 
+Bac_selec <- iNEXT(t(Bac_comm), q = 0, datatype = "abundance", size = max(colSums(Bac_comm)) + 100000)$AsyEst %>% 
   select(Site, Diversity, Estimator) %>% 
   spread(Diversity, Estimator) %>%
   rename(Bac_q0 = "Species richness", Bac_q1 = "Shannon diversity", Bac_q2 = "Simpson diversity") %>%
   mutate(Site = rownames(Bac_comm))
 
-HNF_A <- iNEXT(t(HNF_comm), q = 0, datatype = "abundance", size = max(colSums(HNF_comm)) + 100000)$AsyEst %>% 
+HNF_selec <- iNEXT(t(HNF_comm), q = 0, datatype = "abundance", size = max(colSums(HNF_comm)) + 100000)$AsyEst %>% 
   select(Site, Diversity, Estimator) %>% 
   spread(Diversity, Estimator) %>%
   rename(HNF_q0 = "Species richness", HNF_q1 = "Shannon diversity", HNF_q2 = "Simpson diversity") %>%
   mutate(Site = rownames(HNF_comm))
-
-Bac_selec <- Bac_Ampd %>%
-  mutate(Cr_V1 = substr(Var1, start = 1, stop = 9),
-         Cr_V2 = substr(Var2, start = 1, stop = 9)) %>%
-  filter(Cr_V1 == Cr_V2) %>%
-  #filter(Bac_select_p < 0.05) %>%
-  group_by(Var2) %>%
-  summarize(Bac_select = mean(Bac_select_strength, na.rm = TRUE))
 
 Bac_disp <- Bac_BDiv_Chao %>%
   mutate(Cr_V1 = substr(Var1, start = 1, stop = 9),
@@ -328,14 +320,6 @@ Bac_disp <- Bac_BDiv_Chao %>%
   #filter(Bac_select_p < 0.05) %>%
   group_by(Var2) %>%
   summarize(Bac_disp = mean(Bac_disp_strength, na.rm = TRUE))
-
-HNF_selec <- HNF_Ampd %>%
-  mutate(Cr_V1 = substr(Var1, start = 1, stop = 9),
-         Cr_V2 = substr(Var2, start = 1, stop = 9)) %>%
-  filter(Cr_V1 == Cr_V2) %>%
-  #filter(HNF_select_p < 0.05) %>%
-  group_by(Var2) %>%
-  summarize(HNF_select = mean(HNF_select_strength, na.rm = TRUE))
 
 HNF_disp <- HNF_BDiv_Chao %>%
   mutate(Cr_V1 = substr(Var1, start = 1, stop = 9),

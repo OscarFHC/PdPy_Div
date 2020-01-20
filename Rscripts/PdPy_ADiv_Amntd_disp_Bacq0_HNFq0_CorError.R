@@ -274,25 +274,17 @@ fit_fun <- function(data, mapping, ...){
 ##### Envi exploratory factor analyses and  pair-wise correlations ############################
 ###############################################################################################
 ##### Preping data ##########
-Bac_A <- iNEXT(t(Bac_comm), q = 0, datatype = "abundance", size = max(colSums(Bac_comm)) + 100000)$AsyEst %>% 
+Bac_selec <- iNEXT(t(Bac_comm), q = 0, datatype = "abundance", size = max(colSums(Bac_comm)) + 100000)$AsyEst %>% 
   select(Site, Diversity, Estimator) %>% 
   spread(Diversity, Estimator) %>%
   rename(Bac_q0 = "Species richness", Bac_q1 = "Shannon diversity", Bac_q2 = "Simpson diversity") %>%
   mutate(Site = rownames(Bac_comm))
 
-HNF_A <- iNEXT(t(HNF_comm), q = 0, datatype = "abundance", size = max(colSums(HNF_comm)) + 100000)$AsyEst %>% 
+HNF_selec <- iNEXT(t(HNF_comm), q = 0, datatype = "abundance", size = max(colSums(HNF_comm)) + 100000)$AsyEst %>% 
   select(Site, Diversity, Estimator) %>% 
   spread(Diversity, Estimator) %>%
   rename(HNF_q0 = "Species richness", HNF_q1 = "Shannon diversity", HNF_q2 = "Simpson diversity") %>%
   mutate(Site = rownames(HNF_comm))
-
-Bac_selec <- Bac_Amntd %>%
-  mutate(Cr_V1 = substr(Var1, start = 1, stop = 9),
-         Cr_V2 = substr(Var2, start = 1, stop = 9)) %>%
-  filter(Cr_V1 == Cr_V2) %>%
-  #filter(Bac_select_p < 0.05) %>%
-  group_by(Var2) %>%
-  summarize(Bac_select = mean(Bac_select_strength, na.rm = TRUE))
 
 Bac_disp <- Bac_BDiv_Chao %>%
   mutate(Cr_V1 = substr(Var1, start = 1, stop = 9),
@@ -301,14 +293,6 @@ Bac_disp <- Bac_BDiv_Chao %>%
   #filter(Bac_select_p < 0.05) %>%
   group_by(Var2) %>%
   summarize(Bac_disp = mean(Bac_disp_strength, na.rm = TRUE))
-
-HNF_selec <- HNF_Amntd %>%
-  mutate(Cr_V1 = substr(Var1, start = 1, stop = 9),
-         Cr_V2 = substr(Var2, start = 1, stop = 9)) %>%
-  filter(Cr_V1 == Cr_V2) %>%
-  #filter(HNF_select_p < 0.05) %>%
-  group_by(Var2) %>%
-  summarize(HNF_select = mean(HNF_select_strength, na.rm = TRUE))
 
 HNF_disp <- HNF_BDiv_Chao %>%
   mutate(Cr_V1 = substr(Var1, start = 1, stop = 9),
