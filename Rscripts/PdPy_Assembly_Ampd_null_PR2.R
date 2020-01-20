@@ -122,12 +122,9 @@ BacPhylo_null_func <- function(x){
   as.matrix(mpd(Bac_comm, cophenetic(tipShuffle(Bac_phylo)), abundance.weighted = TRUE))
 }
 
-nsim.list <- sapply(1:99, list)
+nsim.list <- sapply(1:999, list)
 test <- parLapply(cl, nsim.list, BacPhylo_null_func)
 test[[1000]] <- as.matrix(mpd(Bac_comm, cophenetic(tipShuffle(Bac_phylo)), abundance.weighted = TRUE))
-
-a <- as.matrix(mpd(Bac_comm, cophenetic(tipShuffle(Bac_phylo)), abundance.weighted = TRUE))
-b <- as.matrix(mpd(Bac_comm, cophenetic(tipShuffle(Bac_phylo)), abundance.weighted = TRUE))
 
 Sys.time() - ini
 
