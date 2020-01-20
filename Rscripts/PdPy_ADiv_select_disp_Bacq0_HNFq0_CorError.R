@@ -886,7 +886,6 @@ summary(Bacq0_HNFq0_psem2.St)
 anova(Bacq0_HNFq0_psem2.0, Bacq0_HNFq0_psem2.Cr, Bacq0_HNFq0_psem2.Season, Bacq0_HNFq0_psem2.St, test = "F")
 anova(Bacq0_HNFq0_psem2.0, Bacq0_HNFq0_psem2.Cr)
 summary(Bacq0_HNFq0_psem2.Cr, fit.measures = TRUE)
-##### Step 2 : include grouping variables (random effects) and environmental variables #####
 ##### Path model analysis : Bac_q0 vs HNF_q0 ##########
 ###############################################################################################
 ##### Testing hypothesis: HNFq0 -> Bac selection -> Bacq0 & Bacq0 -> Bac selection ->  HNFq0 ##

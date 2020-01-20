@@ -156,13 +156,13 @@ NFPhylo_null_func <- function(x){
   community = NF_comm
   phylo = NF_phylo
   # performing comdistnt to calculate MNTD
-  as.matrix(comdist(community, cophenetic(tipShuffle(phylo)), abundance.weighted = TRUE))
+  as.matrix(mpd(community, cophenetic(tipShuffle(phylo)), abundance.weighted = TRUE))
 }
 
 
 nsim.list <- sapply(1:999, list)
 test <- parLapply(cl, nsim.list, NFPhylo_null_func)
-test[[1000]] <- as.matrix(comdist(NF_comm, cophenetic(NF_phylo), abundance.weighted = TRUE))
+test[[1000]] <- as.matrix(mpd(NF_comm, cophenetic(NF_phylo), abundance.weighted = TRUE))
 
 NFPhylo_null <- data.frame(matrix(unlist(test), ncol = length(test), byrow = FALSE)) %>%
   cbind(expand.grid(row.names(NF_comm), row.names(NF_comm))) %>%
@@ -176,7 +176,7 @@ stopCluster(cl)
 numCores <- detectCores()
 numCores
 
-cl <- makeCluster(numCores)
+cl <- makeCluster(numCores - 4)
 
 clusterEvalQ(cl, {
   library(vegan)
@@ -192,16 +192,16 @@ HNFPhylo_null_func <- function(x){
   community = HNF_comm
   phylo = HNF_phylo
   # performing comdistnt to calculate MNTD
-  as.matrix(comdist(community, cophenetic(tipShuffle(phylo)), abundance.weighted = TRUE))
+  as.matrix(mpd(community, cophenetic(tipShuffle(phylo)), abundance.weighted = TRUE))
 }
 ini <- Sys.time()
-nsim.list <- sapply(1:999, list)
+nsim.list <- sapply(1:99, list)
 test <- parLapply(cl, nsim.list, HNFPhylo_null_func)
 Sys.time() - ini
-test[[1000]] <- as.matrix(comdistnt(HNF_comm, cophenetic(HNF_phylo), abundance.weighted = TRUE))
+test[[1000]] <- as.matrix(mpd(HNF_comm, cophenetic(HNF_phylo), abundance.weighted = TRUE))
 
 HNFPhylo_null <- data.frame(matrix(unlist(test), ncol = length(test), byrow = FALSE)) %>%
-  cbind(expand.grid(row.names(NF_comm), row.names(NF_comm))) %>%
+  cbind(row.names(Bac_comm)) %>%
   rename(obs = X1000)
 write.table(HNFPhylo_null, file = "D:/Research/PdPy_Div_Results/HNF_MPD_null_PR2.csv", 
            sep = ",", col.names = TRUE, row.names = FALSE)
