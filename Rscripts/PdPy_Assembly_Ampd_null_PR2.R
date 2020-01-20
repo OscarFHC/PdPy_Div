@@ -198,12 +198,12 @@ ini <- Sys.time()
 nsim.list <- sapply(1:99, list)
 test <- parLapply(cl, nsim.list, HNFPhylo_null_func)
 Sys.time() - ini
-test[[1000]] <- as.matrix(mpd(HNF_comm, cophenetic(HNF_phylo), abundance.weighted = TRUE))
+test[[1000]] <- as.matrix(mpd(HNF_comm, cophenetic(tipShuffle(HNF_phylo)), abundance.weighted = TRUE))
 
 HNFPhylo_null <- data.frame(matrix(unlist(test), ncol = length(test), byrow = FALSE)) %>%
-  cbind(row.names(Bac_comm)) %>%
+  cbind(row.names(HNF_comm)) %>%
   rename(obs = X1000)
-write.table(HNFPhylo_null, file = "D:/Research/PdPy_Div_Results/HNF_MPD_null_PR2.csv", 
+write.table(HNFPhylo_null, file = "D:/Research/PdPy_Div_Results/HNF_Ampd_null_PR2.csv", 
            sep = ",", col.names = TRUE, row.names = FALSE)
 stopCluster(cl)
 ##### Hetero-trophic Nanoflagellate phylogenetic turnover ###########################
