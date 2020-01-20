@@ -95,130 +95,11 @@ Vars <- read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/m
 ###############################################################################################
 
 ###############################################################################################
-##### Phylogenetic turnover / deterministic vs stochastic processes ###########################
-###############################################################################################
-
-##### Bacteria phylogenetic turnover ################################################
-ini <- Sys.time()
-numCores <- detectCores()
-numCores
-
-cl <- makeCluster(numCores)
-
-clusterEvalQ(cl, {
-  library(vegan)
-  #library(tidyverse)
-  library(picante)
-  Bac_comm <- as.data.frame(t(read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/16s_seqXst.csv", sep = ",", 
-                                         header = TRUE, row.names = 1, stringsAsFactors = FALSE, fill = TRUE)))
-  Bac_phylo <- read.tree(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/treeNJ_16s.tree")
-  
-})
-
-BacPhylo_null_func <- function(x){
-  #set up parameters and data
-  community = Bac_comm
-  phylo = Bac_phylo
-  # performing comdistnt to calculate MNTD
-  as.matrix(comdistnt(community, cophenetic(tipShuffle(phylo)), abundance.weighted = TRUE))
-}
-nsim.list <- sapply(1:999, list)
-test <- parLapply(cl, nsim.list, BacPhylo_null_func)
-test[[1000]] <- as.matrix(comdistnt(Bac_comm, cophenetic(Bac_phylo), abundance.weighted = TRUE))
-
-Sys.time() - ini
-
-BacPhylo_null <- data.frame(matrix(unlist(test), ncol = length(test), byrow = FALSE)) %>%
-  cbind(expand.grid(row.names(Bac_comm), row.names(Bac_comm))) %>%
-  rename(obs = X1000)
-write.table(BacPhylo_null, file = "D:/Research/PdPy_Div_Results/Bac_Bmntd_null.csv", 
-            sep = ",", col.names = TRUE, row.names = FALSE)
-stopCluster(cl)
-##### Bacteria phylogenetic turnover ################################################
-
-##### Nanoflagellate phylogenetic turnover ##########################################
-ini <- Sys.time()
-numCores <- detectCores()
-numCores
-
-cl <- makeCluster(numCores)
-
-clusterEvalQ(cl, {
-  library(vegan)
-  library(tidyverse)
-  library(picante)
-  NF_comm <- as.data.frame(t(read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/prot_seqXst_PR2.csv", sep = ",", 
-                                        header = TRUE, row.names = 1, stringsAsFactors = FALSE, fill = TRUE)))
-  NF_phylo<- read.tree(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/prot_treeNJ_PR2.tree")
-})
-
-NFPhylo_null_func <- function(x){
-  # set up parameters and data
-  community = NF_comm
-  phylo = NF_phylo
-  # performing comdistnt to calculate MNTD
-  as.matrix(comdistnt(community, cophenetic(tipShuffle(phylo)), abundance.weighted = TRUE))
-}
-nsim.list <- sapply(1:999, list)
-test <- parLapply(cl, nsim.list, NFPhylo_null_func)
-test[[1000]] <- as.matrix(comdistnt(NF_comm, cophenetic(NF_phylo), abundance.weighted = TRUE))
-
-Sys.time() - ini
-
-NFPhylo_null <- data.frame(matrix(unlist(test), ncol = length(test), byrow = FALSE)) %>%
-  cbind(expand.grid(row.names(NF_comm), row.names(NF_comm))) %>%
-  rename(obs = X1000)
-write.table(NFPhylo_null, file = "D:/Research/PdPy_Div_Results/NF_Bmntd_null_PR2.csv",
-            sep = ",", col.names = TRUE, row.names = FALSE)
-stopCluster(cl)
-##### Nanoflagellate phylogenetic turnover ##########################################
-
-##### Hetero-trophic Nanoflagellate phylogenetic turnover ###########################
-ini <- Sys.time()
-numCores <- detectCores()
-numCores
-
-cl <- makeCluster(numCores)
-
-clusterEvalQ(cl, {
-  library(vegan)
-  library(tidyverse)
-  library(picante)
-  HNF_comm <- as.data.frame(t(read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/HNF_seqXst_PR2.csv", sep = ",", 
-                                         header = TRUE, row.names = 1, stringsAsFactors = FALSE, fill = TRUE)))
-  HNF_phylo<- read.tree(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/HNF_treeNJ_PR2.tree")
-})
-
-HNFPhylo_null_func <- function(x){
-  # set up parameters and data
-  community = HNF_comm
-  phylo = HNF_phylo
-  # performing comdistnt to calculate MNTD
-  as.matrix(comdistnt(community, cophenetic(tipShuffle(phylo)), abundance.weighted = TRUE))
-}
-nsim.list <- sapply(1:999, list)
-test <- parLapply(cl, nsim.list, HNFPhylo_null_func)
-test[[1000]] <- as.matrix(comdistnt(HNF_comm, cophenetic(HNF_phylo), abundance.weighted = TRUE))
-
-Sys.time() - ini
-
-HNFPhylo_null <- data.frame(matrix(unlist(test), ncol = length(test), byrow = FALSE)) %>%
-  cbind(expand.grid(row.names(NF_comm), row.names(NF_comm))) %>%
-  rename(obs = X1000)
-write.table(HNFPhylo_null, file = "D:/Research/PdPy_Div_Results/HNF_Bmntd_null_PR2.csv", 
-           sep = ",", col.names = TRUE, row.names = FALSE)
-stopCluster(cl)
-##### Hetero-trophic Nanoflagellate phylogenetic turnover ###########################
-
-###############################################################################################
-##### Phylogenetic turnover / deterministic vs stochastic processes ###########################
-###############################################################################################
-
-###############################################################################################
 ##### OTU turnover / Dispersal limitation vs homogeneous dispersal ############################
 ###############################################################################################
 
 ##### Bacteria OTU turnover #########################################################
+ini <- Sys.time()
 numCores <- detectCores()
 numCores
 
@@ -240,20 +121,22 @@ BacOTU_null_func <- function(x){
   # performing comdistnt to calculate MNTD
   as.matrix(vegdist(randomizeMatrix(community, null.model = n.mod), method = method))
 }
-
 nsim.list <- sapply(1:999, list)
 test <- parLapply(cl, nsim.list, BacOTU_null_func)
 test[[1000]] <- as.matrix(vegdist(Bac_comm, null.model = "independentswap", method = "chao"))
 
+Sys.time() - ini
+
 BacOTU_null <- data.frame(matrix(unlist(test), ncol = length(test), byrow = FALSE)) %>%
   cbind(expand.grid(row.names(Bac_comm), row.names(Bac_comm))) %>%
   rename(obs = X1000)
-# write.table(BacOTU_null, file = "D:/Research/PdPy_Div_Results/Bac_chao_null.csv",
-#             sep = ",", col.names = TRUE, row.names = FALSE)
+write.table(BacOTU_null, file = "D:/Research/PdPy_Div_Results/Bac_chao_null.csv",
+            sep = ",", col.names = TRUE, row.names = FALSE)
 stopCluster(cl)
 ##### Bacteria OTU turnover #########################################################
 
 ##### Nanoflagellate OTU turnover ###################################################
+ini <- Sys.time()
 numCores <- detectCores()
 numCores
 
@@ -276,10 +159,11 @@ NFOTU_null_func <- function(x){
   # performing comdistnt to calculate MNTD
   as.matrix(vegdist(randomizeMatrix(community, null.model = n.mod), method = method))
 }
-
 nsim.list <- sapply(1:999, list)
 test <- parLapply(cl, nsim.list, NFOTU_null_func)
 test[[1000]] <- as.matrix(vegdist(NF_comm, null.model = "independentswap", method = "chao"))
+
+Sys.time() - ini
 
 NFOTU_null <- data.frame(matrix(unlist(test), ncol = length(test), byrow = FALSE)) %>%
   cbind(expand.grid(row.names(NF_comm), row.names(NF_comm))) %>%
@@ -290,6 +174,7 @@ stopCluster(cl)
 ##### Nanoflagellate OTU turnover ###################################################
 
 ##### Hetero-trophic Nanoflagellate OTU turnover ####################################
+ini <- Sys.time()
 numCores <- detectCores()
 numCores
 
@@ -311,10 +196,11 @@ HNFOTU_null_func <- function(x){
   # performing comdistnt to calculate MNTD
   as.matrix(vegdist(randomizeMatrix(community, null.model = n.mod), method = method))
 }
-
 nsim.list <- sapply(1:999, list)
 test <- parLapply(cl, nsim.list, HNFOTU_null_func)
 test[[1000]] <- as.matrix(vegdist(HNF_comm, null.model = "independentswap", method = "chao"))
+
+Sys.time() - ini
 
 HNFOTU_null <- data.frame(matrix(unlist(test), ncol = length(test), byrow = FALSE)) %>%
   cbind(expand.grid(row.names(HNF_comm), row.names(HNF_comm))) %>%
