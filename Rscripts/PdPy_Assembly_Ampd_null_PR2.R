@@ -99,6 +99,7 @@ Vars <- read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/m
 ###############################################################################################
 
 ##### Bacteria phylogenetic turnover ################################################
+ini <- Sys.time()
 numCores <- detectCores()
 numCores
 cl <- makeCluster(numCores)
@@ -118,17 +119,22 @@ BacPhylo_null_func <- function(x){
   community = Bac_comm
   phylo = Bac_phylo
   # performing comdistnt to calculate MNTD
-  as.matrix(mpd(Bac_comm, cophenetic(Bac_phylo), abundance.weighted = TRUE))
+  as.matrix(mpd(Bac_comm, cophenetic(tipShuffle(Bac_phylo)), abundance.weighted = TRUE))
 }
 
-nsim.list <- sapply(1:9, list)
+nsim.list <- sapply(1:99, list)
 test <- parLapply(cl, nsim.list, BacPhylo_null_func)
-test[[1000]] <- as.matrix(mpd(Bac_comm, cophenetic(Bac_phylo), abundance.weighted = TRUE))
+test[[1000]] <- as.matrix(mpd(Bac_comm, cophenetic(tipShuffle(Bac_phylo)), abundance.weighted = TRUE))
+
+a <- as.matrix(mpd(Bac_comm, cophenetic(tipShuffle(Bac_phylo)), abundance.weighted = TRUE))
+b <- as.matrix(mpd(Bac_comm, cophenetic(tipShuffle(Bac_phylo)), abundance.weighted = TRUE))
+
+Sys.time() - ini
 
 BacPhylo_null <- data.frame(matrix(unlist(test), ncol = length(test), byrow = FALSE)) %>%
   cbind(row.names(Bac_comm)) %>%
   rename(obs = X1000)
-write.table(BacPhylo_null, file = "D:/Research/PdPy_Div_Results/Bac_AMPD_null.csv", 
+write.table(BacPhylo_null, file = "D:/Research/PdPy_Div_Results/Bac_Ampd_null.csv", 
             sep = ",", col.names = TRUE, row.names = FALSE)
 stopCluster(cl)
 ##### Bacteria phylogenetic turnover ################################################
