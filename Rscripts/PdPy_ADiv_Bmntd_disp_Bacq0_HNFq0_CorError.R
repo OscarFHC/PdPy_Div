@@ -198,13 +198,13 @@ Vars <- read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/m
 ###############################################################################################
 ##### Loading nulls ###########################################################################
 ###############################################################################################
-Bac_MNTD_null <- read.table(file = "D:/Research/PdPy_Div_Results/Bac_MNTD_null.csv", sep = ",", 
+Bac_Bmntd_null <- read.table(file = "D:/Research/PdPy_Div_Results/Bac_Bmntd_null.csv", sep = ",", 
                             header = TRUE, stringsAsFactors = FALSE, fill = TRUE)
-Bac_MNTD <- Bac_MNTD_null %>% 
+Bac_Bmntd <- Bac_Bmntd_null %>% 
   select(c(obs, Var1, Var2)) %>%
-  mutate(MNTD_null_mean = apply(Bac_MNTD_null[, !names(Bac_MNTD_null) %in% c("obs", "Var1", "Var2")], 1, mean),
-         MNTD_null_sd = apply(Bac_MNTD_null[, !names(Bac_MNTD_null) %in% c("obs", "Var1", "Var2")], 1, sd),
-         Bac_select_strength = (obs - MNTD_null_mean) / MNTD_null_sd,
+  mutate(Bmntd_null_mean = apply(Bac_Bmntd_null[, !names(Bac_Bmntd_null) %in% c("obs", "Var1", "Var2")], 1, mean),
+         Bmntd_null_sd = apply(Bac_Bmntd_null[, !names(Bac_Bmntd_null) %in% c("obs", "Var1", "Var2")], 1, sd),
+         Bac_select_strength = (obs - Bmntd_null_mean) / Bmntd_null_sd,
          Bac_select_p = pnorm(-abs(Bac_select_strength), 0, 1))
 
 Bac_Chao_null <- read.table(file = "D:/Research/PdPy_Div_Results/Bac_Chao_null.csv", sep = ",", 
@@ -216,12 +216,12 @@ Bac_BDiv_Chao <- Bac_Chao_null %>%
          Bac_disp_strength = (obs - Chao_null_mean) / Chao_null_sd,
          Bac_disp_p = pnorm(Bac_disp_strength, 0, 1))
 
-HNF_MNTD_null <- read.table(file = "D:/Research/PdPy_Div_Results/HNF_MNTD_null_PR2.csv", sep = ",", 
+HNF_Bmntd_null <- read.table(file = "D:/Research/PdPy_Div_Results/HNF_Bmntd_null_PR2.csv", sep = ",", 
                             header = TRUE, stringsAsFactors = FALSE, fill = TRUE)
-HNF_MNTD <- HNF_MNTD_null %>% select(c(obs, Var1, Var2)) %>%
-  mutate(MNTD_null_mean = apply(HNF_MNTD_null[, !names(HNF_MNTD_null) %in% c("obs", "Var1", "Var2")], 1, mean),
-         MNTD_null_sd = apply(HNF_MNTD_null[, !names(HNF_MNTD_null) %in% c("obs", "Var1", "Var2")], 1, sd),
-         HNF_select_strength = (obs - MNTD_null_mean) / MNTD_null_sd,
+HNF_Bmntd <- HNF_Bmntd_null %>% select(c(obs, Var1, Var2)) %>%
+  mutate(Bmntd_null_mean = apply(HNF_Bmntd_null[, !names(HNF_BBmntd_null) %in% c("obs", "Var1", "Var2")], 1, mean),
+         Bmntd_null_sd = apply(HNF_Bmntd_null[, !names(HNF_Bmntd_null) %in% c("obs", "Var1", "Var2")], 1, sd),
+         HNF_select_strength = (obs - Bmntd_null_mean) / Bmntd_null_sd,
          HNF_select_p = pnorm(-abs(HNF_select_strength), 0, 1))
 HNF_Chao_null <- read.table(file = "D:/Research/PdPy_Div_Results/HNF_Chao_null_PR2.csv", sep = ",", 
                             header = TRUE, stringsAsFactors = FALSE, fill = TRUE)
@@ -286,7 +286,7 @@ HNF_A <- iNEXT(t(HNF_comm), q = 0, datatype = "abundance", size = max(colSums(HN
   rename(HNF_q0 = "Species richness", HNF_q1 = "Shannon diversity", HNF_q2 = "Simpson diversity") %>%
   mutate(Site = rownames(HNF_comm))
 
-Bac_selec <- Bac_MNTD %>%
+Bac_selec <- Bac_Bmntd %>%
   mutate(Cr_V1 = substr(Var1, start = 1, stop = 9),
          Cr_V2 = substr(Var2, start = 1, stop = 9)) %>%
   filter(Cr_V1 == Cr_V2) %>%
@@ -302,7 +302,7 @@ Bac_disp <- Bac_BDiv_Chao %>%
   group_by(Var2) %>%
   summarize(Bac_disp = mean(Bac_disp_strength, na.rm = TRUE))
 
-HNF_selec <- HNF_MNTD %>%
+HNF_selec <- HNF_Bmntd %>%
   mutate(Cr_V1 = substr(Var1, start = 1, stop = 9),
          Cr_V2 = substr(Var2, start = 1, stop = 9)) %>%
   filter(Cr_V1 == Cr_V2) %>%
