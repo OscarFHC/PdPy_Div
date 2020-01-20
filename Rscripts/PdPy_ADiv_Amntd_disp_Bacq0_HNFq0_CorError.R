@@ -198,21 +198,13 @@ Vars <- read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/m
 ###############################################################################################
 ##### Loading nulls ###########################################################################
 ###############################################################################################
-Bac_Bmpd_null <- read.table(file = "D:/Research/PdPy_Div_Results/Bac_Bmpd_null.csv", sep = ",", 
+Bac_Amntd_null <- read.table(file = "D:/Research/PdPy_Div_Results/Bac_Amntd_null.csv", sep = ",", 
                             header = TRUE, stringsAsFactors = FALSE, fill = TRUE)
-Bac_Bmntd_null <- read.table(file = "D:/Research/PdPy_Div_Results/Bac_Bmntd_null.csv", sep = ",", 
-                             header = TRUE, stringsAsFactors = FALSE, fill = TRUE)
-Bac_Bmpd <- Bac_Bmpd_null %>% 
+Bac_Amntd <- Bac_Amntd_null %>% 
   select(c(obs, Var1, Var2)) %>%
-  mutate(Bmpd_null_mean = apply(Bac_Bmpd_null[, !names(Bac_Bmpd_null) %in% c("obs", "Var1", "Var2")], 1, mean),
-         Bmpd_null_sd = apply(Bac_Bmpd_null[, !names(Bac_Bmpd_null) %in% c("obs", "Var1", "Var2")], 1, sd),
-         Bac_select_strength = (obs - Bmpd_null_mean) / Bmpd_null_sd,
-         Bac_select_p = pnorm(-abs(Bac_select_strength), 0, 1))
-Bac_Bmntd <- Bac_Bmntd_null %>% 
-  select(c(obs, Var1, Var2)) %>%
-  mutate(Bmntd_null_mean = apply(Bac_Bmntd_null[, !names(Bac_Bmntd_null) %in% c("obs", "Var1", "Var2")], 1, mean),
-         Bmntd_null_sd = apply(Bac_Bmntd_null[, !names(Bac_Bmntd_null) %in% c("obs", "Var1", "Var2")], 1, sd),
-         Bac_select_strength = (obs - Bmntd_null_mean) / Bmntd_null_sd,
+  mutate(Amntd_null_mean = apply(Bac_Amntd_null[, !names(Bac_Amntd_null) %in% c("obs", "Var1", "Var2")], 1, mean),
+         Amntd_null_sd = apply(Bac_Amntd_null[, !names(Bac_Amntd_null) %in% c("obs", "Var1", "Var2")], 1, sd),
+         Bac_select_strength = (obs - Amntd_null_mean) / Amntd_null_sd,
          Bac_select_p = pnorm(-abs(Bac_select_strength), 0, 1))
 
 Bac_Chao_null <- read.table(file = "D:/Research/PdPy_Div_Results/Bac_Chao_null.csv", sep = ",", 
@@ -224,19 +216,12 @@ Bac_BDiv_Chao <- Bac_Chao_null %>%
          Bac_disp_strength = (obs - Chao_null_mean) / Chao_null_sd,
          Bac_disp_p = pnorm(Bac_disp_strength, 0, 1))
 
-HNF_Bmpd_null <- read.table(file = "D:/Research/PdPy_Div_Results/HNF_Bmpd_null_PR2.csv", sep = ",", 
+HNF_Amntd_null <- read.table(file = "D:/Research/PdPy_Div_Results/HNF_Amntd_null_PR2.csv", sep = ",", 
                             header = TRUE, stringsAsFactors = FALSE, fill = TRUE)
-HNF_Bmntd_null <- read.table(file = "D:/Research/PdPy_Div_Results/HNF_Bmntd_null_PR2.csv", sep = ",", 
-                             header = TRUE, stringsAsFactors = FALSE, fill = TRUE)
-HNF_Bmpd <- HNF_Bmpd_null %>% select(c(obs, Var1, Var2)) %>%
-  mutate(Bmpd_null_mean = apply(HNF_Bmpd_null[, !names(HNF_Bmpd_null) %in% c("obs", "Var1", "Var2")], 1, mean),
-         Bmpd_null_sd = apply(HNF_Bmpd_null[, !names(HNF_Bmpd_null) %in% c("obs", "Var1", "Var2")], 1, sd),
-         HNF_select_strength = (obs - Bmpd_null_mean) / Bmpd_null_sd,
-         HNF_select_p = pnorm(-abs(HNF_select_strength), 0, 1))
-HNF_Bmntd <- HNF_Bmntd_null %>% select(c(obs, Var1, Var2)) %>%
-  mutate(Bmntd_null_mean = apply(HNF_Bmntd_null[, !names(HNF_Bmntd_null) %in% c("obs", "Var1", "Var2")], 1, mean),
-         Bmntd_null_sd = apply(HNF_Bmntd_null[, !names(HNF_Bmntd_null) %in% c("obs", "Var1", "Var2")], 1, sd),
-         HNF_select_strength = (obs - Bmntd_null_mean) / Bmntd_null_sd,
+HNF_Amntd <- HNF_Amntd_null %>% select(c(obs, Var1, Var2)) %>%
+  mutate(Amntd_null_mean = apply(HNF_Amntd_null[, !names(HNF_Amntd_null) %in% c("obs", "Var1", "Var2")], 1, mean),
+         Amntd_null_sd = apply(HNF_Amntd_null[, !names(HNF_Amntd_null) %in% c("obs", "Var1", "Var2")], 1, sd),
+         HNF_select_strength = (obs - Amntd_null_mean) / Amntd_null_sd,
          HNF_select_p = pnorm(-abs(HNF_select_strength), 0, 1))
 HNF_Chao_null <- read.table(file = "D:/Research/PdPy_Div_Results/HNF_Chao_null_PR2.csv", sep = ",", 
                             header = TRUE, stringsAsFactors = FALSE, fill = TRUE)
@@ -246,18 +231,6 @@ HNF_BDiv_Chao <- HNF_Chao_null %>%
          Chao_null_sd = apply(HNF_Chao_null[, !names(HNF_Chao_null) %in% c("obs", "Var1", "Var2")], 1, sd),
          HNF_disp_strength = (obs - Chao_null_mean) / Chao_null_sd,
          HNF_disp_p = pnorm(HNF_disp_strength, 0, 1))
-
-HNF_Bnull <- HNF_Bmntd %>%
-  inner_join(HNF_Bmpd, by = c("Var2" = "Var2", "Var1" = "Var1" )) 
-HNF_Bnull %>%
-  ggplot(aes(x = HNF_select_strength.x, y = HNF_select_strength.y)) +
-    geom_point()
-
-Bac_Bnull <- Bac_Bmntd %>%
-  inner_join(Bac_Bmpd, by = c("Var2" = "Var2", "Var1" = "Var1" )) 
-Bac_Bnull %>%
-  ggplot(aes(x = Bac_select_strength.x, y = Bac_select_strength.y)) +
-  geom_point()
 ###############################################################################################
 ##### Loading nulls ###########################################################################
 ###############################################################################################
@@ -313,7 +286,7 @@ HNF_A <- iNEXT(t(HNF_comm), q = 0, datatype = "abundance", size = max(colSums(HN
   rename(HNF_q0 = "Species richness", HNF_q1 = "Shannon diversity", HNF_q2 = "Simpson diversity") %>%
   mutate(Site = rownames(HNF_comm))
 
-Bac_selec <- Bac_Bmpd %>%
+Bac_selec <- Bac_Amntd %>%
   mutate(Cr_V1 = substr(Var1, start = 1, stop = 9),
          Cr_V2 = substr(Var2, start = 1, stop = 9)) %>%
   filter(Cr_V1 == Cr_V2) %>%
@@ -329,7 +302,7 @@ Bac_disp <- Bac_BDiv_Chao %>%
   group_by(Var2) %>%
   summarize(Bac_disp = mean(Bac_disp_strength, na.rm = TRUE))
 
-HNF_selec <- HNF_Bmpd %>%
+HNF_selec <- HNF_Amntd %>%
   mutate(Cr_V1 = substr(Var1, start = 1, stop = 9),
          Cr_V2 = substr(Var2, start = 1, stop = 9)) %>%
   filter(Cr_V1 == Cr_V2) %>%
@@ -413,7 +386,7 @@ p_Adiv_pairs <- HNF_Bac_A %>%
                            "Bacteria\nShannon\ndiversity", "HNF\nShannon\ndiversity", 
                            "Bacteria\nSimpson\ndiversity", "HNF\nSimpson\ndiversity", 
                            "log(Bacteria\nbiomass)", "log(HNF\nbiomass)", 
-                           "Bacteria\nbMPTI", "Bacteria\ndispersal", "HNF\nbMPTI", "HNF\ndispersal"),
+                           "Bacteria\nbNTI", "Bacteria\ndispersal", "HNF\nbNTI", "HNF\ndispersal"),
           #mapping = ggplot2::aes(colour = Cruise),
           upper = list(continuous = cor_fun),
           lower = list(continuous = fit_fun)) +
@@ -502,14 +475,14 @@ p_ADiv_Select <- HNF_Bac_A %>%
   scale_colour_viridis(alpha = 0.7) + 
   labs(x = expression("Log[ Bacteria species richness (Hill number = 0) ]"),
        y = expression("Log[ HNF species richness (Hill number = 0) ]"),
-       colour = expression(paste("\U03B2", "MPTI"))) + 
+       colour = expression(paste("\U03B2", "NTI"))) + 
   theme(
     strip.text.x = element_text(size = 12, face = "bold"),
     axis.text = element_text(size = 12),
     axis.title = element_text(size = 16)
   )
 p_ADiv_Select
-# ggsave(p_ADiv_Select, file = "D:/Research/PdPy_Div_Results/Figs/p_ADiv_Bacq0_HNFq0_Bmpd.jpeg",
+# ggsave(p_ADiv_Select, file = "D:/Research/PdPy_Div_Results/Figs/p_ADiv_Bacq0_HNFq0_Select.jpeg",
 #        dpi = 600, width = 34, height = 28, units = "cm")
 ##### add selection and dispersal #####
 ###############################################################################################
@@ -546,7 +519,7 @@ p_HNFq0_BacSelect <- HNF_Bac_A %>%
   geom_smooth(method = mgcv::gam, formula = y ~ s(x), se = TRUE, color = "red", linetype = "dotted") + 
   scale_colour_viridis(alpha = 0.7, discrete=TRUE) + 
   labs(x = expression("Log[ HNF species richness (Hill number = 0) ]"),
-       y = expression("Deterministic assembly processes ( \U03B2MPTI) of Bacteria community ")) + 
+       y = expression("Deterministic assembly processes ( \U03B2NTI) of Bacteria community ")) + 
   theme(axis.text = element_text(size = 12),
         axis.title = element_text(size = 16))
 
@@ -557,7 +530,7 @@ p_BacSelect_Bacq0 <- HNF_Bac_A %>%
   geom_smooth(formula = y ~ x, method = "lm", se = TRUE, linetype = "dotted") + 
   geom_smooth(method = mgcv::gam, formula = y ~ s(x), se = TRUE, color = "red", linetype = "solid") + 
   scale_colour_viridis(alpha = 0.7, discrete=TRUE) + 
-  labs(x = expression("Deterministic assembly processes ( \U03B2MPTI) of Bacteria community "),
+  labs(x = expression("Deterministic assembly processes ( \U03B2NTI) of Bacteria community "),
        y = expression("Log[ Bacteria species richness (Hill number = 0) ]")) + 
   theme(axis.text = element_text(size = 12),
         axis.title = element_text(size = 16))
@@ -570,7 +543,7 @@ p_HNFq0_BacSelect_Bacq0 <- plot_grid(
             p_BacSelect_Bacq0 + theme(legend.position = "none")),
   legend, rel_widths = c(3, .4))
 p_HNFq0_BacSelect_Bacq0
-# ggsave(p_HNFq0_BacSelect_Bacq0, file = "D:/Research/PdPy_Div_Results/Figs/p_HNFq0_BacBmpd_Bacq0.png",
+# ggsave(p_HNFq0_BacSelect_Bacq0, file = "D:/Research/PdPy_Div/Presentation/20200110_NTOU/p_HNFq0_BacSelect_Bacq0.png",
 #        dpi = 600, width = 56, height = 28, units = "cm")
 ##### HNFq0 -> Bac selection -> Bacq0 ##########
 
@@ -601,7 +574,7 @@ p_Bacq0_HNFSelect <- HNF_Bac_A %>%
   geom_smooth(method = mgcv::gam, formula = y ~ s(x), se = TRUE, color = "red", linetype = "dotted") + 
   scale_colour_viridis(alpha = 0.7, discrete=TRUE) + 
   labs(x = expression("Log[ Bacteria species richness (Hill number = 0) ]"),
-       y = expression("Deterministic assembly processes ( \U03B2MPTI) of HNF community ")) + 
+       y = expression("Deterministic assembly processes ( \U03B2NTI) of HNF community ")) + 
   theme(axis.text = element_text(size = 12),
         axis.title = element_text(size = 16))
 
@@ -612,7 +585,7 @@ p_HNFSelect_HNFq0 <- HNF_Bac_A %>%
   geom_smooth(formula = y ~ x, method = "lm", se = TRUE, linetype = "dotted") + 
   geom_smooth(method = mgcv::gam, formula = y ~ s(x), se = TRUE, color = "red", linetype = "solid") + 
   scale_colour_viridis(alpha = 0.7, discrete=TRUE) + 
-  labs(x = expression("Deterministic assembly processes ( \U03B2MPTI) of HNF community "),
+  labs(x = expression("Deterministic assembly processes ( \U03B2NTI) of HNF community "),
        y = expression("Log[ HNF species richness (Hill number = 0) ]")) + 
   theme(axis.text = element_text(size = 12),
         axis.title = element_text(size = 16))
@@ -625,8 +598,8 @@ p_Select_Bacq0_HNFq0 <- plot_grid(
             p_HNFSelect_HNFq0 + theme(legend.position="none")),
   legend, rel_widths = c(3, .4))
 p_Select_Bacq0_HNFq0
-ggsave(p_Select_Bacq0_HNFq0, file = "D:/Research/PdPy_Div_Results/Figs/p_Bacq0_HNFBmpd_HNFq0.png",
-       dpi = 600, width = 56, height = 28, units = "cm")
+# ggsave(p_Select_Bacq0_HNFq0, file = "D:/Research/PdPy_Div/Presentation/20200110_NTOU/p_Bacq0_HNFSelect_HNFq0.png",
+#        dpi = 600, width = 56, height = 28, units = "cm")
 ##### Bacq0 -> HNF selection ->  HNFq0 ##########
 
 ##### Path model analysis : Bac_q0 vs HNF_q0 ##########
