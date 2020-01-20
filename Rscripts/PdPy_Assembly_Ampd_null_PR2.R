@@ -82,7 +82,7 @@ NF_comm <- as.data.frame(t(read.table(file = "https://raw.githubusercontent.com/
 NF_ra_comm <- NF_comm / rowSums(NF_comm)
 NF_phylo<- read.tree(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/prot_treeNJ_PR2.tree")
 
-HNF_comm <- as.data.frame(t(read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/prot_seqXst_PR2.csv", sep = ",", 
+HNF_comm <- as.data.frame(t(read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/HNF_seqXst_PR2.csv", sep = ",", 
                                        header = TRUE, row.names = 1, stringsAsFactors = FALSE, fill = TRUE)))
 HNF_ra_comm <- HNF_comm / rowSums(HNF_comm)
 HNF_phylo<- read.tree(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/HNF_treeNJ_PR2.tree")
@@ -101,7 +101,6 @@ Vars <- read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/m
 ##### Bacteria phylogenetic turnover ################################################
 numCores <- detectCores()
 numCores
-
 cl <- makeCluster(numCores)
 
 clusterEvalQ(cl, {
@@ -119,17 +118,17 @@ BacPhylo_null_func <- function(x){
   community = Bac_comm
   phylo = Bac_phylo
   # performing comdistnt to calculate MNTD
-  as.matrix(comdist(community, cophenetic(tipShuffle(phylo)), abundance.weighted = TRUE))
+  as.matrix(mpd(Bac_comm, cophenetic(Bac_phylo), abundance.weighted = TRUE))
 }
 
-nsim.list <- sapply(1:999, list)
+nsim.list <- sapply(1:9, list)
 test <- parLapply(cl, nsim.list, BacPhylo_null_func)
-test[[1000]] <- as.matrix(comdist(Bac_comm, cophenetic(Bac_phylo), abundance.weighted = TRUE))
+test[[1000]] <- as.matrix(mpd(Bac_comm, cophenetic(Bac_phylo), abundance.weighted = TRUE))
 
 BacPhylo_null <- data.frame(matrix(unlist(test), ncol = length(test), byrow = FALSE)) %>%
-  cbind(expand.grid(row.names(Bac_comm), row.names(Bac_comm))) %>%
+  cbind(row.names(Bac_comm)) %>%
   rename(obs = X1000)
-write.table(BacPhylo_null, file = "D:/Research/PdPy_Div_Results/Bac_MPD_null.csv", 
+write.table(BacPhylo_null, file = "D:/Research/PdPy_Div_Results/Bac_AMPD_null.csv", 
             sep = ",", col.names = TRUE, row.names = FALSE)
 stopCluster(cl)
 ##### Bacteria phylogenetic turnover ################################################
@@ -196,7 +195,7 @@ ini <- Sys.time()
 nsim.list <- sapply(1:999, list)
 test <- parLapply(cl, nsim.list, HNFPhylo_null_func)
 Sys.time() - ini
-test[[1000]] <- as.matrix(comdist(HNF_comm, cophenetic(HNF_phylo), abundance.weighted = TRUE))
+test[[1000]] <- as.matrix(comdistnt(HNF_comm, cophenetic(HNF_phylo), abundance.weighted = TRUE))
 
 HNFPhylo_null <- data.frame(matrix(unlist(test), ncol = length(test), byrow = FALSE)) %>%
   cbind(expand.grid(row.names(NF_comm), row.names(NF_comm))) %>%
