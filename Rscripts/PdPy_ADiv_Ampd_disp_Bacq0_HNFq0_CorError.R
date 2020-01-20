@@ -203,17 +203,17 @@ Bac_Ampd_null <- read.table(file = "D:/Research/PdPy_Div_Results/Bac_Ampd_null.c
 Bac_Amntd_null <- read.table(file = "D:/Research/PdPy_Div_Results/Bac_Amntd_null.csv", sep = ",", 
                              header = TRUE, stringsAsFactors = FALSE, fill = TRUE)
 Bac_Ampd <- Bac_Ampd_null %>% 
-  select(c(obs, Station)) %>%
-  mutate(Ampd_null_mean = apply(Bac_Ampd_null[, !names(Bac_Ampd_null) %in% c("obs", "Station")], 1, mean),
-         Ampd_null_sd = apply(Bac_Ampd_null[, !names(Bac_Ampd_null) %in% c("obs", "Station")], 1, sd),
-         Bac_select_strength = (obs - Ampd_null_mean) / Ampd_null_sd,
-         Bac_select_p = pnorm(-abs(Bac_select_strength), 0, 1))
+  select(c(obs, Site)) %>%
+  mutate(Ampd_null_mean = apply(Bac_Ampd_null[, !names(Bac_Ampd_null) %in% c("obs", "Site")], 1, mean),
+         Ampd_null_sd = apply(Bac_Ampd_null[, !names(Bac_Ampd_null) %in% c("obs", "Site")], 1, sd),
+         Bac_select = (obs - Ampd_null_mean) / Ampd_null_sd,
+         Bac_select_p = pnorm(-abs(Bac_select), 0, 1))
 Bac_Amntd <- Bac_Amntd_null %>% 
   select(c(obs, Station)) %>%
-  mutate(Amntd_null_mean = apply(Bac_Amntd_null[, !names(Bac_Amntd_null) %in% c("obs", "Station")], 1, mean),
-         Amntd_null_sd = apply(Bac_Amntd_null[, !names(Bac_Amntd_null) %in% c("obs", "Station")], 1, sd),
-         Bac_select_strength = (obs - Amntd_null_mean) / Amntd_null_sd,
-         Bac_select_p = pnorm(-abs(Bac_select_strength), 0, 1))
+  mutate(Amntd_null_mean = apply(Bac_Amntd_null[, !names(Bac_Amntd_null) %in% c("obs", "Site")], 1, mean),
+         Amntd_null_sd = apply(Bac_Amntd_null[, !names(Bac_Amntd_null) %in% c("obs", "Site")], 1, sd),
+         Bac_select = (obs - Amntd_null_mean) / Amntd_null_sd,
+         Bac_select_p = pnorm(-abs(Bac_select), 0, 1))
 
 Bac_Chao_null <- read.table(file = "D:/Research/PdPy_Div_Results/Bac_Chao_null.csv", sep = ",", 
                             header = TRUE, stringsAsFactors = FALSE, fill = TRUE)
@@ -228,16 +228,18 @@ HNF_Ampd_null <- read.table(file = "D:/Research/PdPy_Div_Results/HNF_Ampd_null_P
                             header = TRUE, stringsAsFactors = FALSE, fill = TRUE)
 HNF_Amntd_null <- read.table(file = "D:/Research/PdPy_Div_Results/HNF_Amntd_null_PR2.csv", sep = ",", 
                              header = TRUE, stringsAsFactors = FALSE, fill = TRUE)
-HNF_Ampd <- HNF_Ampd_null %>% select(c(obs, Station)) %>%
-  mutate(Ampd_null_mean = apply(HNF_Ampd_null[, !names(HNF_Ampd_null) %in% c("obs", "Station")], 1, mean),
-         Ampd_null_sd = apply(HNF_Ampd_null[, !names(HNF_Ampd_null) %in% c("obs", "Station")], 1, sd),
-         HNF_select_strength = (obs - Ampd_null_mean) / Ampd_null_sd,
-         HNF_select_p = pnorm(-abs(HNF_select_strength), 0, 1))
-HNF_Amntd <- HNF_Amntd_null %>% select(c(obs, Station)) %>%
+HNF_Ampd <- HNF_Ampd_null %>% 
+  select(c(obs, Site)) %>%
+  mutate(Ampd_null_mean = apply(HNF_Ampd_null[, !names(HNF_Ampd_null) %in% c("obs", "Site")], 1, mean),
+         Ampd_null_sd = apply(HNF_Ampd_null[, !names(HNF_Ampd_null) %in% c("obs", "Site")], 1, sd),
+         HNF_select = (obs - Ampd_null_mean) / Ampd_null_sd,
+         HNF_select_p = pnorm(-abs(HNF_select), 0, 1))
+HNF_Amntd <- HNF_Amntd_null %>% 
+  select(c(obs, Station)) %>%
   mutate(Amntd_null_mean = apply(HNF_Amntd_null[, !names(HNF_Amntd_null) %in% c("obs", "Station")], 1, mean),
          Amntd_null_sd = apply(HNF_Amntd_null[, !names(HNF_Amntd_null) %in% c("obs", "Station")], 1, sd),
-         HNF_select_strength = (obs - Amntd_null_mean) / Amntd_null_sd,
-         HNF_select_p = pnorm(-abs(HNF_select_strength), 0, 1))
+         HNF_select = (obs - Amntd_null_mean) / Amntd_null_sd,
+         HNF_select_p = pnorm(-abs(HNF_select), 0, 1))
 HNF_Chao_null <- read.table(file = "D:/Research/PdPy_Div_Results/HNF_Chao_null_PR2.csv", sep = ",", 
                             header = TRUE, stringsAsFactors = FALSE, fill = TRUE)
 HNF_BDiv_Chao <- HNF_Chao_null %>% 
@@ -301,13 +303,13 @@ fit_fun <- function(data, mapping, ...){
 ##### Envi exploratory factor analyses and  pair-wise correlations ############################
 ###############################################################################################
 ##### Preping data ##########
-Bac_selec <- iNEXT(t(Bac_comm), q = 0, datatype = "abundance", size = max(colSums(Bac_comm)) + 100000)$AsyEst %>% 
+Bac_A <- iNEXT(t(Bac_comm), q = 0, datatype = "abundance", size = max(colSums(Bac_comm)) + 100000)$AsyEst %>% 
   select(Site, Diversity, Estimator) %>% 
   spread(Diversity, Estimator) %>%
   rename(Bac_q0 = "Species richness", Bac_q1 = "Shannon diversity", Bac_q2 = "Simpson diversity") %>%
   mutate(Site = rownames(Bac_comm))
-
-HNF_selec <- iNEXT(t(HNF_comm), q = 0, datatype = "abundance", size = max(colSums(HNF_comm)) + 100000)$AsyEst %>% 
+  
+HNF_A <- iNEXT(t(HNF_comm), q = 0, datatype = "abundance", size = max(colSums(HNF_comm)) + 100000)$AsyEst %>% 
   select(Site, Diversity, Estimator) %>% 
   spread(Diversity, Estimator) %>%
   rename(HNF_q0 = "Species richness", HNF_q1 = "Shannon diversity", HNF_q2 = "Simpson diversity") %>%
@@ -329,13 +331,13 @@ HNF_disp <- HNF_BDiv_Chao %>%
   group_by(Var2) %>%
   summarize(HNF_disp = mean(HNF_disp_strength, na.rm = TRUE))
 
-HNF_Bac_A <- Bac_selec %>%
-  inner_join(Bac_disp, by = c("Var2" = "Var2")) %>%
-  inner_join(HNF_selec, by = c("Var2" = "Var2")) %>%
-  inner_join(HNF_disp, by = c("Var2" = "Var2")) %>%
-  inner_join(Bac_A, by = c("Var2" = "Site")) %>%
-  inner_join(HNF_A, by = c("Var2" = "Site")) %>%
-  inner_join(Vars, by = c("Var2" = "SampleID")) %>%
+HNF_Bac_A <- Bac_A %>%
+  inner_join(Bac_disp, by = c("Site" = "Var2")) %>%
+  inner_join(Bac_Ampd, by = c("Site" = "Site")) %>%
+  inner_join(HNF_A, by = c("Site" = "Site")) %>%
+  inner_join(HNF_disp, by = c("Site" = "Var2")) %>%
+  inner_join(HNF_Ampd, by = c("Site" = "Site")) %>%
+  inner_join(Vars, by = c("Site" = "SampleID")) %>%
   filter(!is.na(NF_Biom)) %>%
   mutate(ln.Bac_q0 = log(Bac_q0),
          ln.HNF_q0 = log(HNF_q0),
@@ -345,8 +347,6 @@ HNF_Bac_A <- Bac_selec %>%
          ln.HNF_q2 = log(HNF_q2),
          ln.Bac_Biom = log(Bac_Biom),
          ln.HNF_Biom = log(HNF_Biom),
-         ln.Bac_select = log(Bac_select - min(Bac_select) + 0.1),
-         ln.HNF_select = log(HNF_select - min(HNF_select) + 0.1),
          ln.Temp = log(Temp),
          ln.Sal = log(Sal),
          ln.PAR = log(PAR),
@@ -392,12 +392,12 @@ fa.diagram(fa3)
 ##### Pair-wise plot of bio-variables ##########
 p_Adiv_pairs <- HNF_Bac_A %>%
   ggpairs(columns = c("ln.Bac_q0", "ln.HNF_q0", "ln.Bac_q1", "ln.HNF_q1", "ln.Bac_q2", "ln.HNF_q2",  
-                      "ln.Bac_Biom", "ln.HNF_Biom", "Bac_select", "Bac_disp", "HNF_select", "HNF_disp"),
+                      "ln.Bac_Biom", "ln.HNF_Biom", "Bac_select", "HNF_select", "Bac_disp", "HNF_disp"),
           columnLabels = c("Bacteria\nspecies\nrichness", "HNF\nspecies\nrichness",
                            "Bacteria\nShannon\ndiversity", "HNF\nShannon\ndiversity", 
                            "Bacteria\nSimpson\ndiversity", "HNF\nSimpson\ndiversity", 
                            "log(Bacteria\nbiomass)", "log(HNF\nbiomass)", 
-                           "Bacteria\nbMPTI", "Bacteria\ndispersal", "HNF\nbMPTI", "HNF\ndispersal"),
+                           "Bacteria\naMPTI", "HNF\naMPTI", "Bacteria\ndispersal", "HNF\ndispersal"),
           #mapping = ggplot2::aes(colour = Cruise),
           upper = list(continuous = cor_fun),
           lower = list(continuous = fit_fun)) +
@@ -410,10 +410,11 @@ ggsave(p_Adiv_pairs, file = "D:/Research/PdPy_Div_Results/Figs/p_ADiv_pairs_ln.j
 # zooming 
 p_Adiv_pairs <- HNF_Bac_A %>%
   ggpairs(columns = c("ln.Bac_q0", "ln.HNF_q0", "ln.HNF_q1", "ln.HNF_q2",  
-                      "ln.Bac_Biom", "ln.HNF_Biom", "Bac_disp", "HNF_disp"),
+                      "ln.Bac_Biom", "ln.HNF_Biom", "Bac_select", "HNF_select", "Bac_disp", "HNF_disp"),
           columnLabels = c("Bacteria\nspecies\nrichness", 
                            "HNF\nspecies\nrichness", "HNF\nShannon\ndiversity", "HNF\nSimpson\ndiversity", 
-                           "log(Bacteria\nbiomass)", "log(HNF\nbiomass)", "Bacteria\ndispersal", "HNF\ndispersal"),
+                           "log(Bacteria\nbiomass)", "log(HNF\nbiomass)", 
+                           "Bacteria\naMPTI", "HNF\naMPTI", "Bacteria\ndispersal", "HNF\ndispersal"),
           #mapping = ggplot2::aes(colour = Cruise),
           upper = list(continuous = cor_fun),
           lower = list(continuous = fit_fun)) +
