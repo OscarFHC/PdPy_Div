@@ -198,12 +198,12 @@ HNFPhylo_null_func <- function(x){
 }
 nsim.list <- sapply(1:999, list)
 test <- parLapply(cl, nsim.list, HNFPhylo_null_func)
-test[[1000]] <- as.matrix(comdistnt(HNF_comm, cophenetic(HNF_phylo), abundance.weighted = TRUE))
+test[[1000]] <- as.matrix(comdist(HNF_comm, cophenetic(HNF_phylo), abundance.weighted = TRUE))
 
 Sys.time() - ini
 
 HNFPhylo_null <- data.frame(matrix(unlist(test), ncol = length(test), byrow = FALSE)) %>%
-  cbind(expand.grid(row.names(NF_comm), row.names(NF_comm))) %>%
+  cbind(expand.grid(row.names(HNF_comm), row.names(HNF_comm))) %>%
   rename(obs = X1000)
 write.table(HNFPhylo_null, file = "D:/Research/PdPy_Div_Results/HNF_Bmpd_null_PR2.csv", 
            sep = ",", col.names = TRUE, row.names = FALSE)

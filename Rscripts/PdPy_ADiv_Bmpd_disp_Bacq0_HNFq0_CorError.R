@@ -198,8 +198,16 @@ Vars <- read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/m
 ###############################################################################################
 ##### Loading nulls ###########################################################################
 ###############################################################################################
-Bac_Bmntd_null <- read.table(file = "D:/Research/PdPy_Div_Results/Bac_Bmntd_null.csv", sep = ",", 
+Bac_Bmpd_null <- read.table(file = "D:/Research/PdPy_Div_Results/Bac_Bmpd_null.csv", sep = ",", 
                             header = TRUE, stringsAsFactors = FALSE, fill = TRUE)
+Bac_Bmntd_null <- read.table(file = "D:/Research/PdPy_Div_Results/Bac_Bmntd_null.csv", sep = ",", 
+                             header = TRUE, stringsAsFactors = FALSE, fill = TRUE)
+Bac_Bmpd <- Bac_Bmpd_null %>% 
+  select(c(obs, Var1, Var2)) %>%
+  mutate(Bmpd_null_mean = apply(Bac_Bmpd_null[, !names(Bac_Bmpd_null) %in% c("obs", "Var1", "Var2")], 1, mean),
+         Bmpd_null_sd = apply(Bac_Bmpd_null[, !names(Bac_Bmpd_null) %in% c("obs", "Var1", "Var2")], 1, sd),
+         Bac_select_strength = (obs - Bmpd_null_mean) / Bmpd_null_sd,
+         Bac_select_p = pnorm(-abs(Bac_select_strength), 0, 1))
 Bac_Bmntd <- Bac_Bmntd_null %>% 
   select(c(obs, Var1, Var2)) %>%
   mutate(Bmntd_null_mean = apply(Bac_Bmntd_null[, !names(Bac_Bmntd_null) %in% c("obs", "Var1", "Var2")], 1, mean),
@@ -216,8 +224,15 @@ Bac_BDiv_Chao <- Bac_Chao_null %>%
          Bac_disp_strength = (obs - Chao_null_mean) / Chao_null_sd,
          Bac_disp_p = pnorm(Bac_disp_strength, 0, 1))
 
-HNF_Bmntd_null <- read.table(file = "D:/Research/PdPy_Div_Results/HNF_Bmntd_null_PR2.csv", sep = ",", 
+HNF_Bmpd_null <- read.table(file = "D:/Research/PdPy_Div_Results/HNF_Bmpd_null_PR2.csv", sep = ",", 
                             header = TRUE, stringsAsFactors = FALSE, fill = TRUE)
+HNF_Bmntd_null <- read.table(file = "D:/Research/PdPy_Div_Results/HNF_Bmntd_null_PR2.csv", sep = ",", 
+                             header = TRUE, stringsAsFactors = FALSE, fill = TRUE)
+HNF_Bmpd <- HNF_Bmpd_null %>% select(c(obs, Var1, Var2)) %>%
+  mutate(Bmpd_null_mean = apply(HNF_Bmpd_null[, !names(HNF_Bmpd_null) %in% c("obs", "Var1", "Var2")], 1, mean),
+         Bmpd_null_sd = apply(HNF_Bmpd_null[, !names(HNF_Bmpd_null) %in% c("obs", "Var1", "Var2")], 1, sd),
+         HNF_select_strength = (obs - Bmpd_null_mean) / Bmpd_null_sd,
+         HNF_select_p = pnorm(-abs(HNF_select_strength), 0, 1))
 HNF_Bmntd <- HNF_Bmntd_null %>% select(c(obs, Var1, Var2)) %>%
   mutate(Bmntd_null_mean = apply(HNF_Bmntd_null[, !names(HNF_Bmntd_null) %in% c("obs", "Var1", "Var2")], 1, mean),
          Bmntd_null_sd = apply(HNF_Bmntd_null[, !names(HNF_Bmntd_null) %in% c("obs", "Var1", "Var2")], 1, sd),
@@ -231,6 +246,18 @@ HNF_BDiv_Chao <- HNF_Chao_null %>%
          Chao_null_sd = apply(HNF_Chao_null[, !names(HNF_Chao_null) %in% c("obs", "Var1", "Var2")], 1, sd),
          HNF_disp_strength = (obs - Chao_null_mean) / Chao_null_sd,
          HNF_disp_p = pnorm(HNF_disp_strength, 0, 1))
+
+HNF_Bnull <- HNF_Bmntd %>%
+  inner_join(HNF_Bmpd, by = c("Var2" = "Var2", "Var1" = "Var1" )) 
+HNF_Bnull %>%
+  ggplot(aes(x = HNF_select_strength.x, y = HNF_select_strength.y)) +
+    geom_point()
+
+Bac_Bnull <- Bac_Bmntd %>%
+  inner_join(Bac_Bmpd, by = c("Var2" = "Var2", "Var1" = "Var1" )) 
+Bac_Bnull %>%
+  ggplot(aes(x = Bac_select_strength.x, y = Bac_select_strength.y)) +
+  geom_point()
 ###############################################################################################
 ##### Loading nulls ###########################################################################
 ###############################################################################################
@@ -286,7 +313,7 @@ HNF_A <- iNEXT(t(HNF_comm), q = 0, datatype = "abundance", size = max(colSums(HN
   rename(HNF_q0 = "Species richness", HNF_q1 = "Shannon diversity", HNF_q2 = "Simpson diversity") %>%
   mutate(Site = rownames(HNF_comm))
 
-Bac_selec <- Bac_Bmntd %>%
+Bac_selec <- Bac_Bmpd %>%
   mutate(Cr_V1 = substr(Var1, start = 1, stop = 9),
          Cr_V2 = substr(Var2, start = 1, stop = 9)) %>%
   filter(Cr_V1 == Cr_V2) %>%
@@ -302,7 +329,7 @@ Bac_disp <- Bac_BDiv_Chao %>%
   group_by(Var2) %>%
   summarize(Bac_disp = mean(Bac_disp_strength, na.rm = TRUE))
 
-HNF_selec <- HNF_Bmntd %>%
+HNF_selec <- HNF_Bmpd %>%
   mutate(Cr_V1 = substr(Var1, start = 1, stop = 9),
          Cr_V2 = substr(Var2, start = 1, stop = 9)) %>%
   filter(Cr_V1 == Cr_V2) %>%
