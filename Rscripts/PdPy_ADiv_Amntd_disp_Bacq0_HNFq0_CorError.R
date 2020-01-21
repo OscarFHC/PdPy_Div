@@ -207,13 +207,13 @@ Bac_Ampd <- Bac_Ampd_null %>%
   mutate(Ampd_null_mean = apply(Bac_Ampd_null[, !names(Bac_Ampd_null) %in% c("obs", "Site")], 1, mean),
          Ampd_null_sd = apply(Bac_Ampd_null[, !names(Bac_Ampd_null) %in% c("obs", "Site")], 1, sd),
          Bac_select = (obs - Ampd_null_mean) / Ampd_null_sd,
-         Bac_select_p = pnorm(-abs(Bac_select_strength), 0, 1))
+         Bac_select_p = pnorm(-abs(Bac_select), 0, 1))
 Bac_Amntd <- Bac_Amntd_null %>% 
-  select(c(obs, Station)) %>%
+  select(c(obs, Site)) %>%
   mutate(Amntd_null_mean = apply(Bac_Amntd_null[, !names(Bac_Amntd_null) %in% c("obs", "Site")], 1, mean),
          Amntd_null_sd = apply(Bac_Amntd_null[, !names(Bac_Amntd_null) %in% c("obs", "Site")], 1, sd),
          Bac_select = (obs - Amntd_null_mean) / Amntd_null_sd,
-         Bac_select_p = pnorm(-abs(Bac_select_strength), 0, 1))
+         Bac_select_p = pnorm(-abs(Bac_select), 0, 1))
 
 Bac_Chao_null <- read.table(file = "D:/Research/PdPy_Div_Results/Bac_Chao_null.csv", sep = ",", 
                             header = TRUE, stringsAsFactors = FALSE, fill = TRUE)
@@ -233,13 +233,13 @@ HNF_Ampd <- HNF_Ampd_null %>%
   mutate(Ampd_null_mean = apply(HNF_Ampd_null[, !names(HNF_Ampd_null) %in% c("obs", "Site")], 1, mean),
          Ampd_null_sd = apply(HNF_Ampd_null[, !names(HNF_Ampd_null) %in% c("obs", "Site")], 1, sd),
          HNF_select = (obs - Ampd_null_mean) / Ampd_null_sd,
-         HNF_select_p = pnorm(-abs(HNF_select_strength), 0, 1))
+         HNF_select_p = pnorm(-abs(HNF_select), 0, 1))
 HNF_Amntd <- HNF_Amntd_null %>% 
-  select(c(obs, Station)) %>%
-  mutate(Amntd_null_mean = apply(HNF_Amntd_null[, !names(HNF_Amntd_null) %in% c("obs", "Station")], 1, mean),
-         Amntd_null_sd = apply(HNF_Amntd_null[, !names(HNF_Amntd_null) %in% c("obs", "Station")], 1, sd),
+  select(c(obs, Site)) %>%
+  mutate(Amntd_null_mean = apply(HNF_Amntd_null[, !names(HNF_Amntd_null) %in% c("obs", "Site")], 1, mean),
+         Amntd_null_sd = apply(HNF_Amntd_null[, !names(HNF_Amntd_null) %in% c("obs", "Site")], 1, sd),
          HNF_select = (obs - Amntd_null_mean) / Amntd_null_sd,
-         HNF_select_p = pnorm(-abs(HNF_select_strength), 0, 1))
+         HNF_select_p = pnorm(-abs(HNF_select), 0, 1))
 HNF_Chao_null <- read.table(file = "D:/Research/PdPy_Div_Results/HNF_Chao_null_PR2.csv", sep = ",", 
                             header = TRUE, stringsAsFactors = FALSE, fill = TRUE)
 HNF_BDiv_Chao <- HNF_Chao_null %>% 
@@ -249,17 +249,19 @@ HNF_BDiv_Chao <- HNF_Chao_null %>%
          HNF_disp_strength = (obs - Chao_null_mean) / Chao_null_sd,
          HNF_disp_p = pnorm(HNF_disp_strength, 0, 1))
 
-HNF_Bnull <- HNF_Amntd %>%
-  inner_join(HNF_Ampd, by = c("Var2" = "Var2", "Var1" = "Var1" )) 
-HNF_Bnull %>%
-  ggplot(aes(x = HNF_select_strength.x, y = HNF_select_strength.y)) +
+Bac_Anull <- Bac_Amntd %>%
+  inner_join(Bac_Ampd, by = c("Site" = "Site")) 
+Bac_Anull %>%
+  ggplot(aes(x = Bac_select.x, y = Bac_select.y)) +
   geom_point()
+cor.test(Bac_Anull$Bac_select.x, Bac_Anull$Bac_select.y)
 
-Bac_Bnull <- Bac_Amntd %>%
-  inner_join(Bac_Ampd, by = c("Var2" = "Var2", "Var1" = "Var1" )) 
-Bac_Bnull %>%
-  ggplot(aes(x = Bac_select_strength.x, y = Bac_select_strength.y)) +
+HNF_Anull <- HNF_Amntd %>%
+  inner_join(HNF_Ampd, by = c("Site" = "Site")) 
+HNF_Anull %>%
+  ggplot(aes(x = HNF_select.x, y = HNF_select.y)) +
   geom_point()
+cor.test(HNF_Anull$HNF_select.x, HNF_Anull$HNF_select.y)
 ###############################################################################################
 ##### Loading nulls ###########################################################################
 ###############################################################################################
