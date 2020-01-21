@@ -255,13 +255,6 @@ Bac_Anull %>%
   ggplot(aes(x = Bac_select.x, y = Bac_select.y)) +
   geom_point()
 cor.test(Bac_Anull$Bac_select.x, Bac_Anull$Bac_select.y)
-
-HNF_Anull <- HNF_Amntd %>%
-  inner_join(HNF_Ampd, by = c("Site" = "Site")) 
-HNF_Anull %>%
-  ggplot(aes(x = HNF_select.x, y = HNF_select.y)) +
-  geom_point()
-cor.test(HNF_Anull$HNF_select.x, HNF_Anull$HNF_select.y)
 ###############################################################################################
 ##### Loading nulls ###########################################################################
 ###############################################################################################
