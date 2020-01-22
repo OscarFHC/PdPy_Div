@@ -209,20 +209,24 @@ fit_fun <- function(data, mapping, ...){
 ###############################################################################################
 ##### Loading data ############################################################################
 ###############################################################################################
-Bac_comm <- as.data.frame(t(read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/16s_seqXst.csv",
-                                       sep = ",", header = TRUE, row.names = 1, stringsAsFactors = FALSE, fill = TRUE)))
+Bac_comm <- as.data.frame(t(read.table(
+  file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/sECS/sECS_Bac_seqXst_PR2_new.csv", 
+  sep = ",", header = TRUE, row.names = 1, stringsAsFactors = FALSE, fill = TRUE)))
 Bac_ra_comm <- Bac_comm / rowSums(Bac_comm)
-Bac_phylo<- read.tree(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/treeNJ_16s.tree")
+Bac_phylo<- read.tree(
+  file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/sECS/sECS_Bac_treeNJ_PR2_new.tree")
 
-NF_comm <- as.data.frame(t(read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/prot_seqXst_PR2.csv", 
-                                      sep = ",", header = TRUE, row.names = 1, stringsAsFactors = FALSE, fill = TRUE)))
-NF_ra_comm <- NF_comm / rowSums(NF_comm)
-NF_phylo<- read.tree(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/prot_treeNJ_PR2.tree")
-
-HNF_comm <- as.data.frame(t(read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/HNF_seqXst_PR2.csv",
-                                       sep = ",", header = TRUE, row.names = 1, stringsAsFactors = FALSE, fill = TRUE)))
+HNF_comm <- as.data.frame(t(read.table(
+  file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/sECS/sECS_HNF_seqXst_PR2_new.csv", 
+  sep = ",", header = TRUE, row.names = 1, stringsAsFactors = FALSE, fill = TRUE)))
 HNF_ra_comm <- HNF_comm / rowSums(HNF_comm)
-HNF_phylo<- read.tree(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/HNF_treeNJ_PR2.tree")
+HNF_phylo<- read.tree(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/sECS/sECS_HNF_treeNJ_PR2_new.tree")
+
+NF_comm <- as.data.frame(t(read.table(
+  file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/sECS/sECS_prot_seqXst_PR2_new.csv", 
+  sep = ",", header = TRUE, row.names = 1, stringsAsFactors = FALSE, fill = TRUE)))
+NF_ra_comm <- NF_comm / rowSums(NF_comm)
+NF_phylo<- read.tree(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/sECS/sECS_prot_treeNJ_PR2_new.tree")
 
 Vars <- read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/sECS_Vars.csv", sep = ",", 
                    header = TRUE, stringsAsFactors = FALSE, fill = TRUE)
@@ -233,9 +237,9 @@ Vars <- read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/m
 ###############################################################################################
 ##### Loading nulls ###########################################################################
 ###############################################################################################
-Bac_Amntd_null <- read.table(file = "D:/Research/PdPy_Div_Results/Bac_Amntd_null.csv", sep = ",", 
+Bac_Amntd_null <- read.table(file = "D:/Research/PdPy_Div_Results/PR2_new/Bac_Amntd_null.csv", sep = ",", 
                              header = TRUE, stringsAsFactors = FALSE, fill = TRUE)
-Bac_Ampd_null <- read.table(file = "D:/Research/PdPy_Div_Results/Bac_Ampd_null.csv", sep = ",", 
+Bac_Ampd_null <- read.table(file = "D:/Research/PdPy_Div_Results/PR2_new/Bac_Ampd_null.csv", sep = ",", 
                             header = TRUE, stringsAsFactors = FALSE, fill = TRUE)
 Bac_Bmntd_null <- read.table(file = "D:/Research/PdPy_Div_Results/Bac_Bmntd_null.csv", sep = ",", 
                              header = TRUE, stringsAsFactors = FALSE, fill = TRUE)
@@ -274,9 +278,9 @@ Bac_BDiv_Chao <- Bac_Chao_null %>%
          Bac_disp_strength = (obs - Chao_null_mean) / Chao_null_sd,
          Bac_disp_p = pnorm(Bac_disp_strength, 0, 1))
 
-HNF_Amntd_null <- read.table(file = "D:/Research/PdPy_Div_Results/HNF_Amntd_null_PR2.csv", sep = ",", 
+HNF_Amntd_null <- read.table(file = "D:/Research/PdPy_Div_Results/PR2_new/HNF_Amntd_null_PR2.csv", sep = ",", 
                              header = TRUE, stringsAsFactors = FALSE, fill = TRUE)
-HNF_Ampd_null <- read.table(file = "D:/Research/PdPy_Div_Results/HNF_Ampd_null_PR2.csv", sep = ",", 
+HNF_Ampd_null <- read.table(file = "D:/Research/PdPy_Div_Results/PR2_new/HNF_Ampd_null_PR2.csv", sep = ",", 
                             header = TRUE, stringsAsFactors = FALSE, fill = TRUE)
 HNF_Bmntd_null <- read.table(file = "D:/Research/PdPy_Div_Results/HNF_Bmntd_null_PR2.csv", sep = ",", 
                              header = TRUE, stringsAsFactors = FALSE, fill = TRUE)
@@ -415,3 +419,47 @@ HNF_Bac_A <- Bac_A %>%
 HNF_Bac_A <- as.data.frame(HNF_Bac_A)
 head(HNF_Bac_A)
 ##### Preping data ##########
+
+p_Adiv_pairs <- HNF_Bac_A %>%
+  ggpairs(columns = c("ln.Bac_q0", "ln.HNF_q0", "ln.Bac_q1", "ln.HNF_q1", "ln.Bac_q2", "ln.HNF_q2"),
+          columnLabels = c("Bacteria\nspecies\nrichness", "HNF\nspecies\nrichness",
+                           "Bacteria\nShannon\ndiversity", "HNF\nShannon\ndiversity", 
+                           "Bacteria\nSimpson\ndiversity", "HNF\nSimpson\ndiversity"),
+          #mapping = ggplot2::aes(colour = Cruise),
+          upper = list(continuous = cor_fun),
+          lower = list(continuous = fit_fun)) +
+  theme(strip.text.x = element_text(color = "black", size = 14),
+        strip.text.y = element_text(angle = 45, color = "black", size = 14))
+p_Adiv_pairs
+
+p_Adiv_AAssemb_pairs <- HNF_Bac_A %>%
+  ggpairs(columns = c("ln.Bac_q0", "ln.HNF_q0", "ln.Bac_q1", "ln.HNF_q1", "ln.Bac_q2", "ln.HNF_q2",
+                      "Bac_Amntd_select", "Bac_Ampd_select", "HNF_Amntd_select", "HNF_Ampd_select"),
+          columnLabels = c("Bacteria\nspecies\nrichness", "HNF\nspecies\nrichness",
+                           "Bacteria\nShannon\ndiversity", "HNF\nShannon\ndiversity", 
+                           "Bacteria\nSimpson\ndiversity", "HNF\nSimpson\ndiversity",
+                           "Bacteria\naNTI", "Bacteria\naMPTI", "HNF\naNTI", "HNF\naMPTI"),
+          #mapping = ggplot2::aes(colour = Cruise),
+          upper = list(continuous = cor_fun),
+          lower = list(continuous = fit_fun)) +
+  theme(strip.text.x = element_text(color = "black", size = 14),
+        strip.text.y = element_text(angle = 45, color = "black", size = 14))
+p_Adiv_AAssemb_pairs
+ggsave(p_Adiv_AAssemb_pairs, file = "D:/Research/PdPy_Div_Results/Figs/p_Adiv_AAssemb_pairs.png",
+       dpi = 600, width = 34, height = 28, units = "cm")
+
+p_Adiv_BAssemb_pairs <- HNF_Bac_A %>%
+  ggpairs(columns = c("ln.Bac_q0", "ln.HNF_q0", "ln.Bac_q1", "ln.HNF_q1", "ln.Bac_q2", "ln.HNF_q2",
+                      "Bac_Bmntd_select", "Bac_Bmpd_select", "HNF_Bmntd_select", "HNF_Bmpd_select"),
+          columnLabels = c("Bacteria\nspecies\nrichness", "HNF\nspecies\nrichness",
+                           "Bacteria\nShannon\ndiversity", "HNF\nShannon\ndiversity", 
+                           "Bacteria\nSimpson\ndiversity", "HNF\nSimpson\ndiversity",
+                           "Bacteria\nbNTI", "Bacteria\nbMPTI", "HNF\nbNTI", "HNF\nbMPTI"),
+          #mapping = ggplot2::aes(colour = Cruise),
+          upper = list(continuous = cor_fun),
+          lower = list(continuous = fit_fun)) +
+  theme(strip.text.x = element_text(color = "black", size = 14),
+        strip.text.y = element_text(angle = 45, color = "black", size = 14))
+p_Adiv_BAssemb_pairs
+ggsave(p_Adiv_BAssemb_pairs, file = "D:/Research/PdPy_Div_Results/Figs/p_Adiv_BAssemb_pairs.png",
+       dpi = 600, width = 34, height = 28, units = "cm")
