@@ -172,6 +172,41 @@ if (!require(cowplot)) {
 ###############################################################################################
 
 ###############################################################################################
+##### Loading functions #######################################################################
+###############################################################################################
+cor_fun <- function(data, mapping, method="pearson", ndp=2, sz=5, stars=TRUE, ...){
+  
+  x <- eval_data_col(data, mapping$x)
+  y <- eval_data_col(data, mapping$y)
+  
+  corr <- cor.test(x, y, method = method)
+  est <- corr$estimate
+  lb.size <- 6#sz* abs(est) 
+  
+  if(stars){
+    stars <- c("***", "**", "*", "")[findInterval(corr$p.value, c(0, 0.001, 0.01, 0.05, 1))]
+    lbl <- paste0(round(est, ndp), stars)
+  }else{
+    lbl <- round(est, ndp)
+  }
+  
+  ggplot(data = data, mapping = mapping) + 
+    annotate("text", x = mean(x, na.rm = TRUE), y = mean(y, na.rm = TRUE), label = lbl, size = lb.size, ...)+
+    theme(panel.grid = element_blank())
+}
+
+fit_fun <- function(data, mapping, ...){
+  p <- ggplot(data = data, mapping = mapping) + 
+    geom_point() + 
+    geom_smooth(method = loess, fill = "red", color = "red", ...) +
+    geom_smooth(method = lm, fill = "blue", color = "blue", ...)
+  p
+}
+###############################################################################################
+##### Loading functions #######################################################################
+###############################################################################################
+
+###############################################################################################
 ##### Loading data ############################################################################
 ###############################################################################################
 Bac_comm <- as.data.frame(t(read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/16s_seqXst.csv",
@@ -260,41 +295,6 @@ Bac_Bnull %>%
   geom_point()
 ###############################################################################################
 ##### Loading nulls ###########################################################################
-###############################################################################################
-
-###############################################################################################
-##### Loading functions #######################################################################
-###############################################################################################
-cor_fun <- function(data, mapping, method="pearson", ndp=2, sz=5, stars=TRUE, ...){
-  
-  x <- eval_data_col(data, mapping$x)
-  y <- eval_data_col(data, mapping$y)
-  
-  corr <- cor.test(x, y, method = method)
-  est <- corr$estimate
-  lb.size <- 6#sz* abs(est) 
-  
-  if(stars){
-    stars <- c("***", "**", "*", "")[findInterval(corr$p.value, c(0, 0.001, 0.01, 0.05, 1))]
-    lbl <- paste0(round(est, ndp), stars)
-  }else{
-    lbl <- round(est, ndp)
-  }
-  
-  ggplot(data = data, mapping = mapping) + 
-    annotate("text", x = mean(x, na.rm = TRUE), y = mean(y, na.rm = TRUE), label = lbl, size = lb.size, ...)+
-    theme(panel.grid = element_blank())
-}
-
-fit_fun <- function(data, mapping, ...){
-  p <- ggplot(data = data, mapping = mapping) + 
-    geom_point() + 
-    geom_smooth(method = loess, fill = "red", color = "red", ...) +
-    geom_smooth(method = lm, fill = "blue", color = "blue", ...)
-  p
-}
-###############################################################################################
-##### Loading functions #######################################################################
 ###############################################################################################
 
 ###############################################################################################
