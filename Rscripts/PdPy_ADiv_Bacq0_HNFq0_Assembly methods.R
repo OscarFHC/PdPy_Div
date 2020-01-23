@@ -237,15 +237,15 @@ Vars <- read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/m
 ###############################################################################################
 ##### Loading nulls ###########################################################################
 ###############################################################################################
-Bac_Amntd_null <- read.table(file = "D:/Research/PdPy_Div_Results/PR2_new/Bac_Amntd_null.csv", sep = ",", 
+Bac_Amntd_null <- read.table(file = "D:/Research/PdPy_Div_Results/nulls_PR2_2/Bac_Amntd_null_PR2.csv", sep = ",", 
                              header = TRUE, stringsAsFactors = FALSE, fill = TRUE)
-Bac_Ampd_null <- read.table(file = "D:/Research/PdPy_Div_Results/PR2_new/Bac_Ampd_null.csv", sep = ",", 
+Bac_Ampd_null <- read.table(file = "D:/Research/PdPy_Div_Results/nulls_PR2_2/Bac_Ampd_null_PR2.csv", sep = ",", 
                             header = TRUE, stringsAsFactors = FALSE, fill = TRUE)
-Bac_Bmntd_null <- read.table(file = "D:/Research/PdPy_Div_Results/Bac_Bmntd_null.csv", sep = ",", 
+Bac_Bmntd_null <- read.table(file = "D:/Research/PdPy_Div_Results/nulls_PR2_1/Bac_Bmntd_null_PR2.csv", sep = ",", 
                              header = TRUE, stringsAsFactors = FALSE, fill = TRUE)
-Bac_Bmpd_null <- read.table(file = "D:/Research/PdPy_Div_Results/Bac_Bmpd_null.csv", sep = ",", 
+Bac_Bmpd_null <- read.table(file = "D:/Research/PdPy_Div_Results/nulls_PR2_1/Bac_Bmpd_null_PR2.csv", sep = ",", 
                             header = TRUE, stringsAsFactors = FALSE, fill = TRUE)
-Bac_Chao_null <- read.table(file = "D:/Research/PdPy_Div_Results/Bac_Chao_null.csv", sep = ",", 
+Bac_Chao_null <- read.table(file = "D:/Research/PdPy_Div_Results/nulls_PR2_2/Bac_Chao_null_PR2.csv", sep = ",", 
                             header = TRUE, stringsAsFactors = FALSE, fill = TRUE)
 Bac_Amntd <- Bac_Amntd_null %>% 
   select(c(obs, Site)) %>%
@@ -278,15 +278,15 @@ Bac_BDiv_Chao <- Bac_Chao_null %>%
          Bac_disp_strength = (obs - Chao_null_mean) / Chao_null_sd,
          Bac_disp_p = pnorm(Bac_disp_strength, 0, 1))
 
-HNF_Amntd_null <- read.table(file = "D:/Research/PdPy_Div_Results/PR2_new/HNF_Amntd_null_PR2.csv", sep = ",", 
+HNF_Amntd_null <- read.table(file = "D:/Research/PdPy_Div_Results/nulls_PR2_2/HNF_Amntd_null_PR2.csv", sep = ",", 
                              header = TRUE, stringsAsFactors = FALSE, fill = TRUE)
-HNF_Ampd_null <- read.table(file = "D:/Research/PdPy_Div_Results/PR2_new/HNF_Ampd_null_PR2.csv", sep = ",", 
+HNF_Ampd_null <- read.table(file = "D:/Research/PdPy_Div_Results/nulls_PR2_2/HNF_Ampd_null_PR2.csv", sep = ",", 
                             header = TRUE, stringsAsFactors = FALSE, fill = TRUE)
-HNF_Bmntd_null <- read.table(file = "D:/Research/PdPy_Div_Results/HNF_Bmntd_null_PR2.csv", sep = ",", 
+HNF_Bmntd_null <- read.table(file = "D:/Research/PdPy_Div_Results/nulls_PR2_1/HNF_Bmntd_null_PR2.csv", sep = ",", 
                              header = TRUE, stringsAsFactors = FALSE, fill = TRUE)
-HNF_Bmpd_null <- read.table(file = "D:/Research/PdPy_Div_Results/HNF_Bmpd_null_PR2.csv", sep = ",", 
+HNF_Bmpd_null <- read.table(file = "D:/Research/PdPy_Div_Results/nulls_PR2_1/HNF_Bmpd_null_PR2.csv", sep = ",", 
                             header = TRUE, stringsAsFactors = FALSE, fill = TRUE)
-HNF_Chao_null <- read.table(file = "D:/Research/PdPy_Div_Results/HNF_Chao_null_PR2.csv", sep = ",", 
+HNF_Chao_null <- read.table(file = "D:/Research/PdPy_Div_Results/nulls_PR2_2/HNF_Chao_null_PR2.csv", sep = ",", 
                             header = TRUE, stringsAsFactors = FALSE, fill = TRUE)
 HNF_Amntd <- HNF_Amntd_null %>% 
   select(c(obs, Site)) %>%
@@ -445,7 +445,7 @@ p_Adiv_AAssemb_pairs <- HNF_Bac_A %>%
   theme(strip.text.x = element_text(color = "black", size = 14),
         strip.text.y = element_text(angle = 45, color = "black", size = 14))
 p_Adiv_AAssemb_pairs
-ggsave(p_Adiv_AAssemb_pairs, file = "D:/Research/PdPy_Div_Results/Figs/p_Adiv_AAssemb_pairs.png",
+ggsave(p_Adiv_AAssemb_pairs, file = "D:/Research/PdPy_Div_Results/Figs/PR2_2/p_Adiv_AAssemb_pairs.png",
        dpi = 600, width = 34, height = 28, units = "cm")
 
 p_Adiv_BAssemb_pairs <- HNF_Bac_A %>%
