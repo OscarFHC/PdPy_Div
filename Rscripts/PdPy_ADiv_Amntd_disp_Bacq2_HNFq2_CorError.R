@@ -627,7 +627,7 @@ p_HNFq2_BacSelect <- HNF_Bac_A %>%
   geom_smooth(method = mgcv::gam, formula = y ~ s(x), se = TRUE, color = "red", linetype = "solid") + 
   scale_colour_viridis(alpha = 0.7, discrete=TRUE) + 
   labs(x = expression("Log[ HNF Simpson diversity (Hill number = 2) ]"),
-       y = expression("Deterministic assembly processes ( \U03B1NTI) of Bacteria community ")) + 
+       y = expression(paste("Deterministic assembly processes (", alpha, "NTI) of Bacteria community"))) + 
   theme(axis.text = element_text(size = 12),
         axis.title = element_text(size = 16))
 
@@ -638,7 +638,7 @@ p_BacSelect_Bacq2 <- HNF_Bac_A %>%
   geom_smooth(formula = y ~ x, method = "lm", se = TRUE, linetype = "solid") + 
   geom_smooth(method = mgcv::gam, formula = y ~ s(x), se = TRUE, color = "red", linetype = "solid") + 
   scale_colour_viridis(alpha = 0.7, discrete=TRUE) + 
-  labs(x = expression("Deterministic assembly processes ( \U03B1NTI) of Bacteria community "),
+  labs(x = expression(paste("Deterministic assembly processes (", alpha, "NTI) of Bacteria community")),
        y = expression("Log[ Bacteria Simpson diversity (Hill number = 2) ]")) + 
   theme(axis.text = element_text(size = 12),
         axis.title = element_text(size = 16))
@@ -683,7 +683,7 @@ p_Bacq2_HNFSelect <- HNF_Bac_A %>%
   geom_smooth(method = mgcv::gam, formula = y ~ s(x), se = TRUE, color = "red", linetype = "dotted") + 
   scale_colour_viridis(alpha = 0.7, discrete=TRUE) + 
   labs(x = expression("Log[ Bacteria Simpson diversity (Hill number = 2) ]"),
-       y = expression("Deterministic assembly processes ( \U03B1NTI) of HNF community ")) + 
+       y = expression(paste("Deterministic assembly processes (", alpha, "NTI) of HNF community"))) + 
   theme(axis.text = element_text(size = 12),
         axis.title = element_text(size = 16))
 
@@ -694,7 +694,7 @@ p_HNFSelect_HNFq2 <- HNF_Bac_A %>%
   geom_smooth(formula = y ~ x, method = "lm", se = TRUE, linetype = "dotted") + 
   geom_smooth(method = mgcv::gam, formula = y ~ s(x), se = TRUE, color = "red", linetype = "solid") + 
   scale_colour_viridis(alpha = 0.7, discrete=TRUE) + 
-  labs(x = expression("Deterministic assembly processes ( \U03B1NTI) of HNF community "),
+  labs(x = expression(paste("Deterministic assembly processes (", alpha, "NTI) of HNF community")),
        y = expression("Log[ HNF Simpson diversity (Hill number = 2) ]")) + 
   theme(axis.text = element_text(size = 12),
         axis.title = element_text(size = 16))
