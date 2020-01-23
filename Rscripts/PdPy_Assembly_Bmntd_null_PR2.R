@@ -136,7 +136,7 @@ ini <- Sys.time()
 numCores <- detectCores()
 numCores
 
-cl <- makeCluster(numCores)
+cl <- makeCluster(numCores-2)
 
 clusterEvalQ(cl, {
   library(vegan)
@@ -161,44 +161,7 @@ test[[1000]] <- as.matrix(comdistnt(HNF_comm, cophenetic(HNF_phylo), abundance.w
 Sys.time() - ini
 
 HNFPhylo_null <- data.frame(matrix(unlist(test), ncol = length(test), byrow = FALSE)) %>%
-  cbind(expand.grid(row.names(NF_comm), row.names(NF_comm))) %>%
-  rename(obs = X1000)
-write.table(HNFPhylo_null, file = "D:/Research/PdPy_Div_Results/HNF_Bmntd_null_PR2.csv", 
-            sep = ",", col.names = TRUE, row.names = FALSE)
-stopCluster(cl)
-##### Hetero-trophic Nanoflagellate phylogenetic turnover ###########################
-
-##### Hetero-trophic Nanoflagellate phylogenetic turnover ###########################
-ini <- Sys.time()
-numCores <- detectCores()
-numCores
-
-cl <- makeCluster(numCores)
-
-clusterEvalQ(cl, {
-  library(vegan)
-  library(tidyverse)
-  library(picante)
-  HNF_comm <- as.data.frame(t(read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/sECS/sECS_HNF_seqXst_PR2_new.csv",
-                                         sep = ",", header = TRUE, row.names = 1, stringsAsFactors = FALSE, fill = TRUE)))
-  HNF_phylo<- read.tree(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/sECS/sECS_HNF_treeNJ_PR2_new.tree")
-})
-
-HNFPhylo_null_func <- function(x){
-  # set up parameters and data
-  community = HNF_comm
-  phylo = HNF_phylo
-  # performing comdistnt to calculate MNTD
-  as.matrix(comdistnt(community, cophenetic(tipShuffle(phylo)), abundance.weighted = TRUE))
-}
-nsim.list <- sapply(1:999, list)
-test <- parLapply(cl, nsim.list, HNFPhylo_null_func)
-test[[1000]] <- as.matrix(comdistnt(HNF_comm, cophenetic(HNF_phylo), abundance.weighted = TRUE))
-
-Sys.time() - ini
-
-HNFPhylo_null <- data.frame(matrix(unlist(test), ncol = length(test), byrow = FALSE)) %>%
-  cbind(expand.grid(row.names(NF_comm), row.names(NF_comm))) %>%
+  cbind(expand.grid(row.names(HNF_comm), row.names(HNF_comm))) %>%
   rename(obs = X1000)
 write.table(HNFPhylo_null, file = "D:/Research/PdPy_Div_Results/HNF_Bmntd_null_PR2.csv", 
             sep = ",", col.names = TRUE, row.names = FALSE)
