@@ -72,10 +72,10 @@ if (!require(abind)) {
 ###############################################################################################
 ##### Loading data ############################################################################
 ###############################################################################################
-Bac_comm <- as.data.frame(t(read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/sECS_3/sECS_Bac_seqXst_PR2_3.csv",
+HNF_comm <- as.data.frame(t(read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/sECS_3/sECS_HNF_seqXst_PR2_3.csv",
                                        sep = ",", header = TRUE, row.names = 1, stringsAsFactors = FALSE, fill = TRUE)))
-Bac_ra_comm <- Bac_comm / rowSums(Bac_comm)
-Bac_phylo<- read.tree(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/sECS_3/sECS_Bac_treeNJ_PR2_3.tree")
+HNF_ra_comm <- HNF_comm / rowSums(HNF_comm)
+HNF_phylo<- read.tree(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/sECS_3/sECS_HNF_treeNJ_PR2_3.tree")
 ###############################################################################################
 ##### Loading data ############################################################################
 ###############################################################################################
@@ -244,10 +244,10 @@ if (!require(abind)) {
 ###############################################################################################
 ##### Loading data ############################################################################
 ###############################################################################################
-Bac_comm <- as.data.frame(t(read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/sECS_3/sECS_Bac_seqXst_PR2_3.csv",
+HNF_comm <- as.data.frame(t(read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/sECS_3/sECS_HNF_seqXst_PR2_3.csv",
                                        sep = ",", header = TRUE, row.names = 1, stringsAsFactors = FALSE, fill = TRUE)))
-Bac_ra_comm <- Bac_comm / rowSums(Bac_comm)
-Bac_phylo<- read.tree(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/sECS_3/sECS_Bac_treeNJ_PR2_3.tree")
+HNF_ra_comm <- HNF_comm / rowSums(HNF_comm)
+HNF_phylo<- read.tree(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/sECS_3/sECS_HNF_treeNJ_PR2_3.tree")
 ###############################################################################################
 ##### Loading data ############################################################################
 ###############################################################################################

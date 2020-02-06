@@ -108,9 +108,9 @@ BacPhylo_null_func <- function(x){
   # performing comdistnt to calculate MNTD
   as.matrix(comdist(community, cophenetic(tipShuffle(phylo)), abundance.weighted = TRUE))
 }
-nsim.list <- sapply(1:9, list)
+nsim.list <- sapply(1:999, list)
 test <- parLapply(cl, nsim.list, BacPhylo_null_func)
-test[[10]] <- as.matrix(comdist(Bac_comm, cophenetic(Bac_phylo), abundance.weighted = TRUE))
+test[[1000]] <- as.matrix(comdist(Bac_comm, cophenetic(Bac_phylo), abundance.weighted = TRUE))
 
 Sys.time() - ini
 
