@@ -231,13 +231,13 @@ Vars <- read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/m
 ###############################################################################################
 ##### Loading nulls ###########################################################################
 ###############################################################################################
-Bac_Amntd_null <- read.table(file = "D:/Research/PdPy_Div_Results/null_PR2_3/Bac_Amntd_null_3.csv", sep = ",", 
+Bac_Amntd_null <- read.table(file = "D:/Research/PdPy_Div_Results/nulls_PR2_3/Bac_Amntd_null_3.csv", sep = ",", 
                              header = TRUE, stringsAsFactors = FALSE, fill = TRUE)
-Bac_Ampd_null <- read.table(file = "D:/Research/PdPy_Div_Results/null_PR2_3/Bac_Ampd_null_3.csv", sep = ",", 
+Bac_Ampd_null <- read.table(file = "D:/Research/PdPy_Div_Results/nulls_PR2_3/Bac_Ampd_null_3.csv", sep = ",", 
                             header = TRUE, stringsAsFactors = FALSE, fill = TRUE)
-Bac_Bmntd_null <- read.table(file = "D:/Research/PdPy_Div_Results/null_PR2_3/Bac_Bmntd_null_3.csv", sep = ",", 
+Bac_Bmntd_null <- read.table(file = "D:/Research/PdPy_Div_Results/nulls_PR2_3/Bac_Bmntd_null_3.csv", sep = ",", 
                              header = TRUE, stringsAsFactors = FALSE, fill = TRUE)
-Bac_Bmpd_null <- read.table(file = "D:/Research/PdPy_Div_Results/null_PR2_3/Bac_Bmpd_null_3.csv", sep = ",", 
+Bac_Bmpd_null <- read.table(file = "D:/Research/PdPy_Div_Results/nulls_PR2_3/Bac_Bmpd_null_3.csv", sep = ",", 
                             header = TRUE, stringsAsFactors = FALSE, fill = TRUE)
 Bac_Amntd <- Bac_Amntd_null %>% 
   select(c(obs, Site)) %>%
@@ -264,13 +264,13 @@ Bac_Bmpd <- Bac_Bmpd_null %>%
          Bac_Bmpd_select_strength = (obs - Bmpd_null_mean) / Bmpd_null_sd,
          Bac_Bmpd_select_p = pnorm(-abs(Bac_Bmpd_select_strength), 0, 1))
 
-HNF_Amntd_null <- read.table(file = "D:/Research/PdPy_Div_Results/null_PR2_3/HNF_Amntd_null_3.csv", sep = ",", 
+HNF_Amntd_null <- read.table(file = "D:/Research/PdPy_Div_Results/nulls_PR2_3/HNF_Amntd_null_3.csv", sep = ",", 
                              header = TRUE, stringsAsFactors = FALSE, fill = TRUE)
-HNF_Ampd_null <- read.table(file = "D:/Research/PdPy_Div_Results/null_PR2_3/HNF_Ampd_null_3.csv", sep = ",", 
+HNF_Ampd_null <- read.table(file = "D:/Research/PdPy_Div_Results/nulls_PR2_3/HNF_Ampd_null_3.csv", sep = ",", 
                             header = TRUE, stringsAsFactors = FALSE, fill = TRUE)
-HNF_Bmntd_null <- read.table(file = "D:/Research/PdPy_Div_Results/null_PR2_3/HNF_Bmntd_null_3.csv", sep = ",", 
+HNF_Bmntd_null <- read.table(file = "D:/Research/PdPy_Div_Results/nulls_PR2_3/HNF_Bmntd_null_3.csv", sep = ",", 
                              header = TRUE, stringsAsFactors = FALSE, fill = TRUE)
-HNF_Bmpd_null <- read.table(file = "D:/Research/PdPy_Div_Results/null_PR2_3/HNF_Bmpd_null_3.csv", sep = ",", 
+HNF_Bmpd_null <- read.table(file = "D:/Research/PdPy_Div_Results/nulls_PR2_3/HNF_Bmpd_null_3.csv", sep = ",", 
                             header = TRUE, stringsAsFactors = FALSE, fill = TRUE)
 HNF_Amntd <- HNF_Amntd_null %>% 
   select(c(obs, Site)) %>%
@@ -302,16 +302,16 @@ HNF_Bmpd <- HNF_Bmpd_null %>% select(c(obs, Var1, Var2)) %>%
 ##### Phylogenetic signal #####################################################################
 ###############################################################################################
 ##### Bacteria ##########
-Bac_Niche <- as.data.frame(matrix(0, ncol(Bac_comm), 8)) %>%
+Bac_Niche <- as.data.frame(matrix(0, ncol(Bac_comm), 6)) %>%
   #mutate(Bac_ID = names(Bac_comm)) %>%
-  rename(Temp = V1, Sal = V2, PAR = V3, NO2 = V4, NO3 = V5, DIN = V6, PO3 = V7, Chla = V8) 
+  rename(Temp = V1, Sal = V2, PAR = V3, DIN = V4, PO3 = V5, Chla = V6) 
 
 for(i in 1:ncol(Bac_comm)){ 
   Bac_Niche[i, "Temp"] = sum(Bac_comm[,names(Bac_comm)[i]] * Vars$Temp) / sum(Bac_comm[,names(Bac_comm)[i]])
   Bac_Niche[i, "Sal"] = sum(Bac_comm[,names(Bac_comm)[i]] * Vars$Sal) / sum(Bac_comm[,names(Bac_comm)[i]])
   Bac_Niche[i, "PAR"] = sum(Bac_comm[,names(Bac_comm)[i]] * Vars$PAR) / sum(Bac_comm[,names(Bac_comm)[i]])
-  Bac_Niche[i, "NO2"] = sum(Bac_comm[,names(Bac_comm)[i]] * Vars$NO2) / sum(Bac_comm[,names(Bac_comm)[i]])
-  Bac_Niche[i, "NO3"] = sum(Bac_comm[,names(Bac_comm)[i]] * Vars$NO3) / sum(Bac_comm[,names(Bac_comm)[i]])
+  # Bac_Niche[i, "NO2"] = sum(Bac_comm[,names(Bac_comm)[i]] * Vars$NO2) / sum(Bac_comm[,names(Bac_comm)[i]])
+  # Bac_Niche[i, "NO3"] = sum(Bac_comm[,names(Bac_comm)[i]] * Vars$NO3) / sum(Bac_comm[,names(Bac_comm)[i]])
   Bac_Niche[i, "DIN"] = sum(Bac_comm[,names(Bac_comm)[i]] * Vars$DIN) / sum(Bac_comm[,names(Bac_comm)[i]])
   Bac_Niche[i, "PO3"] = sum(Bac_comm[,names(Bac_comm)[i]] * Vars$PO3) / sum(Bac_comm[,names(Bac_comm)[i]])
   Bac_Niche[i, "Chla"] = sum(Bac_comm[,names(Bac_comm)[i]] * Vars$Chla) / sum(Bac_comm[,names(Bac_comm)[i]])
@@ -322,7 +322,7 @@ Bac_Niche_Dist <- vegdist(Bac_Niche, method = "euclidean")
 Bac_Phylo_Dist <- cophenetic(Bac_phylo)
 Bac_PhySig <- mantel.correlog(Bac_Niche_Dist, Bac_Phylo_Dist, n.class = 50)
 Bac_PhySig_fig <- plot(Bac_PhySig)
-# ggsave(plot(Bac_PhySig), file = "D:/Research/PdPy_Div/Results/Bac_PhySig_fig.png", dpi = 600) 
+ggsave(plot(Bac_PhySig), file = "D:/Research/PdPy_Div_Results/FigsBac_PhySig_fig.png", dpi = 600) 
 ##### Bacteria ##########
 
 ##### HNF ##########
