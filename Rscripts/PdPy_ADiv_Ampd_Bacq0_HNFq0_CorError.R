@@ -302,16 +302,16 @@ HNF_Bmpd <- HNF_Bmpd_null %>% select(c(obs, Var1, Var2)) %>%
 ##### Phylogenetic signal #####################################################################
 ###############################################################################################
 ##### Bacteria ##########
-Bac_Niche <- as.data.frame(matrix(0, ncol(Bac_comm), 6)) %>%
+Bac_Niche <- as.data.frame(matrix(0, ncol(Bac_comm), 8)) %>%
   #mutate(Bac_ID = names(Bac_comm)) %>%
-  rename(Temp = V1, Sal = V2, PAR = V3, DIN = V4, PO3 = V5, Chla = V6) 
+  rename(Temp = V1, Sal = V2, PAR = V3, NO2 = V4, NO3 = V5, DIN = V6, PO3 = V7, Chla = V8) 
 
 for(i in 1:ncol(Bac_comm)){ 
   Bac_Niche[i, "Temp"] = sum(Bac_comm[,names(Bac_comm)[i]] * Vars$Temp) / sum(Bac_comm[,names(Bac_comm)[i]])
   Bac_Niche[i, "Sal"] = sum(Bac_comm[,names(Bac_comm)[i]] * Vars$Sal) / sum(Bac_comm[,names(Bac_comm)[i]])
   Bac_Niche[i, "PAR"] = sum(Bac_comm[,names(Bac_comm)[i]] * Vars$PAR) / sum(Bac_comm[,names(Bac_comm)[i]])
-  # Bac_Niche[i, "NO2"] = sum(Bac_comm[,names(Bac_comm)[i]] * Vars$NO2) / sum(Bac_comm[,names(Bac_comm)[i]])
-  # Bac_Niche[i, "NO3"] = sum(Bac_comm[,names(Bac_comm)[i]] * Vars$NO3) / sum(Bac_comm[,names(Bac_comm)[i]])
+  Bac_Niche[i, "NO2"] = sum(Bac_comm[,names(Bac_comm)[i]] * Vars$NO2) / sum(Bac_comm[,names(Bac_comm)[i]])
+  Bac_Niche[i, "NO3"] = sum(Bac_comm[,names(Bac_comm)[i]] * Vars$NO3) / sum(Bac_comm[,names(Bac_comm)[i]])
   Bac_Niche[i, "DIN"] = sum(Bac_comm[,names(Bac_comm)[i]] * Vars$DIN) / sum(Bac_comm[,names(Bac_comm)[i]])
   Bac_Niche[i, "PO3"] = sum(Bac_comm[,names(Bac_comm)[i]] * Vars$PO3) / sum(Bac_comm[,names(Bac_comm)[i]])
   Bac_Niche[i, "Chla"] = sum(Bac_comm[,names(Bac_comm)[i]] * Vars$Chla) / sum(Bac_comm[,names(Bac_comm)[i]])
@@ -322,7 +322,7 @@ Bac_Niche_Dist <- vegdist(Bac_Niche, method = "euclidean")
 Bac_Phylo_Dist <- cophenetic(Bac_phylo)
 Bac_PhySig <- mantel.correlog(Bac_Niche_Dist, Bac_Phylo_Dist, n.class = 50)
 Bac_PhySig_fig <- plot(Bac_PhySig)
-ggsave(plot(Bac_PhySig), file = "D:/Research/PdPy_Div_Results/FigsBac_PhySig_fig.png", dpi = 600) 
+ggsave(plot(Bac_PhySig), file = "D:/Research/PdPy_Div_Results/p_Bac_PhySig.png", dpi = 600) 
 ##### Bacteria ##########
 
 ##### HNF ##########
@@ -346,7 +346,7 @@ HNF_Niche_Dist <- vegdist(HNF_Niche, method = "euclidean")
 HNF_Phylo_Dist <- cophenetic(HNF_phylo)
 HNF_PhySig <- mantel.correlog(HNF_Niche_Dist, HNF_Phylo_Dist, n.class = 50)
 HNF_PhySig_fig <- plot(HNF_PhySig)
-# ggsave(plot(HNF_PhySig), file = "D:/Research/PdPy_Div/Results/HNF_PhySig_fig.png", dpi = 600) 
+ggsave(plot(HNF_PhySig), file = "D:/Research/PdPy_Div_Results/p_HNF_PhySig.png", dpi = 600) 
 ##### HNF ##########
 ###############################################################################################
 ##### Phylogenetic signal #####################################################################
