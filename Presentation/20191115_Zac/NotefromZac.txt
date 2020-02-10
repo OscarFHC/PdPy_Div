@@ -1,0 +1,12 @@
+Hypothesis:
+response variables should be R2, slope, or correlation coef.
+
+consider environmental variables
+
+pair-wise plots of all variables, do not over trust coefficients from sem
+
+deterministic processes can be on different temporal scale, e.g. cruise
+
+
+future direction:
+metacommunity X time series
