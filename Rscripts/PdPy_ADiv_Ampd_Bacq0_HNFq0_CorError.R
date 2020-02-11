@@ -346,7 +346,7 @@ for(i in 1:ncol(HNF_noZeroComm)){
 HNF_Niche <- as.data.frame(scale(HNF_Niche, center = TRUE, scale = TRUE))
 HNF_Niche_Dist <- vegdist(HNF_Niche, method = "euclidean")
 HNF_Phylo_Dist <- cophenetic(drop.tip(HNF_phylo, which(colSums(HNF_comm) == 0)))
-HNF_PhySig <- mantel.correlog(HNF_Niche_Dist, HNF_Phylo_Dist, n.class = 30)
+HNF_PhySig <- mantel.correlog(HNF_Niche_Dist, HNF_Phylo_Dist, n.class = 50)
 HNF_PhySig_fig <- plot(HNF_PhySig)
 ggsave(plot(HNF_PhySig), file = "D:/Research/PdPy_Div_Results/p_HNF_PhySig.png", dpi = 600) 
 ##### HNF ##########
