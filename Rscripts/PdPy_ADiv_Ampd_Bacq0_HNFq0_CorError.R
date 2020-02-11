@@ -546,15 +546,15 @@ p_force <- HNF_Bac_A %>%
     facet_wrap(~ force, ncol = 2, dir = "v", labeller = labeller(force = force.labs)) +  
   theme(
     strip.text.x = element_text(size = 12, face = "bold"),
-    axis.text = element_text(size = 12),
-    axis.title = element_text(size = 16)
+    axis.title = element_text(size = 20),
+    axis.text = element_text(size = 16)
   )
 p_force
 ggsave(p_force, file = "D:/Research/PdPy_Div_Results/Figs/PR2_new/p_force.png",
        dpi = 600, width = 34, height = 28, units = "cm")
 
 ###############################################################################################
-##### Assemnbly processes and dispersal force visualization  ##################################
+##### Assemnbly processes force visualization  ################################################
 ###############################################################################################
 
 ###############################################################################################
@@ -573,19 +573,20 @@ lme_select <- lme(ln.HNF_q1 ~ ln.Bac_q1*Bac_Ampd_select + ln.Bac_q1*HNF_Amntd_se
 summary(lme_select)
 ### plotting (without selection)
 p_HNFq1_Bacq1 <- HNF_Bac_A %>% 
-  select(ln.Bac_q1, ln.HNF_q1, Bac_Ampd_select, HNF_Ampd_select) %>%
+  select(ln.Bac_q1, ln.HNF_q1, Bac_Ampd_select, HNF_Ampd_select, Cruise) %>%
   ggplot(aes(x = ln.Bac_q1, y = ln.HNF_q1)) + 
-  geom_point(size = 3) + 
-  geom_smooth(formula = y ~ x, method = "lm", se = TRUE) + 
-  geom_smooth(method = mgcv::gam, formula = y ~ s(x), se = TRUE, color = "red", linetype = "dotted") + 
-  #scale_colour_viridis(alpha = 0.7) + 
-  labs(x = expression("Log[ Bacteria Shannon diversity (Hill number = 1) ]"),
-       y = expression("Log[ HNF Shannon diversity (Hill number = 1) ]")) + 
-  theme(
-    strip.text.x = element_text(size = 12, face = "bold"),
-    axis.text = element_text(size = 12),
-    axis.title = element_text(size = 16)
-  )
+    geom_point(size = 3, aes(color = Cruise)) + 
+    geom_smooth(formula = y ~ x, method = "lm", se = TRUE) + 
+    # geom_smooth(method = mgcv::gam, formula = y ~ s(x), se = TRUE, color = "red", linetype = "dotted") + 
+    labs(x = expression("Log[ Bacteria Shannon diversity (Hill number = 1) ]"),
+         y = expression("Log[ HNF Shannon diversity (Hill number = 1) ]")) + 
+    theme(
+      strip.text.x = element_text(size = 20, face = "bold"),
+      axis.title = element_text(size = 20),
+      axis.text = element_text(size = 16),
+      legend.title = element_text(size = 20),
+      legend.text = element_text(size = 16)
+    )
 p_HNFq1_Bacq1
 ggsave(p_HNFq1_Bacq1, file = "D:/Research/PdPy_Div_Results/Figs/PR2_3/p_ADiv_HNFq1_Bacq1.png",
        dpi = 600, width = 34, height = 28, units = "cm")
