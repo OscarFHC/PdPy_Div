@@ -301,57 +301,82 @@ HNF_Bmpd <- HNF_Bmpd_null %>% select(c(obs, Var1, Var2)) %>%
 ###############################################################################################
 ##### Phylogenetic signal #####################################################################
 ###############################################################################################
-##### Bacteria ##########
-Bac_Niche <- as.data.frame(matrix(0, ncol(Bac_comm), 8)) %>%
-  #mutate(Bac_ID = names(Bac_comm)) %>%
-  rename(Temp = V1, Sal = V2, PAR = V3, NO2 = V4, NO3 = V5, DIN = V6, PO3 = V7, Chla = V8) 
-
-for(i in 1:ncol(Bac_comm)){ 
-  Bac_Niche[i, "Temp"] = sum(Bac_comm[,names(Bac_comm)[i]] * Vars$Temp) / sum(Bac_comm[,names(Bac_comm)[i]])
-  Bac_Niche[i, "Sal"] = sum(Bac_comm[,names(Bac_comm)[i]] * Vars$Sal) / sum(Bac_comm[,names(Bac_comm)[i]])
-  Bac_Niche[i, "PAR"] = sum(Bac_comm[,names(Bac_comm)[i]] * Vars$PAR) / sum(Bac_comm[,names(Bac_comm)[i]])
-  Bac_Niche[i, "NO2"] = sum(Bac_comm[,names(Bac_comm)[i]] * Vars$NO2) / sum(Bac_comm[,names(Bac_comm)[i]])
-  Bac_Niche[i, "NO3"] = sum(Bac_comm[,names(Bac_comm)[i]] * Vars$NO3) / sum(Bac_comm[,names(Bac_comm)[i]])
-  Bac_Niche[i, "DIN"] = sum(Bac_comm[,names(Bac_comm)[i]] * Vars$DIN) / sum(Bac_comm[,names(Bac_comm)[i]])
-  Bac_Niche[i, "PO3"] = sum(Bac_comm[,names(Bac_comm)[i]] * Vars$PO3) / sum(Bac_comm[,names(Bac_comm)[i]])
-  Bac_Niche[i, "Chla"] = sum(Bac_comm[,names(Bac_comm)[i]] * Vars$Chla) / sum(Bac_comm[,names(Bac_comm)[i]])
-}
-
-Bac_Niche <- as.data.frame(scale(Bac_Niche, center = TRUE, scale = TRUE))
-Bac_Niche_Dist <- vegdist(Bac_Niche, method = "euclidean")
-Bac_Phylo_Dist <- cophenetic(Bac_phylo)
-Bac_PhySig <- mantel.correlog(Bac_Niche_Dist, Bac_Phylo_Dist, n.class = 50)
-Bac_PhySig_fig <- plot(Bac_PhySig)
-ggsave(plot(Bac_PhySig), file = "D:/Research/PdPy_Div_Results/p_Bac_PhySig.png", dpi = 600) 
-##### Bacteria ##########
-
-##### HNF ##########
-HNF_noZeroComm <- HNF_comm[, which(colSums(HNF_comm) != 0)]
-HNF_Niche <- as.data.frame(matrix(0, ncol(HNF_noZeroComm), 8)) %>%
-  # mutate(HNF_ID = names(HNF_comm)) %>%
-  rename(Temp = V1, Sal = V2, PAR = V3, NO2 = V4, NO3 = V5, DIN = V6, PO3 = V7, Chla = V8) 
-Vars_HNF <- Vars[Vars$SampleID %in% row.names(HNF_noZeroComm),]
-
-for(i in 1:ncol(HNF_noZeroComm)){ 
-  HNF_Niche[i, "Temp"] = sum(HNF_noZeroComm[,names(HNF_noZeroComm)[i]] * Vars_HNF$Temp) / sum(HNF_noZeroComm[,names(HNF_noZeroComm)[i]])
-  HNF_Niche[i, "Sal"] = sum(HNF_noZeroComm[,names(HNF_noZeroComm)[i]] * Vars_HNF$Sal) / sum(HNF_noZeroComm[,names(HNF_noZeroComm)[i]])
-  HNF_Niche[i, "PAR"] = sum(HNF_noZeroComm[,names(HNF_noZeroComm)[i]] * Vars_HNF$PAR) / sum(HNF_noZeroComm[,names(HNF_noZeroComm)[i]])
-  HNF_Niche[i, "NO2"] = sum(HNF_noZeroComm[,names(HNF_noZeroComm)[i]] * Vars_HNF$NO2) / sum(HNF_noZeroComm[,names(HNF_noZeroComm)[i]])
-  HNF_Niche[i, "NO3"] = sum(HNF_noZeroComm[,names(HNF_noZeroComm)[i]] * Vars_HNF$NO3) / sum(HNF_noZeroComm[,names(HNF_noZeroComm)[i]])
-  HNF_Niche[i, "DIN"] = sum(HNF_noZeroComm[,names(HNF_noZeroComm)[i]] * Vars_HNF$DIN) / sum(HNF_noZeroComm[,names(HNF_noZeroComm)[i]])
-  HNF_Niche[i, "PO3"] = sum(HNF_noZeroComm[,names(HNF_noZeroComm)[i]] * Vars_HNF$PO3) / sum(HNF_noZeroComm[,names(HNF_noZeroComm)[i]])
-  HNF_Niche[i, "Chla"] = sum(HNF_noZeroComm[,names(HNF_noZeroComm)[i]] * Vars_HNF$Chla) / sum(HNF_noZeroComm[,names(HNF_noZeroComm)[i]])
-}
-
-HNF_Niche <- as.data.frame(scale(HNF_Niche, center = TRUE, scale = TRUE))
-HNF_Niche_Dist <- vegdist(HNF_Niche, method = "euclidean")
-HNF_Phylo_Dist <- cophenetic(drop.tip(HNF_phylo, which(colSums(HNF_comm) == 0)))
-HNF_PhySig <- mantel.correlog(HNF_Niche_Dist, HNF_Phylo_Dist, n.class = 50)
-HNF_PhySig_fig <- plot(HNF_PhySig)
-ggsave(plot(HNF_PhySig), file = "D:/Research/PdPy_Div_Results/p_HNF_PhySig.png", dpi = 600) 
-##### HNF ##########
+# ##### Bacteria ##########
+# Bac_Niche <- as.data.frame(matrix(0, ncol(Bac_comm), 8)) %>%
+#   #mutate(Bac_ID = names(Bac_comm)) %>%
+#   rename(Temp = V1, Sal = V2, PAR = V3, NO2 = V4, NO3 = V5, DIN = V6, PO3 = V7, Chla = V8) 
+# 
+# for(i in 1:ncol(Bac_comm)){ 
+#   Bac_Niche[i, "Temp"] = sum(Bac_comm[,names(Bac_comm)[i]] * Vars$Temp) / sum(Bac_comm[,names(Bac_comm)[i]])
+#   Bac_Niche[i, "Sal"] = sum(Bac_comm[,names(Bac_comm)[i]] * Vars$Sal) / sum(Bac_comm[,names(Bac_comm)[i]])
+#   Bac_Niche[i, "PAR"] = sum(Bac_comm[,names(Bac_comm)[i]] * Vars$PAR) / sum(Bac_comm[,names(Bac_comm)[i]])
+#   Bac_Niche[i, "NO2"] = sum(Bac_comm[,names(Bac_comm)[i]] * Vars$NO2) / sum(Bac_comm[,names(Bac_comm)[i]])
+#   Bac_Niche[i, "NO3"] = sum(Bac_comm[,names(Bac_comm)[i]] * Vars$NO3) / sum(Bac_comm[,names(Bac_comm)[i]])
+#   Bac_Niche[i, "DIN"] = sum(Bac_comm[,names(Bac_comm)[i]] * Vars$DIN) / sum(Bac_comm[,names(Bac_comm)[i]])
+#   Bac_Niche[i, "PO3"] = sum(Bac_comm[,names(Bac_comm)[i]] * Vars$PO3) / sum(Bac_comm[,names(Bac_comm)[i]])
+#   Bac_Niche[i, "Chla"] = sum(Bac_comm[,names(Bac_comm)[i]] * Vars$Chla) / sum(Bac_comm[,names(Bac_comm)[i]])
+# }
+# 
+# Bac_Niche <- as.data.frame(scale(Bac_Niche, center = TRUE, scale = TRUE))
+# Bac_Niche_Dist <- vegdist(Bac_Niche, method = "euclidean")
+# Bac_Phylo_Dist <- cophenetic(Bac_phylo)
+# Bac_PhySig <- mantel.correlog(Bac_Niche_Dist, Bac_Phylo_Dist, n.class = 50)
+# Bac_PhySig_fig <- plot(Bac_PhySig)
+# ggsave(plot(Bac_PhySig), file = "D:/Research/PdPy_Div_Results/p_Bac_PhySig.png", dpi = 600) 
+# ##### Bacteria ##########
+# 
+# ##### HNF ##########
+# HNF_noZeroComm <- HNF_comm[, which(colSums(HNF_comm) != 0)]
+# HNF_Niche <- as.data.frame(matrix(0, ncol(HNF_noZeroComm), 8)) %>%
+#   # mutate(HNF_ID = names(HNF_comm)) %>%
+#   rename(Temp = V1, Sal = V2, PAR = V3, NO2 = V4, NO3 = V5, DIN = V6, PO3 = V7, Chla = V8) 
+# Vars_HNF <- Vars[Vars$SampleID %in% row.names(HNF_noZeroComm),]
+# 
+# for(i in 1:ncol(HNF_noZeroComm)){ 
+#   HNF_Niche[i, "Temp"] = sum(HNF_noZeroComm[,names(HNF_noZeroComm)[i]] * Vars_HNF$Temp) / sum(HNF_noZeroComm[,names(HNF_noZeroComm)[i]])
+#   HNF_Niche[i, "Sal"] = sum(HNF_noZeroComm[,names(HNF_noZeroComm)[i]] * Vars_HNF$Sal) / sum(HNF_noZeroComm[,names(HNF_noZeroComm)[i]])
+#   HNF_Niche[i, "PAR"] = sum(HNF_noZeroComm[,names(HNF_noZeroComm)[i]] * Vars_HNF$PAR) / sum(HNF_noZeroComm[,names(HNF_noZeroComm)[i]])
+#   HNF_Niche[i, "NO2"] = sum(HNF_noZeroComm[,names(HNF_noZeroComm)[i]] * Vars_HNF$NO2) / sum(HNF_noZeroComm[,names(HNF_noZeroComm)[i]])
+#   HNF_Niche[i, "NO3"] = sum(HNF_noZeroComm[,names(HNF_noZeroComm)[i]] * Vars_HNF$NO3) / sum(HNF_noZeroComm[,names(HNF_noZeroComm)[i]])
+#   HNF_Niche[i, "DIN"] = sum(HNF_noZeroComm[,names(HNF_noZeroComm)[i]] * Vars_HNF$DIN) / sum(HNF_noZeroComm[,names(HNF_noZeroComm)[i]])
+#   HNF_Niche[i, "PO3"] = sum(HNF_noZeroComm[,names(HNF_noZeroComm)[i]] * Vars_HNF$PO3) / sum(HNF_noZeroComm[,names(HNF_noZeroComm)[i]])
+#   HNF_Niche[i, "Chla"] = sum(HNF_noZeroComm[,names(HNF_noZeroComm)[i]] * Vars_HNF$Chla) / sum(HNF_noZeroComm[,names(HNF_noZeroComm)[i]])
+# }
+# 
+# HNF_Niche <- as.data.frame(scale(HNF_Niche, center = TRUE, scale = TRUE))
+# HNF_Niche_Dist <- vegdist(HNF_Niche, method = "euclidean")
+# HNF_Phylo_Dist <- cophenetic(drop.tip(HNF_phylo, which(colSums(HNF_comm) == 0)))
+# HNF_PhySig <- mantel.correlog(HNF_Niche_Dist, HNF_Phylo_Dist, n.class = 50)
+# HNF_PhySig_fig <- plot(HNF_PhySig)
+# ggsave(plot(HNF_PhySig), file = "D:/Research/PdPy_Div_Results/p_HNF_PhySig.png", dpi = 600) 
+# ##### HNF ##########
 ###############################################################################################
 ##### Phylogenetic signal #####################################################################
+###############################################################################################
+
+###############################################################################################
+##### sampling maps ###########################################################################
+###############################################################################################
+St_sECS = read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/raw/St_Location.csv", 
+                     header = T, fill = T, sep = ",")
+library(ggmap)
+library(mapproj)
+bbox <- ggmap::make_bbox(Lon, Lat, St_sECS, f = 0.1)
+map <- get_map(
+  location = bbox #c(lon=-85, lat=44) # google search string
+  #, zoom = 7 # larger is closer
+  #, maptype = "terrian" # map type
+  , source = "google"
+)
+map = ggmap(map) + 
+  geom_point(data = St_sECS[1:7,], aes(x = Lon, y = Lat), size = 4) + 
+  labs(x="Longitude", y="Latitude") + 
+  geom_text(data = St_sECS[1:7,], aes(x = Lon, y = Lat, label = Station), hjust = -0.4, vjust = -0.3, size = 6) + 
+  theme(axis.title = element_text(size = 20),
+        axis.text = element_text(size = 16))
+# ggsave(map, file = "D:/Research/PdPy_Div_Results/Figs/PR2_3/p_map.png", dpi = 600) 
+###############################################################################################
+##### sampling maps ###########################################################################
 ###############################################################################################
 
 ###############################################################################################
@@ -504,7 +529,7 @@ ggsave(p_Adiv_AAssemb_zoompairs, file = "D:/Research/PdPy_Div_Results/Figs/PR2_3
 ###############################################################################################
 
 ###############################################################################################
-##### Assemnbly processes and dispersal force visualization  ##################################
+##### Assemnbly processes force visualization  ################################################
 ###############################################################################################
 force.labs <- c("Bacteria \U03B1MPTI", "HNF \U03B1MPTI")
 names(force.labs) <- c("Bac_Ampd_select", "HNF_Ampd_select")
@@ -553,7 +578,7 @@ p_HNFq1_Bacq1 <- HNF_Bac_A %>%
   geom_point(size = 3) + 
   geom_smooth(formula = y ~ x, method = "lm", se = TRUE) + 
   geom_smooth(method = mgcv::gam, formula = y ~ s(x), se = TRUE, color = "red", linetype = "dotted") + 
-  scale_colour_viridis(alpha = 0.7) + 
+  #scale_colour_viridis(alpha = 0.7) + 
   labs(x = expression("Log[ Bacteria Shannon diversity (Hill number = 1) ]"),
        y = expression("Log[ HNF Shannon diversity (Hill number = 1) ]")) + 
   theme(
