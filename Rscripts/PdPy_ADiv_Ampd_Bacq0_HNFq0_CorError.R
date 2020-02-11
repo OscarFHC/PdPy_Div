@@ -658,6 +658,7 @@ p_HNFq1_BacSelect <- HNF_Bac_A %>%
   ggplot(aes(x = ln.HNF_q1, y = Bac_Ampd_select)) + 
     geom_point(aes(color = Cruise), size = 3) + 
     geom_smooth(formula = y ~ x, method = "lm", se = TRUE, linetype = "solid") + 
+    #geom_smooth(method = mgcv::gam, formula = y ~ s(x), se = TRUE, color = "red", linetype = "solid") + 
     scale_colour_viridis(alpha = 0.7, discrete=TRUE) + 
     labs(x = expression("Log[ HNF Shannon diversity (Hill number = 1) ]"),
          y = expression(atop("Deterministic assembly processes (\U03B1MPTI)", "of Bacteria community"))) + 
@@ -995,8 +996,8 @@ Bacq1_HNFq1_psem2.Cr <- psem(
   #     random = ~ 1 | Cruise, data = HNF_Bac_A),
   # lme(ln.Bac_Biom ~ ln.Bac_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3,
   #     random = ~ 1 | Cruise, data = HNF_Bac_A),
-  lme(ln.HNF_Biom ~ ln.HNF_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3,
-      random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML"),
+  # lme(ln.HNF_Biom ~ ln.HNF_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3,
+  #     random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML"),
   
   ln.Bac_q1 %~~% ln.HNF_q1,
   ln.Bac_Biom %~~% ln.HNF_Biom
