@@ -619,9 +619,11 @@ p_ADiv_Select <- HNF_Bac_A %>%
          y = expression("Log[ HNF Shannon diversity (Hill number = 1) ]"),
          colour = expression(paste("\u03B1", "MPTI"))) + 
     theme(
-      strip.text.x = element_text(size = 12, face = "bold"),
-      axis.text = element_text(size = 12),
-      axis.title = element_text(size = 16)
+      strip.text.x = element_text(size = 20, face = "bold"),
+      axis.title = element_text(size = 20),
+      axis.text = element_text(size = 16),
+      legend.title = element_text(size = 20),
+      legend.text = element_text(size = 16)
     )
 p_ADiv_Select
 ggsave(p_ADiv_Select, file = "D:/Research/PdPy_Div_Results/Figs/PR2_3/p_ADiv_HNFq1_Bacq1_Ampd.png",
@@ -656,35 +658,41 @@ p_HNFq1_BacSelect <- HNF_Bac_A %>%
   ggplot(aes(x = ln.HNF_q1, y = Bac_Ampd_select)) + 
     geom_point(aes(color = Cruise), size = 3) + 
     geom_smooth(formula = y ~ x, method = "lm", se = TRUE, linetype = "solid") + 
-    geom_smooth(method = mgcv::gam, formula = y ~ s(x), se = TRUE, color = "red", linetype = "solid") + 
     scale_colour_viridis(alpha = 0.7, discrete=TRUE) + 
     labs(x = expression("Log[ HNF Shannon diversity (Hill number = 1) ]"),
-         y = expression("Deterministic assembly processes (\U03B1MPTI) of Bacteria community ")) + 
-    theme(axis.text = element_text(size = 12),
-          axis.title = element_text(size = 16))
+         y = expression(atop("Deterministic assembly processes (\U03B1MPTI)", "of Bacteria community"))) + 
+    theme(axis.title.y = element_text(size = 20, margin = margin(t = 0, r = 0, b = 0, l = 20)),
+          axis.title.x = element_text(size = 20),
+          axis.text = element_text(size = 16),
+          legend.title = element_text(size = 20),
+          legend.text = element_text(size = 16))
 
 p_BacSelect_Bacq1 <- HNF_Bac_A %>% 
   select(ln.Bac_q1, ln.HNF_q1, Bac_Ampd_select, HNF_Ampd_select, Cruise) %>%
   ggplot(aes(x = Bac_Ampd_select, y = ln.Bac_q1)) + 
     geom_point(aes(color = Cruise), size = 3) + 
     geom_smooth(formula = y ~ x, method = "lm", se = TRUE, linetype = "solid") + 
-    geom_smooth(method = mgcv::gam, formula = y ~ s(x), se = TRUE, color = "red", linetype = "dotted") + 
+    #geom_smooth(method = mgcv::gam, formula = y ~ s(x), se = TRUE, color = "red", linetype = "dotted") + 
     scale_colour_viridis(alpha = 0.7, discrete=TRUE) + 
     labs(x = expression("Deterministic assembly processes (\U03B1MPTI) of Bacteria community "),
-         y = expression("Log[ Bacteria Shannon diversity (Hill number = 1) ]")) + 
-    theme(axis.text = element_text(size = 12),
-          axis.title = element_text(size = 16))
+         y = expression(atop("Log[ Bacterial Shannon diversity", "(Hill number = 1) ]"))) + 
+    theme(axis.title.y = element_text(size = 20, margin = margin(t = 0, r = 0, b = 0, l = 20)),
+          axis.title.x = element_text(size = 20),
+          axis.text = element_text(size = 16),
+          legend.title = element_text(size = 20),
+          legend.text = element_text(size = 16))
 
 legend <- get_legend(
   p_HNFq1_BacSelect + theme(legend.box.margin = margin(0, 0, 0, 12))
 )
 p_HNFq1_BacSelect_Bacq1 <- plot_grid(
   plot_grid(p_HNFq1_BacSelect + theme(legend.position = "none"),
-            p_BacSelect_Bacq1 + theme(legend.position = "none")),
+            p_BacSelect_Bacq1 + theme(legend.position = "none"),
+            ncol = 1, labels = "AUTO", hjust = 0),
   legend, rel_widths = c(3, .4))
 p_HNFq1_BacSelect_Bacq1
 ggsave(p_HNFq1_BacSelect_Bacq1, file = "D:/Research/PdPy_Div_Results/Figs/PR2_3/p_HNFq1_BacAmpd_Bacq1.png",
-       dpi = 600, width = 56, height = 28, units = "cm")
+       dpi = 600, width = 36, height = 42, units = "cm")
 ##### HNFq1 -> Bac selection -> Bacq1 ##########
 
 ##### Bacq1 -> HNF selection -> HNFq1 ##########
@@ -709,35 +717,42 @@ p_Bacq1_HNFSelect <- HNF_Bac_A %>%
   ggplot(aes(x = ln.Bac_q1, y = HNF_Ampd_select)) + 
     geom_point(aes(color = Cruise), size = 3) + 
     geom_smooth(formula = y ~ x, method = "lm", se = TRUE, linetype = "dashed") + 
-    geom_smooth(method = mgcv::gam, formula = y ~ s(x), se = TRUE, color = "red", linetype = "dotted") + 
+    #geom_smooth(method = mgcv::gam, formula = y ~ s(x), se = TRUE, color = "red", linetype = "dotted") + 
     scale_colour_viridis(alpha = 0.7, discrete=TRUE) + 
-    labs(x = expression("Log[ Bacteria Shannon diversity (Hill number = 1) ]"),
-         y = expression("Deterministic assembly processes (\U03B1MPTI) of HNF community ")) + 
-    theme(axis.text = element_text(size = 12),
-          axis.title = element_text(size = 16))
+    labs(x = expression("Log[ Bacterial Shannon diversity (Hill number = 1) ]"),
+         y = expression(atop("Deterministic assembly processes (\U03B1MPTI)", "of HNF community "))) + 
+    theme(axis.title.y = element_text(size = 20, margin = margin(t = 0, r = 0, b = 0, l = 20)),
+          axis.title.x = element_text(size = 20),
+          axis.text = element_text(size = 16),
+          legend.title = element_text(size = 20),
+          legend.text = element_text(size = 16))
 
 p_HNFSelect_HNFq1 <- HNF_Bac_A %>% 
   select(ln.Bac_q1, ln.HNF_q1, Bac_Ampd_select, HNF_Ampd_select, Cruise) %>%
   ggplot(aes(x = HNF_Ampd_select, y = ln.HNF_q1)) + 
     geom_point(aes(color = Cruise), size = 3) + 
     geom_smooth(formula = y ~ x, method = "lm", se = TRUE, linetype = "solid") + 
-    geom_smooth(method = mgcv::gam, formula = y ~ s(x), se = TRUE, color = "red", linetype = "dotted") + 
+    #geom_smooth(method = mgcv::gam, formula = y ~ s(x), se = TRUE, color = "red", linetype = "dotted") + 
     scale_colour_viridis(alpha = 0.7, discrete=TRUE) + 
     labs(x = expression("Deterministic assembly processes (\U03B1MPTI) of HNF community "),
-         y = expression("Log[ HNF Shannon diversity (Hill number = 1) ]")) + 
-    theme(axis.text = element_text(size = 12),
-          axis.title = element_text(size = 16))
+         y = expression(atop("Log[ HNF Shannon diversity", "(Hill number = 1) ]"))) + 
+    theme(axis.title.y = element_text(size = 20, margin = margin(t = 0, r = 0, b = 0, l = 20)),
+          axis.title.x = element_text(size = 20),
+          axis.text = element_text(size = 16),
+          legend.title = element_text(size = 20),
+          legend.text = element_text(size = 16))
 
 legend <- get_legend(
   p_Bacq1_HNFSelect + theme(legend.box.margin = margin(0, 0, 0, 12))
 )
 p_Bacq1_HNFSelect_HNFq1 <- plot_grid(
-  plot_grid(p_Bacq1_HNFSelect + theme(legend.position="none"),
-            p_HNFSelect_HNFq1 + theme(legend.position="none")),
+  plot_grid(p_Bacq1_HNFSelect + theme(legend.position = "none"),
+            p_HNFSelect_HNFq1 + theme(legend.position = "none"),
+            ncol = 1, labels = "AUTO", hjust = 0),
   legend, rel_widths = c(3, .4))
 p_Bacq1_HNFSelect_HNFq1
 ggsave(p_Bacq1_HNFSelect_HNFq1, file = "D:/Research/PdPy_Div_Results/Figs/PR2_3/p_Bacq1_HNFAmpd_HNFq1.png",
-       dpi = 600, width = 56, height = 28, units = "cm")
+       dpi = 600, width = 36, height = 42, units = "cm")
 ##### Bacq0 -> HNF selection ->  HNFq0 ##########
 
 ##### Path model analysis : Bac_q0 vs HNF_q0 ##########
