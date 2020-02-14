@@ -999,8 +999,8 @@ Bacq1_HNFq1_psem2.Cr <- psem(
   # lme(ln.HNF_Biom ~ ln.HNF_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3,
   #     random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML"),
   
-  ln.Bac_q1 %~~% ln.HNF_q1,
-  ln.Bac_Biom %~~% ln.HNF_Biom
+  ln.Bac_q1 %~~% ln.HNF_q1
+  # ln.Bac_Biom %~~% ln.HNF_Biom
 )
 summary(Bacq1_HNFq1_psem2.Cr, fit.measures = TRUE)
 summary(lme(HNF_Ampd_select ~ ln.Bac_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3,
