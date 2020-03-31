@@ -368,10 +368,11 @@ map <- get_map(
   #, maptype = "terrian" # map type
   , source = "google"
 )
+
 map = ggmap(map) + 
-  geom_point(data = St_sECS[1:7,], aes(x = Lon, y = Lat), size = 4) + 
+  geom_point(data = St_sECS[1:6,], aes(x = Lon, y = Lat), size = 4) + 
   labs(x="Longitude", y="Latitude") + 
-  geom_text(data = St_sECS[1:7,], aes(x = Lon, y = Lat, label = Station), hjust = -0.4, vjust = -0.3, size = 6) + 
+  geom_text(data = St_sECS[1:6,], aes(x = Lon, y = Lat, label = Station), hjust = -0.4, vjust = -0.3, size = 6) + 
   theme(axis.title = element_text(size = 20),
         axis.text = element_text(size = 16))
 # ggsave(map, file = "D:/Research/PdPy_Div_Results/Figs/PR2_3/p_map.png", dpi = 600) 
@@ -380,9 +381,8 @@ map = ggmap(map) +
 ###############################################################################################
 
 ###############################################################################################
-##### Envi exploratory factor analyses and  pair-wise correlations ############################
+##### Preping data ############################################################################
 ###############################################################################################
-##### Preping data ##########
 Bac_A <- iNEXT(t(Bac_comm), q = 0, datatype = "abundance", size = max(colSums(Bac_comm)) + 100000)$AsyEst %>% 
   select(Site, Diversity, Estimator) %>% 
   spread(Diversity, Estimator) %>%
@@ -430,14 +430,14 @@ HNF_Bmpd_selec <- HNF_Bmpd %>%
 HNF_Bac_A <- Bac_A %>%
   inner_join(Bac_Amntd, by = c("Site" = "Site")) %>%
   inner_join(Bac_Ampd, by = c("Site" = "Site")) %>%
-  inner_join(Bac_Bmntd_selec, by = c("Site" = "Var2")) %>%
-  inner_join(Bac_Bmpd_selec, by = c("Site" = "Var2")) %>%
+  #inner_join(Bac_Bmntd_selec, by = c("Site" = "Var2")) %>%
+  #inner_join(Bac_Bmpd_selec, by = c("Site" = "Var2")) %>%
   
   inner_join(HNF_A, by = c("Site" = "Site")) %>%
   inner_join(HNF_Amntd, by = c("Site" = "Site")) %>%
   inner_join(HNF_Ampd, by = c("Site" = "Site")) %>%
-  inner_join(HNF_Bmntd_selec, by = c("Site" = "Var2")) %>%
-  inner_join(HNF_Bmpd_selec, by = c("Site" = "Var2")) %>%
+  #inner_join(HNF_Bmntd_selec, by = c("Site" = "Var2")) %>%
+  #inner_join(HNF_Bmpd_selec, by = c("Site" = "Var2")) %>%
   
   inner_join(Vars, by = c("Site" = "SampleID")) %>%
   filter(!is.na(NF_Biom)) %>%
@@ -459,7 +459,13 @@ HNF_Bac_A <- Bac_A %>%
          ln.Chla = log(Chla + 0.00001))
 HNF_Bac_A <- as.data.frame(HNF_Bac_A)
 head(HNF_Bac_A)
-##### Preping data ##########
+###############################################################################################
+##### Preping data ############################################################################
+###############################################################################################
+
+###############################################################################################
+##### Envi exploratory factor analyses and  pair-wise correlations ############################
+###############################################################################################
 
 ##### exploratory factor analyses on environmental data ##########
 ### plotting
@@ -653,21 +659,6 @@ summary(Bacq1_BacS.Cr)
 summary(gam(ln.Bac_q1 ~ s(Bac_Ampd_select, bs = "ts"), data = HNF_Bac_A))
 
 ### plotting
-p_HNFq1_BacSelect <- HNF_Bac_A %>% 
-  select(ln.Bac_q1, ln.HNF_q1, Bac_Ampd_select, HNF_Ampd_select, Cruise) %>%
-  ggplot(aes(x = ln.HNF_q1, y = Bac_Ampd_select)) + 
-    geom_point(aes(color = Cruise), size = 3) + 
-    geom_smooth(formula = y ~ x, method = "lm", se = TRUE, linetype = "solid") + 
-    #geom_smooth(method = mgcv::gam, formula = y ~ s(x), se = TRUE, color = "red", linetype = "solid") + 
-    scale_colour_viridis(alpha = 0.7, discrete=TRUE) + 
-    labs(x = expression("Log[ HNF Shannon diversity (Hill number = 1) ]"),
-         y = expression(atop("Deterministic assembly processes (\U03B1MPTI)", "of Bacteria community"))) + 
-    theme(axis.title.y = element_text(size = 20, margin = margin(t = 0, r = 0, b = 0, l = 20)),
-          axis.title.x = element_text(size = 20),
-          axis.text = element_text(size = 16),
-          legend.title = element_text(size = 20),
-          legend.text = element_text(size = 16))
-
 p_BacSelect_Bacq1 <- HNF_Bac_A %>% 
   select(ln.Bac_q1, ln.HNF_q1, Bac_Ampd_select, HNF_Ampd_select, Cruise) %>%
   ggplot(aes(x = Bac_Ampd_select, y = ln.Bac_q1)) + 
@@ -683,12 +674,27 @@ p_BacSelect_Bacq1 <- HNF_Bac_A %>%
           legend.title = element_text(size = 20),
           legend.text = element_text(size = 16))
 
+p_HNFq1_BacSelect <- HNF_Bac_A %>% 
+  select(ln.Bac_q1, ln.HNF_q1, Bac_Ampd_select, HNF_Ampd_select, Cruise) %>%
+  ggplot(aes(x = ln.HNF_q1, y = Bac_Ampd_select)) + 
+    geom_point(aes(color = Cruise), size = 3) + 
+    geom_smooth(formula = y ~ x, method = "lm", se = TRUE, linetype = "solid") + 
+    #geom_smooth(method = mgcv::gam, formula = y ~ s(x), se = TRUE, color = "red", linetype = "solid") + 
+    scale_colour_viridis(alpha = 0.7, discrete=TRUE) + 
+    labs(x = expression("Log[ HNF Shannon diversity (Hill number = 1) ]"),
+         y = expression(atop("Deterministic assembly processes (\U03B1MPTI)", "of Bacteria community"))) + 
+    theme(axis.title.y = element_text(size = 20, margin = margin(t = 0, r = 0, b = 0, l = 20)),
+          axis.title.x = element_text(size = 20),
+          axis.text = element_text(size = 16),
+          legend.title = element_text(size = 20),
+          legend.text = element_text(size = 16))
+
 legend <- get_legend(
   p_HNFq1_BacSelect + theme(legend.box.margin = margin(0, 0, 0, 12))
 )
 p_HNFq1_BacSelect_Bacq1 <- plot_grid(
-  plot_grid(p_HNFq1_BacSelect + theme(legend.position = "none"),
-            p_BacSelect_Bacq1 + theme(legend.position = "none"),
+  plot_grid(p_BacSelect_Bacq1 + theme(legend.position = "none"),
+            p_HNFq1_BacSelect + theme(legend.position = "none"),
             ncol = 1, labels = "AUTO", hjust = 0),
   legend, rel_widths = c(3, .4))
 p_HNFq1_BacSelect_Bacq1
@@ -713,21 +719,6 @@ summary(HNFq1_HNFS.Cr)
 summary(gam(ln.HNF_q1 ~ s(HNF_Ampd_select, bs = "ts"), data = HNF_Bac_A))
 
 ### plotting
-p_Bacq1_HNFSelect <- HNF_Bac_A %>% 
-  select(ln.Bac_q1, ln.HNF_q1, Bac_Ampd_select, HNF_Ampd_select, Cruise) %>%
-  ggplot(aes(x = ln.Bac_q1, y = HNF_Ampd_select)) + 
-    geom_point(aes(color = Cruise), size = 3) + 
-    geom_smooth(formula = y ~ x, method = "lm", se = TRUE, linetype = "dashed") + 
-    #geom_smooth(method = mgcv::gam, formula = y ~ s(x), se = TRUE, color = "red", linetype = "dotted") + 
-    scale_colour_viridis(alpha = 0.7, discrete=TRUE) + 
-    labs(x = expression("Log[ Bacterial Shannon diversity (Hill number = 1) ]"),
-         y = expression(atop("Deterministic assembly processes (\U03B1MPTI)", "of HNF community "))) + 
-    theme(axis.title.y = element_text(size = 20, margin = margin(t = 0, r = 0, b = 0, l = 20)),
-          axis.title.x = element_text(size = 20),
-          axis.text = element_text(size = 16),
-          legend.title = element_text(size = 20),
-          legend.text = element_text(size = 16))
-
 p_HNFSelect_HNFq1 <- HNF_Bac_A %>% 
   select(ln.Bac_q1, ln.HNF_q1, Bac_Ampd_select, HNF_Ampd_select, Cruise) %>%
   ggplot(aes(x = HNF_Ampd_select, y = ln.HNF_q1)) + 
@@ -743,12 +734,27 @@ p_HNFSelect_HNFq1 <- HNF_Bac_A %>%
           legend.title = element_text(size = 20),
           legend.text = element_text(size = 16))
 
+p_Bacq1_HNFSelect <- HNF_Bac_A %>% 
+  select(ln.Bac_q1, ln.HNF_q1, Bac_Ampd_select, HNF_Ampd_select, Cruise) %>%
+  ggplot(aes(x = ln.Bac_q1, y = HNF_Ampd_select)) + 
+  geom_point(aes(color = Cruise), size = 3) + 
+  geom_smooth(formula = y ~ x, method = "lm", se = TRUE, linetype = "dashed") + 
+  #geom_smooth(method = mgcv::gam, formula = y ~ s(x), se = TRUE, color = "red", linetype = "dotted") + 
+  scale_colour_viridis(alpha = 0.7, discrete=TRUE) + 
+  labs(x = expression("Log[ Bacterial Shannon diversity (Hill number = 1) ]"),
+       y = expression(atop("Deterministic assembly processes (\U03B1MPTI)", "of HNF community "))) + 
+  theme(axis.title.y = element_text(size = 20, margin = margin(t = 0, r = 0, b = 0, l = 20)),
+        axis.title.x = element_text(size = 20),
+        axis.text = element_text(size = 16),
+        legend.title = element_text(size = 20),
+        legend.text = element_text(size = 16))
+
 legend <- get_legend(
   p_Bacq1_HNFSelect + theme(legend.box.margin = margin(0, 0, 0, 12))
 )
 p_Bacq1_HNFSelect_HNFq1 <- plot_grid(
-  plot_grid(p_Bacq1_HNFSelect + theme(legend.position = "none"),
-            p_HNFSelect_HNFq1 + theme(legend.position = "none"),
+  plot_grid(p_HNFSelect_HNFq1 + theme(legend.position = "none"),
+            p_Bacq1_HNFSelect + theme(legend.position = "none"),
             ncol = 1, labels = "AUTO", hjust = 0),
   legend, rel_widths = c(3, .4))
 p_Bacq1_HNFSelect_HNFq1
