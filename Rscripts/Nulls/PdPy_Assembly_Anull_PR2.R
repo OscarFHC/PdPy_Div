@@ -82,10 +82,10 @@ HNF_comm <- as.data.frame(t(read.table(file = "https://raw.githubusercontent.com
 HNF_ra_comm <- HNF_comm / rowSums(HNF_comm)
 HNF_phylo<- read.tree(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/sECS_3/sECS_HNF_treeNJ_PR2_3.tree")
 
-NF_comm <- as.data.frame(t(read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/sECS_3/sECS_prot_seqXst_PR2_3.csv",
-                                      sep = ",", header = TRUE, row.names = 1, stringsAsFactors = FALSE, fill = TRUE)))
-NF_ra_comm <- NF_comm / rowSums(NF_comm)
-NF_phylo<- read.tree(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/sECS_3/sECS_prot_treeNJ_PR2_3.tree")
+# NF_comm <- as.data.frame(t(read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/sECS_3/sECS_prot_seqXst_PR2_3.csv",
+#                                       sep = ",", header = TRUE, row.names = 1, stringsAsFactors = FALSE, fill = TRUE)))
+# NF_ra_comm <- NF_comm / rowSums(NF_comm)
+# NF_phylo<- read.tree(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/sECS_3/sECS_prot_treeNJ_PR2_3.tree")
 ###############################################################################################
 ##### Loading data ############################################################################
 ###############################################################################################
