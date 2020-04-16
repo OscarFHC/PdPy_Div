@@ -249,7 +249,7 @@ HNF_Ampd <- HNF_Ampd_null %>%
          HNF_Ampd_select = (obs - Ampd_null_mean) / Ampd_null_sd,
          HNF_Ampd_select_p = pnorm(-abs(HNF_Ampd_select), 0, 1))
 
-ADivCorr_null <- read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/Anulls_PR2_3/Neutral_ACorr_null_3.csv", 
+ADivCorr_null <- read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/Anulls_PR2_3/Neutral_ACorr_null.csv", 
                             sep = ",", header = TRUE, stringsAsFactors = FALSE, fill = TRUE)
 ###############################################################################################
 ##### Loading nulls ###########################################################################
@@ -515,10 +515,12 @@ ggsave(p_HNFq1_Bacq1, file = "D:/Research/PdPy_Div_Results/Figs/PR2_3/p_ADiv_HNF
        dpi = 600, width = 34, height = 28, units = "cm")
 
 # check alpha diversity relationship against null distribution generated from the neutral model
+rank(ADivCorr_null[,2])[1]/1000
+
 ADivCorr_null %>% 
   ggplot() + 
-  geom_histogram(aes(q1coef), binwidth = 0.1) +
-  geom_vline(xintercept = ADivCorr_null[1, 2])
+  geom_histogram(aes(q1coef), binwidth = 0.05) +
+  geom_vline(xintercept = ADivCorr_null[1, 2], color = "red") + 
   labs(x = expression("Linear regression coefficient"),
        y = expression("Frequency")) + 
   theme(
@@ -527,7 +529,8 @@ ADivCorr_null %>%
     axis.text = element_text(size = 16),
     legend.title = element_text(size = 20),
     legend.text = element_text(size = 16)
-  )
+  ) + 
+  theme_classic()
 
 
 ##### without selection #####
@@ -559,6 +562,7 @@ p_ADiv_Select <- HNF_Bac_A %>%
          y = expression("Log[ HNF Shannon diversity (Hill number = 1) ]"),
          colour = expression(paste("\u03B1", "MPTI"))) + 
     theme(
+      panel.background = element_rect(fill = "white", colour = "grey50"),
       strip.text.x = element_text(size = 20, face = "bold"),
       axis.title = element_text(size = 20),
       axis.text = element_text(size = 16),
