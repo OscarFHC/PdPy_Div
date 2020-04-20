@@ -216,9 +216,9 @@ HNF_Bac_A <- Bac_A %>%
          ln.Bac_q2 = log(Bac_q2),
          ln.HNF_q2 = log(HNF_q2))
 Bac_comm <- Bac_comm[which(rownames(Bac_comm) %in% HNF_Bac_A$Site), ]
-q0coef <- summary(gam(ln.HNF_q0 ~ ln.Bac_q0, data = HNF_Bac_A))$p.coef[2]
-q1coef <- summary(gam(ln.HNF_q1 ~ ln.Bac_q1, data = HNF_Bac_A))$p.coef[2]
-q2coef <- summary(gam(ln.HNF_q2 ~ ln.Bac_q2, data = HNF_Bac_A))$p.coef[2]
+q0coef <- cor.test(HNF_Bac_A$ln.HNF_q0, HNF_Bac_A$ln.Bac_q0)$estimate
+q1coef <- cor.test(HNF_Bac_A$ln.HNF_q1, HNF_Bac_A$ln.Bac_q1)$estimate
+q2coef <- cor.test(HNF_Bac_A$ln.HNF_q2, HNF_Bac_A$ln.Bac_q2)$estimate
 
 # now randomly shuffle HNF community
 for (i in 1:999){
@@ -239,9 +239,9 @@ for (i in 1:999){
            ln.Bac_q2 = log(Bac_q2),
            ln.HNF_q2 = log(HNF_q2))
   
-  q0coef <- c(q0coef, summary(gam(ln.HNF_q0 ~ ln.Bac_q0, data = HNF_Bac_RandA))$p.coef[2])
-  q1coef <- c(q1coef, summary(gam(ln.HNF_q1 ~ ln.Bac_q1, data = HNF_Bac_RandA))$p.coef[2])
-  q2coef <- c(q2coef, summary(gam(ln.HNF_q2 ~ ln.Bac_q2, data = HNF_Bac_RandA))$p.coef[2])
+  q0coef <- c(q0coef, cor.test(HNF_Bac_RandA$ln.HNF_q0, HNF_Bac_RandA$ln.Bac_q0)$estimate)
+  q1coef <- c(q1coef, cor.test(HNF_Bac_RandA$ln.HNF_q1, HNF_Bac_RandA$ln.Bac_q1)$estimate)
+  q2coef <- c(q2coef, cor.test(HNF_Bac_RandA$ln.HNF_q2, HNF_Bac_RandA$ln.Bac_q2)$estimate)
 }
 
 write.table(cbind(q0coef, q1coef, q2coef), file = "D:/Research/PdPy_Div/Anulls_PR2_3/Neutral_ACorr_null.csv",
