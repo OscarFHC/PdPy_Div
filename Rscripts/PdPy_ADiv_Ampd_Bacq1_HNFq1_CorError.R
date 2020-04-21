@@ -332,7 +332,7 @@ map = ggmap(map) +
   geom_text(data = St_sECS[1:6,], aes(x = Lon, y = Lat, label = Station), hjust = -0.4, vjust = -0.3, size = 6) + 
   theme(axis.title = element_text(size = 20),
         axis.text = element_text(size = 16))
-# ggsave(map, file = "D:/Research/PdPy_Div_Results/Figs/PR2_3/p_map.png", dpi = 600) 
+ggsave(map, file = "D:/Research/PdPy_Div_Results/Figs/PR2_3/Fig2_map.png", dpi = 600) 
 ###############################################################################################
 ##### sampling maps ###########################################################################
 ###############################################################################################
@@ -415,6 +415,22 @@ fa.diagram(fa3)
 ##### exploratory factor analyses on environmental data ##########
 
 ##### Pair-wise plot of bio-variables ##########
+p_Adiv_AAssemb_pairs <- HNF_Bac_A %>%
+  ggpairs(columns = c("ln.Bac_q0", "ln.HNF_q0", "ln.Bac_q1", "ln.HNF_q1", "ln.Bac_q2", "ln.HNF_q2", 
+                      "Bac_Ampd_select", "HNF_Ampd_select"),
+          columnLabels = c("Bacteria\nspecies\nrichness", "HNF\nspecies\nrichness",
+                           "Bacteria\nShannon\ndiversity", "HNF\nShannon\ndiversity", 
+                           "Bacteria\nSimpson\ndiversity", "HNF\nSimpson\ndiversity",
+                           "Bacteria\n\U03B1MPTI", "HNF\n\U03B1MPTI"),
+          #mapping = ggplot2::aes(colour = Cruise),
+          upper = list(continuous = cor_fun),
+          lower = list(continuous = fit_fun)) +
+  theme(strip.text.x = element_text(color = "black", size = 14),
+        strip.text.y = element_text(angle = 45, color = "black", size = 14))
+p_Adiv_AAssemb_pairs
+ggsave(p_Adiv_AAssemb_pairs, file = "D:/Research/PdPy_Div_Results/Figs/PR2_3/FigS1_Adiv_AMPTI_pairs.png",
+       dpi = 600, width = 34, height = 28, units = "cm")
+
 p_Adiv_AAssemb_pairs <- HNF_Bac_A %>%
   ggpairs(columns = c("ln.Bac_q0", "ln.HNF_q0", "ln.Bac_q1", "ln.HNF_q1", "ln.Bac_q2", "ln.HNF_q2",
                       "Bac_Amntd_select", "Bac_Ampd_select", "HNF_Amntd_select", "HNF_Ampd_select"),
