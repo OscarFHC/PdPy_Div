@@ -510,6 +510,7 @@ gam_select <- gam(ln.HNF_q1 ~ ln.Bac_q1*Bac_Ampd_select + ln.Bac_q1*HNF_Ampd_sel
 summary(gam_select)
 lme_select <- lme(ln.HNF_q1 ~ ln.Bac_q1*Bac_Ampd_select + ln.Bac_q1*HNF_Amntd_select, random = ( ~1 | Cruise), data = HNF_Bac_A)
 summary(lme_select)
+cor.test()
 ### plotting (without selection)
 p_HNFq1_Bacq1 <- HNF_Bac_A %>% 
   select(ln.Bac_q1, ln.HNF_q1, Bac_Ampd_select, HNF_Ampd_select, Cruise) %>%
@@ -517,17 +518,17 @@ p_HNFq1_Bacq1 <- HNF_Bac_A %>%
     geom_point(size = 3, aes(color = Cruise)) + 
     geom_smooth(formula = y ~ x, method = "lm", se = TRUE) + 
     # geom_smooth(method = mgcv::gam, formula = y ~ s(x), se = TRUE, color = "red", linetype = "dotted") + 
-    labs(x = expression("Log[ Bacteria Shannon diversity (Hill number = 1) ]"),
-         y = expression("Log[ HNF Shannon diversity (Hill number = 1) ]")) + 
+    labs(x = expression("Log[ Bacteria Shannon diversity ]"),
+         y = expression("Log[ HNF Shannon diversity ]")) + 
     theme(
       strip.text.x = element_text(size = 20, face = "bold"),
-      axis.title = element_text(size = 20),
+      axis.title = element_text(size = 24),
       axis.text = element_text(size = 16),
       legend.title = element_text(size = 20),
-      legend.text = element_text(size = 16)
+      legend.text = element_text(size = 20)
     )
 p_HNFq1_Bacq1
-ggsave(p_HNFq1_Bacq1, file = "D:/Research/PdPy_Div_Results/Figs/PR2_3/p_ADiv_HNFq1_Bacq1.png",
+ggsave(p_HNFq1_Bacq1, file = "D:/Manuscripts/PdPy_Div_MS/ms_Figs/Fig3_ADivCor.png",
        dpi = 600, width = 34, height = 28, units = "cm")
 
 # check alpha diversity relationship against null distribution generated from the neutral model
