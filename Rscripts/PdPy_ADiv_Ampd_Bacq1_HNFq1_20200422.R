@@ -256,88 +256,6 @@ ADivCorr_null <- read.table(file = "https://raw.githubusercontent.com/OscarFHC/P
 ###############################################################################################
 
 ###############################################################################################
-##### Phylogenetic signal #####################################################################
-###############################################################################################
-##### Bacteria ##########
-# Bac_Niche <- as.data.frame(matrix(0, ncol(Bac_comm), 8)) %>%
-#   #mutate(Bac_ID = names(Bac_comm)) %>%
-#   rename(Temp = V1, Sal = V2, PAR = V3, NO2 = V4, NO3 = V5, DIN = V6, PO3 = V7, Chla = V8) 
-# 
-# for(i in 1:ncol(Bac_comm)){ 
-#   Bac_Niche[i, "Temp"] = sum(Bac_comm[,names(Bac_comm)[i]] * Vars$Temp) / sum(Bac_comm[,names(Bac_comm)[i]])
-#   Bac_Niche[i, "Sal"] = sum(Bac_comm[,names(Bac_comm)[i]] * Vars$Sal) / sum(Bac_comm[,names(Bac_comm)[i]])
-#   Bac_Niche[i, "PAR"] = sum(Bac_comm[,names(Bac_comm)[i]] * Vars$PAR) / sum(Bac_comm[,names(Bac_comm)[i]])
-#   Bac_Niche[i, "NO2"] = sum(Bac_comm[,names(Bac_comm)[i]] * Vars$NO2) / sum(Bac_comm[,names(Bac_comm)[i]])
-#   Bac_Niche[i, "NO3"] = sum(Bac_comm[,names(Bac_comm)[i]] * Vars$NO3) / sum(Bac_comm[,names(Bac_comm)[i]])
-#   Bac_Niche[i, "DIN"] = sum(Bac_comm[,names(Bac_comm)[i]] * Vars$DIN) / sum(Bac_comm[,names(Bac_comm)[i]])
-#   Bac_Niche[i, "PO3"] = sum(Bac_comm[,names(Bac_comm)[i]] * Vars$PO3) / sum(Bac_comm[,names(Bac_comm)[i]])
-#   Bac_Niche[i, "Chla"] = sum(Bac_comm[,names(Bac_comm)[i]] * Vars$Chla) / sum(Bac_comm[,names(Bac_comm)[i]])
-# }
-# 
-# Bac_Niche <- as.data.frame(scale(Bac_Niche, center = TRUE, scale = TRUE))
-# Bac_Niche_Dist <- vegdist(Bac_Niche, method = "euclidean")
-# Bac_Phylo_Dist <- cophenetic(Bac_phylo)
-# Bac_PhySig <- mantel.correlog(Bac_Niche_Dist, Bac_Phylo_Dist, n.class = 50)
-# Bac_PhySig_fig <- plot(Bac_PhySig)
-# ggsave(plot(Bac_PhySig), file = "D:/Research/PdPy_Div_Results/p_Bac_PhySig.png", dpi = 600) 
-##### Bacteria ##########
- 
-##### HNF ##########
-# HNF_noZeroComm <- HNF_comm[, which(colSums(HNF_comm) != 0)]
-# HNF_Niche <- as.data.frame(matrix(0, ncol(HNF_noZeroComm), 8)) %>%
-#   # mutate(HNF_ID = names(HNF_comm)) %>%
-#   rename(Temp = V1, Sal = V2, PAR = V3, NO2 = V4, NO3 = V5, DIN = V6, PO3 = V7, Chla = V8) 
-# Vars_HNF <- Vars[Vars$SampleID %in% row.names(HNF_noZeroComm),]
-# 
-# for(i in 1:ncol(HNF_noZeroComm)){ 
-#   HNF_Niche[i, "Temp"] = sum(HNF_noZeroComm[,names(HNF_noZeroComm)[i]] * Vars_HNF$Temp) / sum(HNF_noZeroComm[,names(HNF_noZeroComm)[i]])
-#   HNF_Niche[i, "Sal"] = sum(HNF_noZeroComm[,names(HNF_noZeroComm)[i]] * Vars_HNF$Sal) / sum(HNF_noZeroComm[,names(HNF_noZeroComm)[i]])
-#   HNF_Niche[i, "PAR"] = sum(HNF_noZeroComm[,names(HNF_noZeroComm)[i]] * Vars_HNF$PAR) / sum(HNF_noZeroComm[,names(HNF_noZeroComm)[i]])
-#   HNF_Niche[i, "NO2"] = sum(HNF_noZeroComm[,names(HNF_noZeroComm)[i]] * Vars_HNF$NO2) / sum(HNF_noZeroComm[,names(HNF_noZeroComm)[i]])
-#   HNF_Niche[i, "NO3"] = sum(HNF_noZeroComm[,names(HNF_noZeroComm)[i]] * Vars_HNF$NO3) / sum(HNF_noZeroComm[,names(HNF_noZeroComm)[i]])
-#   HNF_Niche[i, "DIN"] = sum(HNF_noZeroComm[,names(HNF_noZeroComm)[i]] * Vars_HNF$DIN) / sum(HNF_noZeroComm[,names(HNF_noZeroComm)[i]])
-#   HNF_Niche[i, "PO3"] = sum(HNF_noZeroComm[,names(HNF_noZeroComm)[i]] * Vars_HNF$PO3) / sum(HNF_noZeroComm[,names(HNF_noZeroComm)[i]])
-#   HNF_Niche[i, "Chla"] = sum(HNF_noZeroComm[,names(HNF_noZeroComm)[i]] * Vars_HNF$Chla) / sum(HNF_noZeroComm[,names(HNF_noZeroComm)[i]])
-# }
-# 
-# HNF_Niche <- as.data.frame(scale(HNF_Niche, center = TRUE, scale = TRUE))
-# HNF_Niche_Dist <- vegdist(HNF_Niche, method = "euclidean")
-# HNF_Phylo_Dist <- cophenetic(drop.tip(HNF_phylo, which(colSums(HNF_comm) == 0)))
-# HNF_PhySig <- mantel.correlog(HNF_Niche_Dist, HNF_Phylo_Dist, n.class = 50)
-# HNF_PhySig_fig <- plot(HNF_PhySig)
-# ggsave(plot(HNF_PhySig), file = "D:/Research/PdPy_Div_Results/p_HNF_PhySig.png", dpi = 600) 
-##### HNF ##########
-###############################################################################################
-##### Phylogenetic signal #####################################################################
-###############################################################################################
-
-###############################################################################################
-##### sampling maps ###########################################################################
-###############################################################################################
-St_sECS = read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/raw/St_Location.csv", 
-                     header = T, fill = T, sep = ",")
-library(ggmap)
-library(mapproj)
-bbox <- ggmap::make_bbox(Lon, Lat, St_sECS, f = 0.1)
-map <- get_map(
-  location = bbox #c(lon=-85, lat=44) # google search string
-  #, zoom = 7 # larger is closer
-  #, maptype = "terrian" # map type
-  , source = "google"
-)
-
-map = ggmap(map) + 
-  geom_point(data = St_sECS[1:6,], aes(x = Lon, y = Lat), size = 4) + 
-  labs(x="Longitude", y="Latitude") + 
-  geom_text(data = St_sECS[1:6,], aes(x = Lon, y = Lat, label = Station), hjust = -0.4, vjust = -0.3, size = 6) + 
-  theme(axis.title = element_text(size = 20),
-        axis.text = element_text(size = 16))
-ggsave(map, file = "D:/Research/PdPy_Div_Results/Figs/PR2_3/Fig2_map.png", dpi = 600) 
-###############################################################################################
-##### sampling maps ###########################################################################
-###############################################################################################
-
-###############################################################################################
 ##### Preping data ############################################################################
 ###############################################################################################
 Bac_A <- iNEXT(t(Bac_comm), q = 0, datatype = "abundance", size = max(colSums(Bac_comm)) + 100000)$AsyEst %>% 
@@ -378,6 +296,32 @@ HNF_Bac_A <- as.data.frame(HNF_Bac_A)
 head(HNF_Bac_A)
 ###############################################################################################
 ##### Preping data ############################################################################
+###############################################################################################
+
+###############################################################################################
+##### sampling maps ###########################################################################
+###############################################################################################
+St_sECS = read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/raw/St_Location.csv", 
+                     header = T, fill = T, sep = ",")
+library(ggmap)
+library(mapproj)
+bbox <- ggmap::make_bbox(Lon, Lat, St_sECS, f = 0.1)
+map <- get_map(
+  location = bbox #c(lon=-85, lat=44) # google search string
+  #, zoom = 7 # larger is closer
+  #, maptype = "terrian" # map type
+  , source = "google"
+)
+
+map = ggmap(map) + 
+  geom_point(data = St_sECS[1:6,], aes(x = Lon, y = Lat), size = 4) + 
+  labs(x="Longitude", y="Latitude") + 
+  geom_text(data = St_sECS[1:6,], aes(x = Lon, y = Lat, label = Station), hjust = -0.4, vjust = -0.3, size = 6) + 
+  theme(axis.title = element_text(size = 20),
+        axis.text = element_text(size = 16))
+ggsave(map, file = "D:/Research/PdPy_Div_Results/Figs/PR2_3/Fig2_map.png", dpi = 600) 
+###############################################################################################
+##### sampling maps ###########################################################################
 ###############################################################################################
 
 ###############################################################################################
@@ -468,6 +412,62 @@ ggsave(p_Adiv_AAssemb_zoompairs, file = "D:/Research/PdPy_Div_Results/Figs/PR2_3
 ###############################################################################################
 
 ###############################################################################################
+##### Phylogenetic signal #####################################################################
+###############################################################################################
+##### Bacteria ##########
+# Bac_Niche <- as.data.frame(matrix(0, ncol(Bac_comm), 8)) %>%
+#   #mutate(Bac_ID = names(Bac_comm)) %>%
+#   rename(Temp = V1, Sal = V2, PAR = V3, NO2 = V4, NO3 = V5, DIN = V6, PO3 = V7, Chla = V8) 
+# 
+# for(i in 1:ncol(Bac_comm)){ 
+#   Bac_Niche[i, "Temp"] = sum(Bac_comm[,names(Bac_comm)[i]] * Vars$Temp) / sum(Bac_comm[,names(Bac_comm)[i]])
+#   Bac_Niche[i, "Sal"] = sum(Bac_comm[,names(Bac_comm)[i]] * Vars$Sal) / sum(Bac_comm[,names(Bac_comm)[i]])
+#   Bac_Niche[i, "PAR"] = sum(Bac_comm[,names(Bac_comm)[i]] * Vars$PAR) / sum(Bac_comm[,names(Bac_comm)[i]])
+#   Bac_Niche[i, "NO2"] = sum(Bac_comm[,names(Bac_comm)[i]] * Vars$NO2) / sum(Bac_comm[,names(Bac_comm)[i]])
+#   Bac_Niche[i, "NO3"] = sum(Bac_comm[,names(Bac_comm)[i]] * Vars$NO3) / sum(Bac_comm[,names(Bac_comm)[i]])
+#   Bac_Niche[i, "DIN"] = sum(Bac_comm[,names(Bac_comm)[i]] * Vars$DIN) / sum(Bac_comm[,names(Bac_comm)[i]])
+#   Bac_Niche[i, "PO3"] = sum(Bac_comm[,names(Bac_comm)[i]] * Vars$PO3) / sum(Bac_comm[,names(Bac_comm)[i]])
+#   Bac_Niche[i, "Chla"] = sum(Bac_comm[,names(Bac_comm)[i]] * Vars$Chla) / sum(Bac_comm[,names(Bac_comm)[i]])
+# }
+# 
+# Bac_Niche <- as.data.frame(scale(Bac_Niche, center = TRUE, scale = TRUE))
+# Bac_Niche_Dist <- vegdist(Bac_Niche, method = "euclidean")
+# Bac_Phylo_Dist <- cophenetic(Bac_phylo)
+# Bac_PhySig <- mantel.correlog(Bac_Niche_Dist, Bac_Phylo_Dist, n.class = 50)
+# Bac_PhySig_fig <- plot(Bac_PhySig)
+# ggsave(plot(Bac_PhySig), file = "D:/Research/PdPy_Div_Results/p_Bac_PhySig.png", dpi = 600) 
+##### Bacteria ##########
+
+##### HNF ##########
+# HNF_noZeroComm <- HNF_comm[, which(colSums(HNF_comm) != 0)]
+# HNF_Niche <- as.data.frame(matrix(0, ncol(HNF_noZeroComm), 8)) %>%
+#   # mutate(HNF_ID = names(HNF_comm)) %>%
+#   rename(Temp = V1, Sal = V2, PAR = V3, NO2 = V4, NO3 = V5, DIN = V6, PO3 = V7, Chla = V8) 
+# Vars_HNF <- Vars[Vars$SampleID %in% row.names(HNF_noZeroComm),]
+# 
+# for(i in 1:ncol(HNF_noZeroComm)){ 
+#   HNF_Niche[i, "Temp"] = sum(HNF_noZeroComm[,names(HNF_noZeroComm)[i]] * Vars_HNF$Temp) / sum(HNF_noZeroComm[,names(HNF_noZeroComm)[i]])
+#   HNF_Niche[i, "Sal"] = sum(HNF_noZeroComm[,names(HNF_noZeroComm)[i]] * Vars_HNF$Sal) / sum(HNF_noZeroComm[,names(HNF_noZeroComm)[i]])
+#   HNF_Niche[i, "PAR"] = sum(HNF_noZeroComm[,names(HNF_noZeroComm)[i]] * Vars_HNF$PAR) / sum(HNF_noZeroComm[,names(HNF_noZeroComm)[i]])
+#   HNF_Niche[i, "NO2"] = sum(HNF_noZeroComm[,names(HNF_noZeroComm)[i]] * Vars_HNF$NO2) / sum(HNF_noZeroComm[,names(HNF_noZeroComm)[i]])
+#   HNF_Niche[i, "NO3"] = sum(HNF_noZeroComm[,names(HNF_noZeroComm)[i]] * Vars_HNF$NO3) / sum(HNF_noZeroComm[,names(HNF_noZeroComm)[i]])
+#   HNF_Niche[i, "DIN"] = sum(HNF_noZeroComm[,names(HNF_noZeroComm)[i]] * Vars_HNF$DIN) / sum(HNF_noZeroComm[,names(HNF_noZeroComm)[i]])
+#   HNF_Niche[i, "PO3"] = sum(HNF_noZeroComm[,names(HNF_noZeroComm)[i]] * Vars_HNF$PO3) / sum(HNF_noZeroComm[,names(HNF_noZeroComm)[i]])
+#   HNF_Niche[i, "Chla"] = sum(HNF_noZeroComm[,names(HNF_noZeroComm)[i]] * Vars_HNF$Chla) / sum(HNF_noZeroComm[,names(HNF_noZeroComm)[i]])
+# }
+# 
+# HNF_Niche <- as.data.frame(scale(HNF_Niche, center = TRUE, scale = TRUE))
+# HNF_Niche_Dist <- vegdist(HNF_Niche, method = "euclidean")
+# HNF_Phylo_Dist <- cophenetic(drop.tip(HNF_phylo, which(colSums(HNF_comm) == 0)))
+# HNF_PhySig <- mantel.correlog(HNF_Niche_Dist, HNF_Phylo_Dist, n.class = 50)
+# HNF_PhySig_fig <- plot(HNF_PhySig)
+# ggsave(plot(HNF_PhySig), file = "D:/Research/PdPy_Div_Results/p_HNF_PhySig.png", dpi = 600) 
+##### HNF ##########
+###############################################################################################
+##### Phylogenetic signal #####################################################################
+###############################################################################################
+
+###############################################################################################
 ##### Assemnbly processes force visualization  ################################################
 ###############################################################################################
 force.labs <- c("Bacteria \U03B1MPTI", "HNF \U03B1MPTI")
@@ -535,6 +535,7 @@ p_HNFq1_Bacq1 <- HNF_Bac_A %>%
   ggplot(aes(x = ln.Bac_q1, y = ln.HNF_q1)) + 
     geom_point(size = 3, aes(color = Cruise)) + 
     geom_smooth(formula = y ~ x, method = "lm", se = TRUE) + 
+    scale_colour_viridis(alpha = 0.7, discrete=TRUE) +
     # geom_smooth(method = mgcv::gam, formula = y ~ s(x), se = TRUE, color = "red", linetype = "dotted") + 
     labs(x = expression("Log[ Bacteria Shannon diversity ]"),
          y = expression("Log[ HNF Shannon diversity ]")) + 
@@ -548,49 +549,6 @@ p_HNFq1_Bacq1 <- HNF_Bac_A %>%
 p_HNFq1_Bacq1
 ggsave(p_HNFq1_Bacq1, file = "D:/Manuscripts/PdPy_Div_MS/ms_Figs/Fig3_ADivCor.png",
        dpi = 600, width = 34, height = 28, units = "cm")
-
-
-
-##### without selection #####
-
-##### add selection and dispersal #####
-### linear model
-HNFq1_Bacq1_0 <- glm(ln.HNF_q1 ~ ln.Bac_q1, data = HNF_Bac_A)
-HNFq1_Bacq1_1 <- lme(ln.HNF_q1 ~ ln.Bac_q1, random = ( ~1 | Cruise), data = HNF_Bac_A, method = "ML")
-
-anova(HNFq1_Bacq1_0, HNFq1_Bacq1_1, test = "F")
-AIC(HNFq1_Bacq1_0, HNFq1_Bacq1_1)
-
-summary(HNFq1_Bacq1_1)
-
-# Plotting HNF and Bac alppha diversity relationship with selection as color code
-community.labs <- c("Colored by selection on bacteria community", "Colored by selection on HNF community")
-names(community.labs) <- c("Bac_Ampd_select", "HNF_Ampd_select")
-
-p_ADiv_Select <- HNF_Bac_A %>% 
-  select(ln.Bac_q1, ln.HNF_q1, Bac_Ampd_select, HNF_Ampd_select) %>%
-  gather(key = "community", value = "Selection", -c(ln.Bac_q1, ln.HNF_q1)) %>%
-  ggplot(aes(x = ln.Bac_q1, y = ln.HNF_q1, color = Selection)) + 
-    geom_point(size = 3) + 
-    geom_smooth(formula = y ~ x, method = "lm", se = TRUE) + 
-    #geom_smooth(method = mgcv::gam, formula = y ~ s(x), se = TRUE, color = "red", linetype = "dotted") + 
-    facet_grid(~ community, labeller = labeller(community = community.labs)) +  
-    scale_colour_viridis(alpha = 0.7) + 
-    labs(x = expression("Log[ Bacteria Shannon diversity (Hill number = 1) ]"),
-         y = expression("Log[ HNF Shannon diversity (Hill number = 1) ]"),
-         colour = expression(paste("\u03B1", "MPTI"))) + 
-    theme(
-      panel.background = element_rect(fill = "white", colour = "grey50"),
-      strip.text.x = element_text(size = 20, face = "bold"),
-      axis.title = element_text(size = 24),
-      axis.text = element_text(size = 16),
-      legend.title = element_text(size = 20),
-      legend.text = element_text(size = 20)
-    )
-p_ADiv_Select
-ggsave(p_ADiv_Select, file = "D:/Research/PdPy_Div_Results/Figs/PR2_3/p_ADiv_HNFq1_Bacq1_Ampd.png",
-       dpi = 600, width = 34, height = 28, units = "cm")
-##### add selection and dispersal #####
 ###############################################################################################
 ##### Simple HNF and Bac alppha diversity relationship  #######################################
 ###############################################################################################
@@ -600,16 +558,16 @@ ggsave(p_ADiv_Select, file = "D:/Research/PdPy_Div_Results/Figs/PR2_3/p_ADiv_HNF
 ###############################################################################################
 ##### HNFq1 -> Bac selection -> Bacq1 ##########
 ### linear model testing
-BacS_HNFq1.0 <- lm(Bac_Ampd_select ~ ln.HNF_q1, data = HNF_Bac_A)
-BacS_HNFq1.Cr <- lme(Bac_Ampd_select ~ ln.HNF_q1, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
-BacS_HNFq1.Season <- lme(Bac_Amntd_select ~ ln.HNF_q1, random = ~ 1 | Season, data = HNF_Bac_A, method = "ML")
-AIC(BacS_HNFq1.1, BacS_HNFq1.Cr, BacS_HNFq1.Season)
+BacS_HNFq1.0 <- lm(Bac_Ampd_select ~ ln.HNF_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, data = HNF_Bac_A)
+BacS_HNFq1.Cr <- lme(Bac_Ampd_select ~ ln.HNF_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
+BacS_HNFq1.Season <- lme(Bac_Ampd_select ~ ln.HNF_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, random = ~ 1 | Season, data = HNF_Bac_A, method = "ML")
+AIC(BacS_HNFq1.0, BacS_HNFq1.Cr, BacS_HNFq1.Season)
 summary(BacS_HNFq1.Cr)
 summary(gam(Bac_Amntd_select ~ s(ln.HNF_q2, bs = "ts"), data = HNF_Bac_A))
 
-Bacq1_BacS.0 <- lm(ln.Bac_q1 ~ Bac_Ampd_select, data = HNF_Bac_A)
-Bacq1_BacS.Cr <- lme(ln.Bac_q1 ~ Bac_Ampd_select, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
-Bacq1_BacS.Season <- lme(ln.Bac_q1 ~ Bac_Ampd_select, random = ~ 1 | Season, data = HNF_Bac_A, method = "ML")
+Bacq1_BacS.0 <- lm(ln.Bac_q1 ~ Bac_Ampd_select + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, data = HNF_Bac_A)
+Bacq1_BacS.Cr <- lme(ln.Bac_q1 ~ Bac_Ampd_select + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
+Bacq1_BacS.Season <- lme(ln.Bac_q1 ~ Bac_Ampd_select + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, random = ~ 1 | Season, data = HNF_Bac_A, method = "ML")
 AIC(Bacq1_BacS.0, Bacq1_BacS.Cr, Bacq1_BacS.Season)
 summary(Bacq1_BacS.Cr)
 summary(gam(ln.Bac_q1 ~ s(Bac_Ampd_select, bs = "ts"), data = HNF_Bac_A))
@@ -623,12 +581,14 @@ p_BacSelect_Bacq1 <- HNF_Bac_A %>%
     #geom_smooth(method = mgcv::gam, formula = y ~ s(x), se = TRUE, color = "red", linetype = "dotted") + 
     scale_colour_viridis(alpha = 0.7, discrete=TRUE) + 
     labs(x = expression("Deterministic assembly processes (\U03B1MPTI) of Bacteria community "),
-         y = expression(atop("Log[ Bacterial Shannon diversity", "(Hill number = 1) ]"))) + 
-    theme(axis.title.y = element_text(size = 20, margin = margin(t = 0, r = 0, b = 0, l = 20)),
-          axis.title.x = element_text(size = 20),
-          axis.text = element_text(size = 16),
-          legend.title = element_text(size = 20),
-          legend.text = element_text(size = 16))
+         y = expression(atop("Log[ Bacterial Shannon diversity ]"))) + 
+    theme(
+      strip.text.x = element_text(size = 20, face = "bold"),
+      axis.title = element_text(size = 24),
+      axis.text = element_text(size = 16),
+      legend.title = element_text(size = 20),
+      legend.text = element_text(size = 20)
+    )
 
 p_HNFq1_BacSelect <- HNF_Bac_A %>% 
   select(ln.Bac_q1, ln.HNF_q1, Bac_Ampd_select, HNF_Ampd_select, Cruise) %>%
@@ -637,13 +597,15 @@ p_HNFq1_BacSelect <- HNF_Bac_A %>%
     geom_smooth(formula = y ~ x, method = "lm", se = TRUE, linetype = "solid") + 
     #geom_smooth(method = mgcv::gam, formula = y ~ s(x), se = TRUE, color = "red", linetype = "solid") + 
     scale_colour_viridis(alpha = 0.7, discrete=TRUE) + 
-    labs(x = expression("Log[ HNF Shannon diversity (Hill number = 1) ]"),
+    labs(x = expression("Log[ HNF Shannon diversity ]"),
          y = expression(atop("Deterministic assembly processes (\U03B1MPTI)", "of Bacteria community"))) + 
-    theme(axis.title.y = element_text(size = 20, margin = margin(t = 0, r = 0, b = 0, l = 20)),
-          axis.title.x = element_text(size = 20),
-          axis.text = element_text(size = 16),
-          legend.title = element_text(size = 20),
-          legend.text = element_text(size = 16))
+    theme(
+      strip.text.x = element_text(size = 20, face = "bold"),
+      axis.title = element_text(size = 24),
+      axis.text = element_text(size = 16),
+      legend.title = element_text(size = 20),
+      legend.text = element_text(size = 20)
+    )
 
 legend <- get_legend(
   p_HNFq1_BacSelect + theme(legend.box.margin = margin(0, 0, 0, 12))
@@ -654,25 +616,26 @@ p_HNFq1_BacSelect_Bacq1 <- plot_grid(
             ncol = 1, labels = "AUTO", hjust = 0),
   legend, rel_widths = c(3, .4))
 p_HNFq1_BacSelect_Bacq1
-ggsave(p_HNFq1_BacSelect_Bacq1, file = "D:/Research/PdPy_Div_Results/Figs/PR2_3/p_HNFq1_BacAmpd_Bacq1.png",
+ggsave(p_HNFq1_BacSelect_Bacq1, file = "D:/Manuscripts/PdPy_Div_MS/ms_Figs/Fig4_HNFq1_BacAmpd_Bacq1.png",
        dpi = 600, width = 36, height = 42, units = "cm")
 ##### HNFq1 -> Bac selection -> Bacq1 ##########
 
 ##### Bacq1 -> HNF selection -> HNFq1 ##########
 ### linear model testing
-HNFS_Bacq1.0 <- lm(HNF_Ampd_select ~ ln.Bac_q1, data = HNF_Bac_A)
-HNFS_Bacq1.Cr <- lme(HNF_Ampd_select ~ ln.Bac_q1, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
-HNFS_Bacq1.Season <- lme(HNF_Ampd_select ~ ln.Bac_q1, random = ~ 1 | Season, data = HNF_Bac_A, method = "ML")
+HNFS_Bacq1.0 <- lm(HNF_Ampd_select ~ ln.Bac_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, data = HNF_Bac_A)
+HNFS_Bacq1.Cr <- lme(HNF_Ampd_select ~ ln.Bac_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
+HNFS_Bacq1.Season <- lme(HNF_Ampd_select ~ ln.Bac_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, random = ~ 1 | Season, data = HNF_Bac_A, method = "ML")
 AIC(HNFS_Bacq1.0, HNFS_Bacq1.Cr, HNFS_Bacq1.Season)
 summary(HNFS_Bacq1.Cr)
 summary(gam(HNF_Ampd_select ~ s(ln.Bac_q1, bs = "ts"), data = HNF_Bac_A))
 
-HNFq1_HNFS.0 <- lm(ln.HNF_q1 ~ HNF_Amntd_select, data = HNF_Bac_A)
-HNFq1_HNFS.Cr <- lme(ln.HNF_q1 ~ HNF_Amntd_select, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
-HNFq1_HNFS.Season <- lme(ln.HNF_q1 ~ HNF_Amntd_select, random = ~ 1 | Season, data = HNF_Bac_A, method = "ML")
+HNFq1_HNFS.0 <- lm(ln.HNF_q1 ~ HNF_Ampd_select + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, data = HNF_Bac_A)
+HNFq1_HNFS.Cr <- lme(ln.HNF_q1 ~ HNF_Ampd_select + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
+HNFq1_HNFS.Season <- lme(ln.HNF_q1 ~ HNF_Ampd_select + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, random = ~ 1 | Season, data = HNF_Bac_A, method = "ML")
 AIC(HNFq1_HNFS.0, HNFq1_HNFS.Cr, HNFq1_HNFS.Season)
 summary(HNFq1_HNFS.Cr)
 summary(gam(ln.HNF_q1 ~ s(HNF_Ampd_select, bs = "ts"), data = HNF_Bac_A))
+anova(HNFq1_HNFS.Cr, gam(ln.HNF_q1 ~ s(HNF_Ampd_select, bs = "ts"), data = HNF_Bac_A))
 
 ### plotting
 p_HNFSelect_HNFq1 <- HNF_Bac_A %>% 
@@ -683,12 +646,14 @@ p_HNFSelect_HNFq1 <- HNF_Bac_A %>%
     #geom_smooth(method = mgcv::gam, formula = y ~ s(x), se = TRUE, color = "red", linetype = "dotted") + 
     scale_colour_viridis(alpha = 0.7, discrete=TRUE) + 
     labs(x = expression("Deterministic assembly processes (\U03B1MPTI) of HNF community "),
-         y = expression(atop("Log[ HNF Shannon diversity", "(Hill number = 1) ]"))) + 
-    theme(axis.title.y = element_text(size = 20, margin = margin(t = 0, r = 0, b = 0, l = 20)),
-          axis.title.x = element_text(size = 20),
-          axis.text = element_text(size = 16),
-          legend.title = element_text(size = 20),
-          legend.text = element_text(size = 16))
+         y = expression(atop("Log[ HNF Shannon diversity ]"))) + 
+    theme(
+      strip.text.x = element_text(size = 20, face = "bold"),
+      axis.title = element_text(size = 24),
+      axis.text = element_text(size = 16),
+      legend.title = element_text(size = 20),
+      legend.text = element_text(size = 20)
+    )
 
 p_Bacq1_HNFSelect <- HNF_Bac_A %>% 
   select(ln.Bac_q1, ln.HNF_q1, Bac_Ampd_select, HNF_Ampd_select, Cruise) %>%
@@ -697,14 +662,15 @@ p_Bacq1_HNFSelect <- HNF_Bac_A %>%
   geom_smooth(formula = y ~ x, method = "lm", se = TRUE, linetype = "dashed") + 
   #geom_smooth(method = mgcv::gam, formula = y ~ s(x), se = TRUE, color = "red", linetype = "dotted") + 
   scale_colour_viridis(alpha = 0.7, discrete=TRUE) + 
-  labs(x = expression("Log[ Bacterial Shannon diversity (Hill number = 1) ]"),
+  labs(x = expression("Log[ Bacterial Shannon diversity ]"),
        y = expression(atop("Deterministic assembly processes (\U03B1MPTI)", "of HNF community "))) + 
-  theme(axis.title.y = element_text(size = 20, margin = margin(t = 0, r = 0, b = 0, l = 20)),
-        axis.title.x = element_text(size = 20),
-        axis.text = element_text(size = 16),
-        legend.title = element_text(size = 20),
-        legend.text = element_text(size = 16))
-
+  theme(
+    strip.text.x = element_text(size = 20, face = "bold"),
+    axis.title = element_text(size = 24),
+    axis.text = element_text(size = 16),
+    legend.title = element_text(size = 20),
+    legend.text = element_text(size = 20)
+  )
 legend <- get_legend(
   p_Bacq1_HNFSelect + theme(legend.box.margin = margin(0, 0, 0, 12))
 )
@@ -714,260 +680,10 @@ p_Bacq1_HNFSelect_HNFq1 <- plot_grid(
             ncol = 1, labels = "AUTO", hjust = 0),
   legend, rel_widths = c(3, .4))
 p_Bacq1_HNFSelect_HNFq1
-ggsave(p_Bacq1_HNFSelect_HNFq1, file = "D:/Research/PdPy_Div_Results/Figs/PR2_3/p_Bacq1_HNFAmpd_HNFq1.png",
+ggsave(p_Bacq1_HNFSelect_HNFq1, file = "D:/Manuscripts/PdPy_Div_MS/ms_Figs/Fig5_Bacq1_HNFAmpd_HNFq1.png",
        dpi = 600, width = 36, height = 42, units = "cm")
-##### Bacq0 -> HNF selection ->  HNFq0 ##########
+##### Bacq1 -> HNF selection -> HNFq1 ##########
 
-##### Path model analysis : Bac_q0 vs HNF_q0 ##########
-##### Step 1: no random effects #####
-Bacq1_HNFq1_mod1.0 <- '
-  # regressions
-    ln.Bac_q1 ~ Bac_Ampd_select + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3
-    ln.HNF_q1 ~ HNF_Ampd_select + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3
-    Bac_Ampd_select ~ ln.HNF_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3
-    HNF_Ampd_select ~ ln.Bac_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3
-  
-  # correlated error
-    ln.Bac_q1 ~~ ln.HNF_q1
-'
-
-Bacq1_HNFq1_mod1.1 <- '
-  # regressions
-    ln.Bac_q1 ~ Bac_Ampd_select + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3
-    ln.HNF_q1 ~ HNF_Ampd_select + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3
-    Bac_Ampd_select ~ ln.HNF_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3
-    HNF_Ampd_select ~ ln.Bac_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3
-    ln.Bac_Biom ~ ln.Bac_q1 + ln.HNF_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3
-    ln.HNF_Biom ~ ln.HNF_q1 + ln.Bac_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3
-  
-  # correlated error
-    ln.Bac_q1 ~~ ln.HNF_q1
-    ln.Bac_Biom ~~ ln.HNF_Biom
-'
-
-Bacq1_HNFq1_mod1.2 <- '
-  # regressions
-    ln.Bac_q1 ~ Bac_Ampd_select + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3
-    ln.HNF_q1 ~ HNF_Ampd_select + ln.Bac_Biom + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3
-    Bac_Ampd_select ~ ln.HNF_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3
-    HNF_Ampd_select ~ ln.Bac_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3
-    ln.Bac_Biom ~ ln.Bac_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3
-    ln.HNF_Biom ~ ln.HNF_q1 + ln.Bac_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3
-  
-  # correlated error  
-    ln.Bac_q1 ~~ ln.HNF_q1
-    ln.Bac_Biom ~~ ln.HNF_Biom
-'
-
-Bacq1_HNFq1_mod1.3 <- '
-  # regressions
-    ln.Bac_q1 ~ Bac_Ampd_select + ln.HNF_Biom + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3
-    ln.HNF_q1 ~ HNF_Ampd_select + ln.Bac_Biom + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3
-    Bac_Ampd_select ~ ln.HNF_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3
-    HNF_Ampd_select ~ ln.Bac_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3
-    ln.Bac_Biom ~ ln.Bac_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3
-    ln.HNF_Biom ~ ln.HNF_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3
-  
-  # correlated error
-    ln.Bac_q1 ~~ ln.HNF_q1
-    ln.Bac_Biom ~~ ln.HNF_Biom
-'
-
-Bacq1_HNFq1_mod1.4 <- '
-  # regressions
-    ln.Bac_q1 ~ Bac_Ampd_select + ln.HNF_Biom + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3
-    ln.HNF_q1 ~ HNF_Ampd_select + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3
-    Bac_Ampd_select ~ ln.HNF_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3
-    HNF_Ampd_select ~ ln.Bac_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3
-    ln.Bac_Biom ~ ln.Bac_q1 + ln.HNF_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3
-    ln.HNF_Biom ~ ln.HNF_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3
-  
-  # correlated error
-    ln.Bac_q1 ~~ ln.HNF_q1
-    ln.Bac_Biom ~~ ln.HNF_Biom
-'
-
-Bacq1_HNFq1_mod1.5 <- '
-  # regressions
-    ln.Bac_q1 ~ Bac_Ampd_select + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3
-    ln.HNF_q1 ~ HNF_Ampd_select + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3
-    Bac_Ampd_select ~ ln.HNF_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3
-    HNF_Ampd_select ~ ln.Bac_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3
-    ln.Bac_Biom ~ ln.Bac_q1 + ln.HNF_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3
-    ln.HNF_Biom ~ ln.HNF_q1 + ln.Bac_q1 + ln.Bac_Biom + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3
-    
-  # correlated error
-    ln.Bac_q1 ~~ ln.HNF_q1
-'
-
-Bacq1_HNFq1_mod1.6 <- '
-  # regressions
-    ln.Bac_q1 ~ Bac_Ampd_select + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3
-    ln.HNF_q1 ~ HNF_Ampd_select + ln.Bac_Biom + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3
-    Bac_Ampd_select ~ ln.HNF_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3
-    HNF_Ampd_select ~ ln.Bac_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3
-    ln.Bac_Biom ~ ln.Bac_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3
-    ln.HNF_Biom ~ ln.HNF_q1 + ln.Bac_q1 + ln.Bac_Biom + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3
-    
-  # correlated error
-    ln.Bac_q1 ~~ ln.HNF_q1
-'
-
-Bacq1_HNFq1_mod1.7 <- '
-  # regressions
-    ln.Bac_q1 ~ Bac_Ampd_select + ln.HNF_Biom + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3
-    ln.HNF_q1 ~ HNF_Ampd_select + ln.Bac_Biom + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3
-    Bac_Ampd_select ~ ln.HNF_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3
-    HNF_Ampd_select ~ ln.Bac_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3
-    ln.Bac_Biom ~ ln.Bac_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3
-    ln.HNF_Biom ~ ln.HNF_q1 + ln.Bac_Biom + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3
-    
-  # correlated error
-    ln.Bac_q1 ~~ ln.HNF_q1
-'
-
-Bacq1_HNFq1_mod1.8 <- '
-  # regressions
-    ln.Bac_q1 ~ Bac_Ampd_select + ln.HNF_Biom + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3
-    ln.HNF_q1 ~ HNF_Ampd_select + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3
-    Bac_Ampd_select ~ ln.HNF_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3
-    HNF_Ampd_select ~ ln.Bac_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3
-    ln.Bac_Biom ~ ln.Bac_q1 + ln.HNF_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3
-    ln.HNF_Biom ~ ln.HNF_q1 + ln.Bac_Biom + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3
-    
-  # correlated error
-    ln.Bac_q1 ~~ ln.HNF_q1
-'
-
-Bacq1_HNFq1_mod1.9 <- '
-  # regressions
-    ln.Bac_q1 ~ Bac_Ampd_select + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3
-    ln.HNF_q1 ~ HNF_Ampd_select + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3
-    Bac_Ampd_select ~ ln.HNF_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3
-    HNF_Ampd_select ~ ln.Bac_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3
-    ln.Bac_Biom ~ ln.Bac_q1 + ln.HNF_q1 + ln.HNF_Biom + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3
-    ln.HNF_Biom ~ ln.HNF_q1 + ln.Bac_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3
-    
-  # correlated error
-    ln.Bac_q1 ~~ ln.HNF_q1
-'
-
-Bacq1_HNFq1_mod1.10 <- '
-  # regressions
-    ln.Bac_q1 ~ Bac_Ampd_select + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3
-    ln.HNF_q1 ~ HNF_Ampd_select + ln.Bac_Biom + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3
-    Bac_Ampd_select ~ ln.HNF_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3
-    HNF_Ampd_select ~ ln.Bac_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3
-    ln.Bac_Biom ~ ln.Bac_q1 + ln.HNF_Biom + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3
-    ln.HNF_Biom ~ ln.HNF_q1 + ln.Bac_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3
-    
-  # correlated error
-    ln.Bac_q1 ~~ ln.HNF_q1
-'
-
-Bacq1_HNFq1_mod1.11 <- '
-  # regressions
-    ln.Bac_q1 ~ Bac_Ampd_select + ln.HNF_Biom + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3
-    ln.HNF_q1 ~ HNF_Ampd_select + ln.Bac_Biom + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3
-    Bac_Ampd_select ~ ln.HNF_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3
-    HNF_Ampd_select ~ ln.Bac_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3
-    ln.Bac_Biom ~ ln.Bac_q1 + ln.HNF_Biom + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3
-    ln.HNF_Biom ~ ln.HNF_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3
-    
-  # correlated error
-    ln.Bac_q1 ~~ ln.HNF_q1
-'
-
-Bacq1_HNFq1_mod1.12 <- '
-  # regressions
-    ln.Bac_q1 ~ Bac_Ampd_select + ln.HNF_Biom + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3
-    ln.HNF_q1 ~ HNF_Ampd_select + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3
-    Bac_Ampd_select ~ ln.HNF_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3
-    HNF_Ampd_select ~ ln.Bac_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3
-    ln.Bac_Biom ~ ln.Bac_q1 + ln.HNF_q1 + ln.HNF_Biom + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3
-    ln.HNF_Biom ~ ln.HNF_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3
-    
-  # correlated error
-    ln.Bac_q1 ~~ ln.HNF_q1
-'
-Bacq1_HNFq1_lavaan1.0 <- sem(Bacq1_HNFq1_mod1.0, data = HNF_Bac_A)
-Bacq1_HNFq1_lavaan1.1 <- sem(Bacq1_HNFq1_mod1.1, data = HNF_Bac_A)
-Bacq1_HNFq1_lavaan1.2 <- sem(Bacq1_HNFq1_mod1.2, data = HNF_Bac_A)
-Bacq1_HNFq1_lavaan1.3 <- sem(Bacq1_HNFq1_mod1.3, data = HNF_Bac_A)
-Bacq1_HNFq1_lavaan1.4 <- sem(Bacq1_HNFq1_mod1.4, data = HNF_Bac_A)
-Bacq1_HNFq1_lavaan1.5 <- sem(Bacq1_HNFq1_mod1.5, data = HNF_Bac_A)
-Bacq1_HNFq1_lavaan1.6 <- sem(Bacq1_HNFq1_mod1.6, data = HNF_Bac_A)
-Bacq1_HNFq1_lavaan1.7 <- sem(Bacq1_HNFq1_mod1.7, data = HNF_Bac_A)
-Bacq1_HNFq1_lavaan1.8 <- sem(Bacq1_HNFq1_mod1.8, data = HNF_Bac_A)
-Bacq1_HNFq1_lavaan1.9 <- sem(Bacq1_HNFq1_mod1.9, data = HNF_Bac_A)
-Bacq1_HNFq1_lavaan1.10 <- sem(Bacq1_HNFq1_mod1.10, data = HNF_Bac_A)
-Bacq1_HNFq1_lavaan1.11 <- sem(Bacq1_HNFq1_mod1.11, data = HNF_Bac_A)
-Bacq1_HNFq1_lavaan1.12 <- sem(Bacq1_HNFq1_mod1.12, data = HNF_Bac_A)
-
-AICstep1 <- AIC(Bacq1_HNFq1_lavaan1.0, Bacq1_HNFq1_lavaan1.1, Bacq1_HNFq1_lavaan1.2, Bacq1_HNFq1_lavaan1.3,
-                Bacq1_HNFq1_lavaan1.4, Bacq1_HNFq1_lavaan1.5, Bacq1_HNFq1_lavaan1.6, Bacq1_HNFq1_lavaan1.7,
-                Bacq1_HNFq1_lavaan1.8, Bacq1_HNFq1_lavaan1.9, Bacq1_HNFq1_lavaan1.10, Bacq1_HNFq1_lavaan1.11,
-                Bacq1_HNFq1_lavaan1.12)
-AICstep1 <- AICstep1 %>% cbind(row.names(AICstep1)) %>%
-  arrange(AIC)
-AICstep1
-
-Bacq1_HNFq1_mod1.3 <- '
-  # regressions
-    ln.Bac_q1 ~ Bac_Ampd_select + ln.HNF_Biom + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3
-    ln.HNF_q1 ~ HNF_Ampd_select + ln.Bac_Biom + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3
-    Bac_Ampd_select ~ ln.HNF_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3
-    HNF_Ampd_select ~ ln.Bac_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3
-    ln.Bac_Biom ~ ln.Bac_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3
-    ln.HNF_Biom ~ ln.HNF_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3
-  
-  # correlated error
-    ln.Bac_q1 ~~ ln.HNF_q1
-    ln.Bac_Biom ~~ ln.HNF_Biom
-'
-Bacq1_HNFq1_lavaan1.3 <- sem(Bacq1_HNFq1_mod1.3, data = HNF_Bac_A)#, se = "bootstrap")
-summary(Bacq1_HNFq1_lavaan1.3, fit.measures = TRUE)
-##### Step 1: no random effects #####
-##### Step 2 : include grouping variables (random effects) and environmental variables #####
-Bacq1_HNFq1_psem2.0 <- psem(
-  lm(ln.Bac_q1 ~ Bac_Ampd_select + ln.HNF_Biom + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3,
-     data = HNF_Bac_A),
-  lm(ln.HNF_q1 ~ HNF_Ampd_select + ln.Bac_Biom + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3,
-     data = HNF_Bac_A),
-  lm(Bac_Ampd_select ~ ln.HNF_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3,
-    data = HNF_Bac_A),
-  # lm(HNF_Ampd_select ~ ln.Bac_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3,
-  #    data = HNF_Bac_A),
-  # lm(ln.Bac_Biom ~ ln.Bac_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3,
-  #    data = HNF_Bac_A),
-  lm(ln.HNF_Biom ~ ln.HNF_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3,
-    data = HNF_Bac_A),
-  
-  ln.Bac_q1 %~~% ln.HNF_q1,
-  ln.Bac_Biom %~~% ln.HNF_Biom
-)
-summary(Bacq1_HNFq1_psem2.0)
-Bacq1_HNFq1_psem2.Cr <- psem(
-  lme(ln.Bac_q1 ~ Bac_Ampd_select + ln.HNF_Biom + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3,
-      random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML"),
-  lme(ln.HNF_q1 ~ HNF_Ampd_select + ln.Bac_Biom + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3,
-      random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML"),
-  lme(Bac_Ampd_select ~ ln.HNF_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3,
-      random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML"),
-  # lme(HNF_Ampd_select ~ ln.Bac_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3,
-  #     random = ~ 1 | Cruise, data = HNF_Bac_A),
-  # lme(ln.Bac_Biom ~ ln.Bac_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3,
-  #     random = ~ 1 | Cruise, data = HNF_Bac_A),
-  # lme(ln.HNF_Biom ~ ln.HNF_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3,
-  #     random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML"),
-  
-  ln.Bac_q1 %~~% ln.HNF_q1
-  # ln.Bac_Biom %~~% ln.HNF_Biom
-)
-summary(Bacq1_HNFq1_psem2.Cr, fit.measures = TRUE)
-summary(lme(HNF_Ampd_select ~ ln.Bac_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3,
-    random = ~ 1 | Cruise, data = HNF_Bac_A))
-##### Path model analysis : Bac_q0 vs HNF_q0 ##########
 ###############################################################################################
 ##### Testing hypothesis: HNFq0 -> Bac selection -> Bacq0 & Bacq0 -> Bac selection ->  HNFq0 ##
 ###############################################################################################
