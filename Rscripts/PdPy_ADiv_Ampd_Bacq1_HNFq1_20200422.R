@@ -434,8 +434,6 @@ Bac_Niche <- as.data.frame(scale(Bac_Niche, center = TRUE, scale = TRUE))
 Bac_Niche_Dist <- vegdist(Bac_Niche, method = "euclidean")
 Bac_Phylo_Dist <- cophenetic(Bac_phylo)
 Bac_PhySig <- mantel.correlog(Bac_Niche_Dist, Bac_Phylo_Dist, n.class = 50)
-Bac_PhySig_fig <- plot(Bac_PhySig)
-ggsave(plot(Bac_PhySig), file = "D:/Research/PdPy_Div_Results/p_Bac_PhySig.png", dpi = 600)
 ##### Bacteria ##########
 
 ##### HNF ##########
@@ -460,9 +458,62 @@ HNF_Niche <- as.data.frame(scale(HNF_Niche, center = TRUE, scale = TRUE))
 HNF_Niche_Dist <- vegdist(HNF_Niche, method = "euclidean")
 HNF_Phylo_Dist <- cophenetic(drop.tip(HNF_phylo, which(colSums(HNF_comm) == 0)))
 HNF_PhySig <- mantel.correlog(HNF_Niche_Dist, HNF_Phylo_Dist, n.class = 50)
-HNF_PhySig_fig <- plot(HNF_PhySig)
-ggsave(plot(HNF_PhySig), file = "D:/Research/PdPy_Div_Results/p_HNF_PhySig.png", dpi = 600)
 ##### HNF ##########
+
+##### Visualization ##########
+Bac_PhySig_p <- as.data.frame(Bac_PhySig$mantel.res) %>%
+  rename(PrCorrected = "Pr(corrected)", PrMantel = "Pr(Mantel)") %>%
+  filter(PrCorrected != "NA") %>%
+  mutate(sig = ifelse(PrCorrected < 0.05, "significant", "non-signifant")) %>%
+  ggplot() + 
+  geom_point(aes(x = class.index, y = Mantel.cor, color = as.factor(sig)), size = 3) + 
+  geom_hline(yintercept = 0, color = "red") + 
+  scale_colour_manual( values = c("grey", "black")) + 
+  labs(x = expression("Phylogenetic distance"),
+       y = expression("Mantel correlation")
+  ) + 
+  theme_classic() + 
+  theme(
+    strip.text.x = element_text(size = 20, face = "bold"),
+    axis.title = element_text(size = 24),
+    axis.text = element_text(size = 16),
+    legend.text = element_text(size = 20),
+    legend.title = element_blank()
+  )
+
+HNF_PhySig_p <- as.data.frame(HNF_PhySig$mantel.res) %>%
+  rename(PrCorrected = "Pr(corrected)", PrMantel = "Pr(Mantel)") %>%
+  filter(PrCorrected != "NA") %>%
+  mutate(sig = ifelse(PrCorrected < 0.05, "significant", "non-signifant")) %>%
+  ggplot() + 
+    geom_point(aes(x = class.index, y = Mantel.cor, color = as.factor(sig)), size = 3) + 
+    geom_hline(yintercept = 0, color = "red") + 
+    scale_colour_manual( values = c("grey", "black")) + 
+    labs(x = expression("Phylogenetic distance"),
+         y = expression("Mantel correlation")
+         ) + 
+    theme_classic() + 
+    theme(
+      strip.text.x = element_text(size = 20, face = "bold"),
+      axis.title = element_text(size = 24),
+      axis.text = element_text(size = 16),
+      legend.text = element_text(size = 20),
+      legend.title = element_blank()
+    )
+
+legend <- get_legend(
+  HNF_PhySig_p + theme(legend.box.margin = margin(0, 0, 0, 12))
+)
+p_PhySig <- plot_grid(
+  plot_grid(Bac_PhySig_p + theme(legend.position = "none"),
+            HNF_PhySig_p + theme(legend.position = "none"),
+            ncol = 1, labels = "AUTO", hjust = 0),
+  legend, rel_widths = c(3, .4))
+p_PhySig
+
+ggsave(p_PhySig, file = "D:/Manuscript/PdPy_Div_MS/ms_Figs/FigS2_PhySig.png",
+       dpi = 600, width = 34, height = 28, units = "cm")
+##### Visualization ##########
 ###############################################################################################
 ##### Phylogenetic signal #####################################################################
 ###############################################################################################
