@@ -259,7 +259,7 @@ write.table(cbind(q0coef, q1coef, q2coef), file = "D:/Research/PdPy_Div/Anulls_P
 ini <- Sys.time()
 numCores <- detectCores()
 numCores
-cl <- makeCluster(numCores - 24)
+cl <- makeCluster(numCores - 2)
 
 clusterEvalQ(cl, {
   library(vegan)
@@ -267,7 +267,7 @@ clusterEvalQ(cl, {
   library(picante)
   Bac_comm <- as.data.frame(t(read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/sECS_4/sECS_Bac_seqXst_PR2_4.csv",
                                          sep = ",", header = TRUE, row.names = 1, stringsAsFactors = FALSE, fill = TRUE)))
-  Bac_phylo<- read.tree(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/sECS_3/sECS_Bac_treeNJ_PR2_4.tree")
+  Bac_phylo<- read.tree(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/sECS_4/sECS_Bac_treeNJ_PR2_4.tree")
 })
 
 BacPhylo_null_func <- function(x){
@@ -304,7 +304,7 @@ clusterEvalQ(cl, {
   library(picante)
   HNF_comm <- as.data.frame(t(read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/sECS_4/sECS_HNF_seqXst_PR2_4.csv",
                                          sep = ",", header = TRUE, row.names = 1, stringsAsFactors = FALSE, fill = TRUE)))
-  HNF_phylo<- read.tree(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/sECS_3/sECS_HNF_treeNJ_PR2_4.tree")
+  HNF_phylo<- read.tree(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/sECS_4/sECS_HNF_treeNJ_PR2_4.tree")
 })
 
 HNFPhylo_null_func <- function(x){
@@ -348,7 +348,7 @@ clusterEvalQ(cl, {
   library(picante)
   Bac_comm <- as.data.frame(t(read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/sECS_4/sECS_Bac_seqXst_PR2_4.csv",
                                          sep = ",", header = TRUE, row.names = 1, stringsAsFactors = FALSE, fill = TRUE)))
-  Bac_phylo<- read.tree(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/sECS_3/sECS_Bac_treeNJ_PR2_4.tree")
+  Bac_phylo<- read.tree(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/sECS_4/sECS_Bac_treeNJ_PR2_4.tree")
 })
 
 BacPhylo_null_func <- function(x){
@@ -386,7 +386,7 @@ clusterEvalQ(cl, {
   library(picante)
   HNF_comm <- as.data.frame(t(read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/sECS_4/sECS_HNF_seqXst_PR2_4.csv",
                                          sep = ",", header = TRUE, row.names = 1, stringsAsFactors = FALSE, fill = TRUE)))
-  HNF_phylo<- read.tree(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/sECS_3/sECS_HNF_treeNJ_PR2_4.tree")
+  HNF_phylo<- read.tree(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/sECS_4/sECS_HNF_treeNJ_PR2_4.tree")
 })
 
 HNFPhylo_null_func <- function(x){
