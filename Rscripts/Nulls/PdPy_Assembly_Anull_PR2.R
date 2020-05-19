@@ -77,15 +77,15 @@ if (!require(mgcv)) {
 ###############################################################################################
 ##### Loading data ############################################################################
 ###############################################################################################
-Bac_comm <- as.data.frame(t(read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/sECS_3/sECS_Bac_seqXst_PR2_3.csv",
+Bac_comm <- as.data.frame(t(read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/sECS_4/sECS_Bac_seqXst_PR2_4.csv",
                                        sep = ",", header = TRUE, row.names = 1, stringsAsFactors = FALSE, fill = TRUE)))
 Bac_ra_comm <- Bac_comm / rowSums(Bac_comm)
-Bac_phylo<- read.tree(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/sECS_3/sECS_Bac_treeNJ_PR2_3.tree")
+Bac_phylo<- read.tree(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/sECS_4/sECS_Bac_treeNJ_PR2_4.tree")
 
-HNF_comm <- as.data.frame(t(read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/sECS_3/sECS_HNF_seqXst_PR2_3.csv",
+HNF_comm <- as.data.frame(t(read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/sECS_4/sECS_HNF_seqXst_PR2_4.csv",
                                        sep = ",", header = TRUE, row.names = 1, stringsAsFactors = FALSE, fill = TRUE)))
 HNF_ra_comm <- HNF_comm / rowSums(HNF_comm)
-HNF_phylo<- read.tree(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/sECS_3/sECS_HNF_treeNJ_PR2_3.tree")
+HNF_phylo<- read.tree(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/sECS_4/sECS_HNF_treeNJ_PR2_4.tree")
 
 # NF_comm <- as.data.frame(t(read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/sECS_3/sECS_prot_seqXst_PR2_3.csv",
 #                                       sep = ",", header = TRUE, row.names = 1, stringsAsFactors = FALSE, fill = TRUE)))
@@ -183,7 +183,7 @@ HNF_phylo<- read.tree(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Di
 #   # Sys.time() - ini
 # }
 # 
-# write.table(cbind(q0coef, q1coef, q2coef), file = "D:/Research/PdPy_Div_Results/nulls_PR2_3/Neutral_ACorr_null_3.csv", 
+# write.table(cbind(q0coef, q1coef, q2coef), file = "D:/Research/PdPy_Div_Results/nulls_PR2_4/Neutral_ACorr_null_4.csv", 
 #             sep = ",", col.names = TRUE, row.names = FALSE)
 ###############################################################################################
 ##### Predator-prey diversity correlation under neutral processes #############################
@@ -192,9 +192,9 @@ HNF_phylo<- read.tree(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Di
 ###############################################################################################
 ##### Predator-prey diversity correlation under neutral processes #############################
 ###############################################################################################
-Bac_comm <- as.data.frame(t(read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/sECS_3/sECS_Bac_seqXst_PR2_3.csv",
+Bac_comm <- as.data.frame(t(read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/sECS_4/sECS_Bac_seqXst_PR2_4.csv",
                                        sep = ",", header = TRUE, row.names = 1, stringsAsFactors = FALSE, fill = TRUE)))
-HNF_comm <- as.data.frame(t(read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/sECS_3/sECS_HNF_seqXst_PR2_3.csv",
+HNF_comm <- as.data.frame(t(read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/sECS_4/sECS_HNF_seqXst_PR2_4.csv",
                                        sep = ",", header = TRUE, row.names = 1, stringsAsFactors = FALSE, fill = TRUE)))
 Bac_A <- iNEXT(t(Bac_comm), q = 0, datatype = "abundance", size = max(colSums(HNF_comm)) + 100000)$AsyEst %>%
   select(Site, Diversity, Estimator) %>%
@@ -244,7 +244,7 @@ for (i in 1:999){
   q2coef <- c(q2coef, cor.test(HNF_Bac_RandA$ln.HNF_q2, HNF_Bac_RandA$ln.Bac_q2)$estimate)
 }
 
-write.table(cbind(q0coef, q1coef, q2coef), file = "D:/Research/PdPy_Div/Anulls_PR2_3/Neutral_ACorr_null.csv",
+write.table(cbind(q0coef, q1coef, q2coef), file = "D:/Research/PdPy_Div/Anulls_PR2_4/Neutral_ACorr_null.csv",
             sep = ",", col.names = TRUE, row.names = FALSE)
 ###############################################################################################
 ##### Predator-prey diversity correlation under neutral processes #############################
@@ -265,16 +265,16 @@ clusterEvalQ(cl, {
   library(vegan)
   #library(tidyverse)
   library(picante)
-  Bac_comm <- as.data.frame(t(read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/sECS_3/sECS_Bac_seqXst_PR2_3.csv",
+  Bac_comm <- as.data.frame(t(read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/sECS_4/sECS_Bac_seqXst_PR2_4.csv",
                                          sep = ",", header = TRUE, row.names = 1, stringsAsFactors = FALSE, fill = TRUE)))
-  Bac_phylo<- read.tree(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/sECS_3/sECS_Bac_treeNJ_PR2_3.tree")
+  Bac_phylo<- read.tree(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/sECS_3/sECS_Bac_treeNJ_PR2_4.tree")
 })
 
 BacPhylo_null_func <- function(x){
   #set up parameters and data
   community = Bac_comm
   phylo = Bac_phylo
-  # performing comdistnt to calculate MNTD
+  # performing comdistnt to calculate MPD
   as.matrix(mpd(Bac_comm, cophenetic(tipShuffle(Bac_phylo)), abundance.weighted = TRUE))
 }
 nsim.list <- sapply(1:999, list)
@@ -286,7 +286,7 @@ Sys.time() - ini
 BacPhylo_null <- data.frame(matrix(unlist(test), ncol = length(test), byrow = FALSE)) %>%
   cbind(row.names(Bac_comm)) %>%
   rename(obs = X1000)
-write.table(BacPhylo_null, file = "/home/zac422/Desktop/OSCAR/Nulls/Bac_Ampd_null_3.csv", 
+write.table(BacPhylo_null, file = "/home/zac422/Desktop/OSCAR/Nulls/Bac_Ampd_null_4.csv", 
             sep = ",", col.names = TRUE, row.names = FALSE)
 stopCluster(cl)
 ##### Bacteria phylogenetic turnover ################################################
@@ -302,16 +302,16 @@ clusterEvalQ(cl, {
   library(vegan)
   library(tidyverse)
   library(picante)
-  HNF_comm <- as.data.frame(t(read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/sECS_3/sECS_HNF_seqXst_PR2_3.csv",
+  HNF_comm <- as.data.frame(t(read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/sECS_4/sECS_HNF_seqXst_PR2_4.csv",
                                          sep = ",", header = TRUE, row.names = 1, stringsAsFactors = FALSE, fill = TRUE)))
-  HNF_phylo<- read.tree(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/sECS_3/sECS_HNF_treeNJ_PR2_3.tree")
+  HNF_phylo<- read.tree(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/sECS_3/sECS_HNF_treeNJ_PR2_4.tree")
 })
 
 HNFPhylo_null_func <- function(x){
   # set up parameters and data
   community = HNF_comm
   phylo = HNF_phylo
-  # performing comdistnt to calculate MNTD
+  # performing comdistnt to calculate MPD
   as.matrix(mpd(community, cophenetic(tipShuffle(phylo)), abundance.weighted = TRUE))
 }
 nsim.list <- sapply(1:999, list)
@@ -323,7 +323,7 @@ Sys.time() - ini
 HNFPhylo_null <- data.frame(matrix(unlist(test), ncol = length(test), byrow = FALSE)) %>%
   cbind(row.names(HNF_comm)) %>%
   rename(obs = X1000)
-write.table(HNFPhylo_null, file = "/home/zac422/Desktop/OSCAR/Nulls/HNF_Ampd_null_3.csv", 
+write.table(HNFPhylo_null, file = "/home/zac422/Desktop/OSCAR/Nulls/HNF_Ampd_null_4.csv", 
             sep = ",", col.names = TRUE, row.names = FALSE)
 stopCluster(cl)
 ##### Hetero-trophic Nanoflagellate phylogenetic turnover ###########################
@@ -346,9 +346,9 @@ clusterEvalQ(cl, {
   library(vegan)
   #library(tidyverse)
   library(picante)
-  Bac_comm <- as.data.frame(t(read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/sECS_3/sECS_Bac_seqXst_PR2_3.csv",
+  Bac_comm <- as.data.frame(t(read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/sECS_4/sECS_Bac_seqXst_PR2_4.csv",
                                          sep = ",", header = TRUE, row.names = 1, stringsAsFactors = FALSE, fill = TRUE)))
-  Bac_phylo<- read.tree(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/sECS_3/sECS_Bac_treeNJ_PR2_3.tree")
+  Bac_phylo<- read.tree(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/sECS_3/sECS_Bac_treeNJ_PR2_4.tree")
 })
 
 BacPhylo_null_func <- function(x){
@@ -368,7 +368,7 @@ Sys.time() - ini
 BacPhylo_null <- data.frame(matrix(unlist(test), ncol = length(test), byrow = FALSE)) %>%
   cbind(row.names(Bac_comm)) %>%
   rename(obs = X1000)
-write.table(BacPhylo_null, file = "/home/zac422/Desktop/OSCAR/Nulls/Bac_Amntd_null_3.csv", 
+write.table(BacPhylo_null, file = "/home/zac422/Desktop/OSCAR/Nulls/Bac_Amntd_null_4.csv", 
             sep = ",", col.names = TRUE, row.names = FALSE)
 stopCluster(cl)
 ##### Bacteria phylogenetic turnover ################################################
@@ -384,9 +384,9 @@ clusterEvalQ(cl, {
   library(vegan)
   library(tidyverse)
   library(picante)
-  HNF_comm <- as.data.frame(t(read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/sECS_3/sECS_HNF_seqXst_PR2_3.csv",
+  HNF_comm <- as.data.frame(t(read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/sECS_4/sECS_HNF_seqXst_PR2_4.csv",
                                          sep = ",", header = TRUE, row.names = 1, stringsAsFactors = FALSE, fill = TRUE)))
-  HNF_phylo<- read.tree(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/sECS_3/sECS_HNF_treeNJ_PR2_3.tree")
+  HNF_phylo<- read.tree(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/sECS_3/sECS_HNF_treeNJ_PR2_4.tree")
 })
 
 HNFPhylo_null_func <- function(x){
@@ -405,7 +405,7 @@ Sys.time() - ini
 HNFPhylo_null <- data.frame(matrix(unlist(test), ncol = length(test), byrow = FALSE)) %>%
   cbind(row.names(HNF_comm)) %>%
   rename(obs = X1000)
-write.table(HNFPhylo_null, file = "/home/zac422/Desktop/OSCAR/Nulls/HNF_Amntd_null_3.csv", 
+write.table(HNFPhylo_null, file = "/home/zac422/Desktop/OSCAR/Nulls/HNF_Amntd_null_4.csv", 
            sep = ",", col.names = TRUE, row.names = FALSE)
 stopCluster(cl)
 ##### Hetero-trophic Nanoflagellate phylogenetic turnover ###########################
