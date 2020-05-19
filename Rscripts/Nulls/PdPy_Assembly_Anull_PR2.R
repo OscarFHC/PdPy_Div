@@ -296,7 +296,7 @@ ini <- Sys.time()
 numCores <- detectCores()
 numCores
 
-cl <- makeCluster(numCores - 24)
+cl <- makeCluster(numCores - 2)
 
 clusterEvalQ(cl, {
   library(vegan)
@@ -323,7 +323,7 @@ Sys.time() - ini
 HNFPhylo_null <- data.frame(matrix(unlist(test), ncol = length(test), byrow = FALSE)) %>%
   cbind(row.names(HNF_comm)) %>%
   rename(obs = X1000)
-write.table(HNFPhylo_null, file = "/home/zac422/Desktop/OSCAR/Nulls/HNF_Ampd_null_4.csv", 
+write.table(HNFPhylo_null, file = "D:/Research/PdPy_Div/Anulls_PR2_4/HNF_Ampd_null_4.csv", 
             sep = ",", col.names = TRUE, row.names = FALSE)
 stopCluster(cl)
 ##### Hetero-trophic Nanoflagellate phylogenetic turnover ###########################
@@ -378,7 +378,7 @@ ini <- Sys.time()
 numCores <- detectCores()
 numCores
 
-cl <- makeCluster(numCores - 24)
+cl <- makeCluster(numCores - 2)
 
 clusterEvalQ(cl, {
   library(vegan)
@@ -405,7 +405,7 @@ Sys.time() - ini
 HNFPhylo_null <- data.frame(matrix(unlist(test), ncol = length(test), byrow = FALSE)) %>%
   cbind(row.names(HNF_comm)) %>%
   rename(obs = X1000)
-write.table(HNFPhylo_null, file = "/home/zac422/Desktop/OSCAR/Nulls/HNF_Amntd_null_4.csv", 
+write.table(HNFPhylo_null, file = "D:/Research/PdPy_Div/Anulls_PR2_4/HNF_Amntd_null_4.csv", 
            sep = ",", col.names = TRUE, row.names = FALSE)
 stopCluster(cl)
 ##### Hetero-trophic Nanoflagellate phylogenetic turnover ###########################

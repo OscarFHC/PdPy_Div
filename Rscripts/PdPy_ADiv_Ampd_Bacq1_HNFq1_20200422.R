@@ -231,7 +231,7 @@ Vars <- read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/m
 ###############################################################################################
 ##### Loading nulls ###########################################################################
 ###############################################################################################
-Bac_Ampd_null <- read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/Anulls_PR2_3/Bac_Ampd_null_3.csv", 
+Bac_Ampd_null <- read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/Anulls_PR2_4/Bac_Ampd_null_4.csv", 
                             sep = ",", header = TRUE, stringsAsFactors = FALSE, fill = TRUE)
 Bac_Ampd <- Bac_Ampd_null %>% 
   select(c(obs, Site)) %>%
@@ -240,7 +240,7 @@ Bac_Ampd <- Bac_Ampd_null %>%
          Bac_Ampd_select = (obs - Ampd_null_mean) / Ampd_null_sd,
          Bac_Ampd_select_p = pnorm(-abs(Bac_Ampd_select), 0, 1))
 
-HNF_Ampd_null <- read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/Anulls_PR2_3/HNF_Ampd_null_3.csv", 
+HNF_Ampd_null <- read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/Anulls_PR2_4/HNF_Ampd_null_4.csv", 
                             sep = ",", header = TRUE, stringsAsFactors = FALSE, fill = TRUE)
 HNF_Ampd <- HNF_Ampd_null %>% 
   select(c(obs, Site)) %>%
