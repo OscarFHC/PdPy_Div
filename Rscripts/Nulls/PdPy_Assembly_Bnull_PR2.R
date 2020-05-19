@@ -128,7 +128,7 @@ Sys.time() - ini
 BacPhylo_null <- data.frame(matrix(unlist(test), ncol = length(test), byrow = FALSE)) %>%
   cbind(expand.grid(row.names(Bac_comm), row.names(Bac_comm))) %>%
   rename(obs = X1000)
-write.table(HNFPhylo_null, file = "D:/Research/PdPy_DivBnulls_PR2_4/Bac_Bmpd_null_4_1.csv", 
+write.table(HNFPhylo_null, file = "D:/Research/PdPy_Div_Results/nulls_PR2_4/Bac_Bmpd_null_4_1.csv", 
             sep = ",", col.names = TRUE, row.names = FALSE)
 stopCluster(cl)
 ##### Bacteria phylogenetic turnover ################################################
@@ -165,7 +165,7 @@ Sys.time() - ini
 HNFPhylo_null <- data.frame(matrix(unlist(test), ncol = length(test), byrow = FALSE)) %>%
   cbind(expand.grid(row.names(HNF_comm), row.names(HNF_comm))) %>%
   rename(obs = X1000)
-write.table(HNFPhylo_null, file = "D:/Research/PdPy_DivBnulls_PR2_4/HNF_Bmpd_null_4.csv", 
+write.table(HNFPhylo_null, file = "D:/Research/PdPy_Div_Results/nulls_PR2_4/HNF_Bmpd_null_4.csv", 
             sep = ",", col.names = TRUE, row.names = FALSE)
 stopCluster(cl)
 ##### Hetero-trophic Nanoflagellate phylogenetic turnover ###########################
@@ -210,7 +210,7 @@ Sys.time() - ini
 BacPhylo_null <- data.frame(matrix(unlist(test), ncol = length(test), byrow = FALSE)) %>%
   cbind(expand.grid(row.names(Bac_comm), row.names(Bac_comm))) %>%
   rename(obs = X1000)
-write.table(HNFPhylo_null, file = "D:/Research/PdPy_DivBnulls_PR2_4/Bac_Bmntd_null_4_1.csv", 
+write.table(HNFPhylo_null, file = "D:/Research/PdPy_Div_Results/nulls_PR2_4/Bac_Bmntd_null_4_1.csv", 
             sep = ",", col.names = TRUE, row.names = FALSE)
 stopCluster(cl)
 ##### Bacteria phylogenetic turnover ################################################
@@ -247,7 +247,7 @@ Sys.time() - ini
 HNFPhylo_null <- data.frame(matrix(unlist(test), ncol = length(test), byrow = FALSE)) %>%
   cbind(expand.grid(row.names(HNF_comm), row.names(HNF_comm))) %>%
   rename(obs = X1000)
-write.table(HNFPhylo_null, file = "D:/Research/PdPy_DivBnulls_PR2_4/HNF_Bmntd_null_4.csv", 
+write.table(HNFPhylo_null, file = "D:/Research/PdPy_Div_Results/nulls_PR2_4/HNF_Bmntd_null_4.csv", 
             sep = ",", col.names = TRUE, row.names = FALSE)
 stopCluster(cl)
 ##### Hetero-trophic Nanoflagellate phylogenetic turnover ###########################
