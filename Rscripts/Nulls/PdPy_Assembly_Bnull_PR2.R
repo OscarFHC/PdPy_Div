@@ -100,7 +100,7 @@ ini <- Sys.time()
 numCores <- detectCores()
 numCores
 
-cl <- makeCluster(numCores - 24)
+cl <- makeCluster(numCores - 2)
 
 clusterEvalQ(cl, {
   library(vegan)
@@ -128,7 +128,7 @@ Sys.time() - ini
 BacPhylo_null <- data.frame(matrix(unlist(test), ncol = length(test), byrow = FALSE)) %>%
   cbind(expand.grid(row.names(Bac_comm), row.names(Bac_comm))) %>%
   rename(obs = X1000)
-write.table(BacPhylo_null, file = "/home/zac422/Desktop/OSCAR/Nulls/Bac_Bmpd_null_4.csv", 
+write.table(HNFPhylo_null, file = "D:/Research/PdPy_DivBnulls_PR2_4/Bac_Bmpd_null_4_1.csv", 
             sep = ",", col.names = TRUE, row.names = FALSE)
 stopCluster(cl)
 ##### Bacteria phylogenetic turnover ################################################
@@ -138,7 +138,7 @@ ini <- Sys.time()
 numCores <- detectCores()
 numCores
 
-cl <- makeCluster(numCores - 24)
+cl <- makeCluster(numCores - 2)
 
 clusterEvalQ(cl, {
   library(vegan)
@@ -165,7 +165,7 @@ Sys.time() - ini
 HNFPhylo_null <- data.frame(matrix(unlist(test), ncol = length(test), byrow = FALSE)) %>%
   cbind(expand.grid(row.names(HNF_comm), row.names(HNF_comm))) %>%
   rename(obs = X1000)
-write.table(HNFPhylo_null, file = "/home/zac422/Desktop/OSCAR/Nulls/HNF_Bmpd_null_4.csv", 
+write.table(HNFPhylo_null, file = "D:/Research/PdPy_DivBnulls_PR2_4/HNF_Bmpd_null_4.csv", 
             sep = ",", col.names = TRUE, row.names = FALSE)
 stopCluster(cl)
 ##### Hetero-trophic Nanoflagellate phylogenetic turnover ###########################
@@ -183,7 +183,7 @@ ini <- Sys.time()
 numCores <- detectCores()
 numCores
 
-cl <- makeCluster(numCores - 24)
+cl <- makeCluster(numCores - 2)
 
 clusterEvalQ(cl, {
   library(vegan)
@@ -210,7 +210,7 @@ Sys.time() - ini
 BacPhylo_null <- data.frame(matrix(unlist(test), ncol = length(test), byrow = FALSE)) %>%
   cbind(expand.grid(row.names(Bac_comm), row.names(Bac_comm))) %>%
   rename(obs = X1000)
-write.table(BacPhylo_null, file = "/home/zac422/Desktop/OSCAR/Nulls/Bac_Bmntd_null_4.csv", 
+write.table(HNFPhylo_null, file = "D:/Research/PdPy_DivBnulls_PR2_4/Bac_Bmntd_null_4_1.csv", 
             sep = ",", col.names = TRUE, row.names = FALSE)
 stopCluster(cl)
 ##### Bacteria phylogenetic turnover ################################################
@@ -238,16 +238,16 @@ HNFPhylo_null_func <- function(x){
   # performing comdistnt to calculate MNTD
   as.matrix(comdistnt(community, cophenetic(tipShuffle(phylo)), abundance.weighted = TRUE))
 }
-nsim.list <- sapply(1:9, list)
+nsim.list <- sapply(1:999, list)
 test <- parLapply(cl, nsim.list, HNFPhylo_null_func)
-test[[10]] <- as.matrix(comdistnt(HNF_comm, cophenetic(HNF_phylo), abundance.weighted = TRUE))
+test[[1000]] <- as.matrix(comdistnt(HNF_comm, cophenetic(HNF_phylo), abundance.weighted = TRUE))
 
 Sys.time() - ini
 
 HNFPhylo_null <- data.frame(matrix(unlist(test), ncol = length(test), byrow = FALSE)) %>%
   cbind(expand.grid(row.names(HNF_comm), row.names(HNF_comm))) %>%
-  rename(obs = X10)
-write.table(HNFPhylo_null, file = "/home/zac422/Desktop/OSCAR/Nulls/HNF_Bmntd_null_4.csv", 
+  rename(obs = X1000)
+write.table(HNFPhylo_null, file = "D:/Research/PdPy_DivBnulls_PR2_4/HNF_Bmntd_null_4.csv", 
             sep = ",", col.names = TRUE, row.names = FALSE)
 stopCluster(cl)
 ##### Hetero-trophic Nanoflagellate phylogenetic turnover ###########################

@@ -210,17 +210,17 @@ fit_fun <- function(data, mapping, ...){
 ##### Loading data ############################################################################
 ###############################################################################################
 Bac_comm <- as.data.frame(t(read.table(
-  file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/sECS_3/sECS_Bac_seqXst_PR2_3.csv", 
+  file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/sECS_4/sECS_Bac_seqXst_PR2_4.csv", 
   sep = ",", header = TRUE, row.names = 1, stringsAsFactors = FALSE, fill = TRUE)))
 Bac_ra_comm <- Bac_comm / rowSums(Bac_comm)
 Bac_phylo<- read.tree(
-  file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/sECS_3/sECS_Bac_treeNJ_PR2_3.tree")
+  file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/sECS_4/sECS_Bac_treeNJ_PR2_4.tree")
 
 HNF_comm <- as.data.frame(t(read.table(
-  file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/sECS_3/sECS_HNF_seqXst_PR2_3.csv", 
+  file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/sECS_4/sECS_HNF_seqXst_PR2_4.csv", 
   sep = ",", header = TRUE, row.names = 1, stringsAsFactors = FALSE, fill = TRUE)))
 HNF_ra_comm <- HNF_comm / rowSums(HNF_comm)
-HNF_phylo<- read.tree(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/sECS_3/sECS_HNF_treeNJ_PR2_3.tree")
+HNF_phylo<- read.tree(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/sECS_4/sECS_HNF_treeNJ_PR2_4.tree")
 
 Vars <- read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/sECS_Vars.csv", sep = ",", 
                    header = TRUE, stringsAsFactors = FALSE, fill = TRUE)
@@ -249,7 +249,7 @@ HNF_Ampd <- HNF_Ampd_null %>%
          HNF_Ampd_select = (obs - Ampd_null_mean) / Ampd_null_sd,
          HNF_Ampd_select_p = pnorm(-abs(HNF_Ampd_select), 0, 1))
 
-ADivCorr_null <- read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/Anulls_PR2_3/Neutral_ACorr_null.csv", 
+ADivCorr_null <- read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/Anulls_PR2_4/Neutral_ACorr_null.csv", 
                             sep = ",", header = TRUE, stringsAsFactors = FALSE, fill = TRUE)
 ###############################################################################################
 ##### Loading nulls ###########################################################################
@@ -484,11 +484,12 @@ Bac_PhySig_p <- as.data.frame(Bac_PhySig$mantel.res) %>%
 HNF_PhySig_p <- as.data.frame(HNF_PhySig$mantel.res) %>%
   rename(PrCorrected = "Pr(corrected)", PrMantel = "Pr(Mantel)") %>%
   filter(PrCorrected != "NA") %>%
-  mutate(sig = ifelse(PrCorrected < 0.05, "significant", "non-signifant")) %>%
+  mutate(sig = ifelse(PrCorrected < 0.1, "significant", "non-signifant")) %>%
   ggplot() + 
     geom_point(aes(x = class.index, y = Mantel.cor, color = as.factor(sig)), size = 3) + 
     geom_hline(yintercept = 0, color = "red") + 
-    scale_colour_manual( values = c("grey", "black")) + 
+    scale_colour_manual(values = c("grey", "grey32"), 
+                        labels = c(expression(atop("non-", "significant")), expression(atop("marginal", "significant")))) + 
     labs(x = expression("Phylogenetic distance"),
          y = expression("Mantel correlation")
          ) + 
