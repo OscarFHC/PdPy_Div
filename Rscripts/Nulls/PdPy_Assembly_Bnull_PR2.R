@@ -128,7 +128,7 @@ Sys.time() - ini
 BacPhylo_null <- data.frame(matrix(unlist(test), ncol = length(test), byrow = FALSE)) %>%
   cbind(expand.grid(row.names(Bac_comm), row.names(Bac_comm))) %>%
   rename(obs = X1000)
-write.table(HNFPhylo_null, file = "D:/Research/PdPy_Div_Results/nulls_PR2_4/Bac_Bmpd_null_4_1.csv", 
+write.table(BacPhylo_null, file = "D:/Research/PdPy_Div_Results/nulls_PR2_4/Bac_Bmpd_null_4_1.csv", 
             sep = ",", col.names = TRUE, row.names = FALSE)
 stopCluster(cl)
 ##### Bacteria phylogenetic turnover ################################################
@@ -210,7 +210,7 @@ Sys.time() - ini
 BacPhylo_null <- data.frame(matrix(unlist(test), ncol = length(test), byrow = FALSE)) %>%
   cbind(expand.grid(row.names(Bac_comm), row.names(Bac_comm))) %>%
   rename(obs = X1000)
-write.table(HNFPhylo_null, file = "D:/Research/PdPy_Div_Results/nulls_PR2_4/Bac_Bmntd_null_4_1.csv", 
+write.table(BacPhylo_null, file = "D:/Research/PdPy_Div_Results/nulls_PR2_4/Bac_Bmntd_null_4_1.csv", 
             sep = ",", col.names = TRUE, row.names = FALSE)
 stopCluster(cl)
 ##### Bacteria phylogenetic turnover ################################################
