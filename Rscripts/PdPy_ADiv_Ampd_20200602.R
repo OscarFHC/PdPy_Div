@@ -237,8 +237,8 @@ Bac_Ampd <- Bac_Ampd_null %>%
   select(c(obs, Site)) %>%
   mutate(Ampd_null_mean = apply(Bac_Ampd_null[, !names(Bac_Ampd_null) %in% c("obs", "Site")], 1, mean),
          Ampd_null_sd = apply(Bac_Ampd_null[, !names(Bac_Ampd_null) %in% c("obs", "Site")], 1, sd),
-         Bac_Ampd_select = (obs - Ampd_null_mean) / Ampd_null_sd,
-         Bac_Ampd_select_p = pnorm(-abs(Bac_Ampd_select), 0, 1))
+         Bac_Ampti = (obs - Ampd_null_mean) / Ampd_null_sd,
+         Bac_Ampti_p = pnorm(-abs(Bac_Ampti), 0, 1))
 
 HNF_Ampd_null <- read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/Anulls_PR2_4/HNF_Ampd_null_4.csv", 
                             sep = ",", header = TRUE, stringsAsFactors = FALSE, fill = TRUE)
@@ -246,11 +246,8 @@ HNF_Ampd <- HNF_Ampd_null %>%
   select(c(obs, Site)) %>%
   mutate(Ampd_null_mean = apply(HNF_Ampd_null[, !names(HNF_Ampd_null) %in% c("obs", "Site")], 1, mean),
          Ampd_null_sd = apply(HNF_Ampd_null[, !names(HNF_Ampd_null) %in% c("obs", "Site")], 1, sd),
-         HNF_Ampd_select = (obs - Ampd_null_mean) / Ampd_null_sd,
-         HNF_Ampd_select_p = pnorm(-abs(HNF_Ampd_select), 0, 1))
-
-ADivCorr_null <- read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/Anulls_PR2_4/Neutral_ACorr_null.csv", 
-                            sep = ",", header = TRUE, stringsAsFactors = FALSE, fill = TRUE)
+         HNF_Ampti = (obs - Ampd_null_mean) / Ampd_null_sd,
+         HNF_Ampti_p = pnorm(-abs(HNF_Ampti), 0, 1))
 ###############################################################################################
 ##### Loading nulls ###########################################################################
 ###############################################################################################
@@ -340,22 +337,22 @@ ggsave(p_HNFq1_Bacq1, file = "D:/Manuscripts/PdPy_Div_MS/ms_Figs/Fig3_HNFq1_Bacq
 ###############################################################################################
 ##### HNFq1 -> Bac selection -> Bacq1 ##########
 ### linear model testing
-BacS_HNFq1.0 <- lm(Bac_Ampd_select ~ ln.HNF_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, data = HNF_Bac_A)
-BacS_HNFq1.Cr <- lme(Bac_Ampd_select ~ ln.HNF_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
-BacS_HNFq1.Season <- lme(Bac_Ampd_select ~ ln.HNF_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, random = ~ 1 | Season, data = HNF_Bac_A, method = "ML")
+BacS_HNFq1.0 <- lm(Bac_Ampti ~ ln.HNF_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, data = HNF_Bac_A)
+BacS_HNFq1.Cr <- lme(Bac_Ampti ~ ln.HNF_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
+BacS_HNFq1.Season <- lme(Bac_Ampti ~ ln.HNF_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, random = ~ 1 | Season, data = HNF_Bac_A, method = "ML")
 AIC(BacS_HNFq1.0, BacS_HNFq1.Cr, BacS_HNFq1.Season)
 summary(BacS_HNFq1.Cr)
 
-Bacq1_BacS.0 <- lm(ln.Bac_q1 ~ Bac_Ampd_select + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, data = HNF_Bac_A)
-Bacq1_BacS.Cr <- lme(ln.Bac_q1 ~ Bac_Ampd_select + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
-Bacq1_BacS.Season <- lme(ln.Bac_q1 ~ Bac_Ampd_select + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, random = ~ 1 | Season, data = HNF_Bac_A, method = "ML")
+Bacq1_BacS.0 <- lm(ln.Bac_q1 ~ Bac_Ampti + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, data = HNF_Bac_A)
+Bacq1_BacS.Cr <- lme(ln.Bac_q1 ~ Bac_Ampti + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
+Bacq1_BacS.Season <- lme(ln.Bac_q1 ~ Bac_Ampti + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, random = ~ 1 | Season, data = HNF_Bac_A, method = "ML")
 AIC(Bacq1_BacS.0, Bacq1_BacS.Cr, Bacq1_BacS.Season)
 summary(Bacq1_BacS.Cr)
 
 ### plotting
 p_BacSelect_Bacq1 <- HNF_Bac_A %>% 
-  select(ln.Bac_q1, ln.HNF_q1, Bac_Ampd_select, HNF_Ampd_select, Cruise) %>%
-  ggplot(aes(x = Bac_Ampd_select, y = ln.Bac_q1)) + 
+  select(ln.Bac_q1, ln.HNF_q1, Bac_Ampti, HNF_Ampti, Cruise) %>%
+  ggplot(aes(x = Bac_Ampti, y = ln.Bac_q1)) + 
     geom_point(aes(color = Cruise), size = 3) + 
     geom_smooth(formula = y ~ x, method = "lm", se = TRUE, linetype = "solid") + 
     #geom_smooth(method = mgcv::gam, formula = y ~ s(x), se = TRUE, color = "red", linetype = "dotted") + 
@@ -373,8 +370,8 @@ p_BacSelect_Bacq1 <- HNF_Bac_A %>%
     )
 
 p_HNFq1_BacSelect <- HNF_Bac_A %>% 
-  select(ln.Bac_q1, ln.HNF_q1, Bac_Ampd_select, HNF_Ampd_select, Cruise) %>%
-  ggplot(aes(x = ln.HNF_q1, y = Bac_Ampd_select)) + 
+  select(ln.Bac_q1, ln.HNF_q1, Bac_Ampti, HNF_Ampti, Cruise) %>%
+  ggplot(aes(x = ln.HNF_q1, y = Bac_Ampti)) + 
     geom_point(aes(color = Cruise), size = 3) + 
     geom_smooth(formula = y ~ x, method = "lm", se = TRUE, linetype = "solid") + 
     #geom_smooth(method = mgcv::gam, formula = y ~ s(x), se = TRUE, color = "red", linetype = "solid") + 
@@ -406,22 +403,22 @@ ggsave(p_HNFq1_BacSelect_Bacq1, file = "D:/Manuscripts/PdPy_Div_MS/ms_Figs/Fig4_
 
 ##### Bacq1 -> HNF selection -> HNFq1 ##########
 ### linear model testing
-HNFS_Bacq1.0 <- lm(HNF_Ampd_select ~ ln.Bac_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, data = HNF_Bac_A)
-HNFS_Bacq1.Cr <- lme(HNF_Ampd_select ~ ln.Bac_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
-HNFS_Bacq1.Season <- lme(HNF_Ampd_select ~ ln.Bac_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, random = ~ 1 | Season, data = HNF_Bac_A, method = "ML")
+HNFS_Bacq1.0 <- lm(HNF_Ampti ~ ln.Bac_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, data = HNF_Bac_A)
+HNFS_Bacq1.Cr <- lme(HNF_Ampti ~ ln.Bac_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
+HNFS_Bacq1.Season <- lme(HNF_Ampti ~ ln.Bac_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, random = ~ 1 | Season, data = HNF_Bac_A, method = "ML")
 AIC(HNFS_Bacq1.0, HNFS_Bacq1.Cr, HNFS_Bacq1.Season)
 summary(HNFS_Bacq1.Cr)
 
-HNFq1_HNFS.0 <- lm(ln.HNF_q1 ~ HNF_Ampd_select + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, data = HNF_Bac_A)
-HNFq1_HNFS.Cr <- lme(ln.HNF_q1 ~ HNF_Ampd_select + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
-HNFq1_HNFS.Season <- lme(ln.HNF_q1 ~ HNF_Ampd_select + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, random = ~ 1 | Season, data = HNF_Bac_A, method = "ML")
+HNFq1_HNFS.0 <- lm(ln.HNF_q1 ~ HNF_Ampti + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, data = HNF_Bac_A)
+HNFq1_HNFS.Cr <- lme(ln.HNF_q1 ~ HNF_Ampti + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
+HNFq1_HNFS.Season <- lme(ln.HNF_q1 ~ HNF_Ampti + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, random = ~ 1 | Season, data = HNF_Bac_A, method = "ML")
 AIC(HNFq1_HNFS.0, HNFq1_HNFS.Cr, HNFq1_HNFS.Season)
 summary(HNFq1_HNFS.Cr)
 
 ### plotting
 p_HNFSelect_HNFq1 <- HNF_Bac_A %>% 
-  select(ln.Bac_q1, ln.HNF_q1, Bac_Ampd_select, HNF_Ampd_select, Cruise) %>%
-  ggplot(aes(x = HNF_Ampd_select, y = ln.HNF_q1)) + 
+  select(ln.Bac_q1, ln.HNF_q1, Bac_Ampti, HNF_Ampti, Cruise) %>%
+  ggplot(aes(x = HNF_Ampti, y = ln.HNF_q1)) + 
     geom_point(aes(color = Cruise), size = 3) + 
     geom_smooth(formula = y ~ x, method = "lm", se = TRUE, linetype = "dashed") + 
     #geom_smooth(method = mgcv::gam, formula = y ~ s(x), se = TRUE, color = "red", linetype = "dotted") + 
@@ -439,8 +436,8 @@ p_HNFSelect_HNFq1 <- HNF_Bac_A %>%
     )
 
 p_Bacq1_HNFSelect <- HNF_Bac_A %>% 
-  select(ln.Bac_q1, ln.HNF_q1, Bac_Ampd_select, HNF_Ampd_select, Cruise) %>%
-  ggplot(aes(x = ln.Bac_q1, y = HNF_Ampd_select)) + 
+  select(ln.Bac_q1, ln.HNF_q1, Bac_Ampti, HNF_Ampti, Cruise) %>%
+  ggplot(aes(x = ln.Bac_q1, y = HNF_Ampti)) + 
   geom_point(aes(color = Cruise), size = 3) + 
   geom_smooth(formula = y ~ x, method = "lm", se = TRUE, linetype = "dashed") + 
   #geom_smooth(method = mgcv::gam, formula = y ~ s(x), se = TRUE, color = "red", linetype = "dotted") + 
@@ -473,6 +470,120 @@ ggsave(p_Bacq1_HNFSelect_HNFq1, file = "D:/Manuscripts/PdPy_Div_MS/ms_Figs/Fig5_
 ##### Testing hypothesis: HNFq0 -> Bac selection -> Bacq0 & Bacq0 -> Bac selection ->  HNFq0 ##
 ###############################################################################################
 
+###############################################################################################
+##### Ampti-> HNFq1_Bacq1 association  ########################################################
+###############################################################################################
+### statistical test
+HNF_Bac_A <- HNF_Bac_A %>%
+  group_by(Cruise) %>%
+  mutate(
+    R2 = summary(lm(ln.HNF_q1 ~ ln.Bac_q1))$r.squared,
+    coef = summary(lm(ln.HNF_q1 ~ ln.Bac_q1))$coefficients[2, 1]
+  ) 
+ADiv_Cr <- HNF_Bac_A %>%
+  summarize(
+    meanBac_Ampti = mean(Bac_Ampti),
+    meanHNF_Ampti = mean(HNF_Ampti),
+    R2 = mean(R2),
+    coef = mean(coef)
+  )
+
+# Mod_R2_BacAmpti <- glm(R2 ~ Bac_Ampti, data = HNF_Bac_A)
+# Mod_R2_HNFAmpti <- glm(R2 ~ HNF_Ampti, data = HNF_Bac_A)
+# summary(Mod_R2_BacAmpti)
+# summary(Mod_R2_HNFAmpti)
+
+Mod_R2_meanBacAmpti <- glm(R2 ~ meanBac_Ampti, data = ADiv_Cr)
+Mod_R2_meanHNFAmpti <- glm(R2 ~ meanHNF_Ampti, data = ADiv_Cr)
+summary(Mod_R2_meanBacAmpti)
+summary(Mod_R2_meanHNFAmpti)
+
+# Mod_coef_BacAmpti <- glm(coef ~ Bac_Ampti, data = HNF_Bac_A[which(HNF_Bac_A$coef > -1), ])
+# Mod_coef_HNFAmpti <- glm(coef ~ HNF_Ampti, data = HNF_Bac_A[which(HNF_Bac_A$coef > -1), ])
+# summary(Mod_coef_BacAmpti)
+# summary(Mod_coef_HNFAmpti)
+
+Mod_coef_meanBacAmpti <- glm(coef ~ meanBac_Ampti, data = ADiv_Cr[which(ADiv_Cr$coef > -1), ])
+Mod_coef_meanHNFAmpti <- glm(coef ~ meanHNF_Ampti, data = ADiv_Cr[which(ADiv_Cr$coef > -1), ])
+summary(Mod_coef_meanBacAmpti)
+summary(Mod_coef_meanHNFAmpti)
+
+### visualization
+p_ADivR2_BacAmpd <- ggplot(data = ADiv_Cr, aes(x = meanBac_Ampti, y = R2)) + 
+    geom_point(size = 4) +    
+    geom_point(data = HNF_Bac_A, aes(x = Bac_Ampti, y = R2), size = 2, color = "grey") +
+    geom_smooth(formula = y ~ x, method = "lm", se = TRUE, linetype = "dashed") + 
+    labs(x = expression(atop("Deterministic assembly processes (\U03B1MPTI)", "of Bacteria community")),
+         y = bquote("R"^2~ "of diversity association")) + 
+    theme(
+      panel.background = element_blank(),
+      axis.line = element_line(colour = "black"),
+      strip.text.x = element_text(size = 20, face = "bold"),
+      axis.title = element_text(size = 24),
+      axis.text = element_text(size = 16),
+      legend.title = element_text(size = 20),
+      legend.text = element_text(size = 20)
+    )
+p_ADivR2_HNFAmpd <- ggplot(data = ADiv_Cr, aes(x = meanHNF_Ampti, y = R2)) + 
+    geom_point(size = 4) +  
+    geom_point(data = HNF_Bac_A, aes(x = HNF_Ampti, y = R2), size = 2, color = "grey") + 
+    geom_smooth(formula = y ~ x, method = "lm", se = TRUE, linetype = "dashed") + 
+    labs(x = expression(atop("Deterministic assembly processes (\U03B1MPTI)", "of HNF community")),
+         y = bquote("R"^2~ "of diversity association")) + 
+    theme(
+      panel.background = element_blank(),
+      axis.line = element_line(colour = "black"),
+      strip.text.x = element_text(size = 20, face = "bold"),
+      axis.title = element_text(size = 24),
+      axis.text = element_text(size = 16),
+      legend.title = element_text(size = 20),
+      legend.text = element_text(size = 20)
+    )
+p_ADivR2_Ampd <- plot_grid(p_ADivR2_BacAmpd, p_ADivR2_HNFAmpd, ncol = 1, labels = "AUTO", hjust = 0)
+p_ADivR2_Ampd
+ggsave(p_ADivR2_Ampd, file = "D:/Research/PdPy_Div_Results/Figs/Lab422 meeting_20200602/p_ADivR2_Ampd.png",
+       dpi = 600, width = 36, height = 42, units = "cm")
+
+p_ADivcoef_BacAmpd <- ggplot(data = ADiv_Cr, aes(x = meanBac_Ampti, y = coef)) + #[which(Adiv_cr$coef > -1), ]
+    geom_point(size = 4) + 
+    geom_point(data = HNF_Bac_A, aes(x = Bac_Ampti, y = coef), size = 2, color = "grey") + 
+    geom_smooth(formula = y ~ x, method = "lm", se = TRUE, linetype = "dashed") + 
+    labs(x = expression(atop("Deterministic assembly processes (\U03B1MPTI)", "of Bacteria community")),
+         y = bquote(atop("Regression coefficient", "of diversity association"))) + 
+    theme(
+      panel.background = element_blank(),
+      axis.line = element_line(colour = "black"),
+      strip.text.x = element_text(size = 20, face = "bold"),
+      axis.title = element_text(size = 24),
+      axis.text = element_text(size = 16),
+      legend.title = element_text(size = 20),
+      legend.text = element_text(size = 20)
+    )
+p_ADivcoef_HNFAmpd <- ggplot(data = ADiv_Cr, aes(x = meanHNF_Ampti, y = coef)) + #[which(ADiv_Cr$coef > -1), ]
+    geom_point(size = 4) +
+    geom_point(data = HNF_Bac_A, aes(x = HNF_Ampti, y = coef), size = 2, color = "grey") + 
+    geom_smooth(formula = y ~ x, method = "lm", se = TRUE, linetype = "dashed") + 
+    labs(x = expression(atop("Deterministic assembly processes (\U03B1MPTI)", "of HNF community")),
+         y = bquote(atop("Regression coefficient", "of diversity association"))) + 
+    theme(
+      panel.background = element_blank(),
+      axis.line = element_line(colour = "black"),
+      strip.text.x = element_text(size = 20, face = "bold"),
+      axis.title = element_text(size = 24),
+      axis.text = element_text(size = 16),
+      legend.title = element_text(size = 20),
+      legend.text = element_text(size = 20)
+    )
+p_ADivcoef_Ampd <- plot_grid(p_ADivcoef_BacAmpd, p_ADivcoef_HNFAmpd, ncol = 1, labels = "AUTO", hjust = 0)
+p_ADivcoef_Ampd
+ggsave(p_ADivcoef_Ampd, file = "D:/Research/PdPy_Div_Results/Figs/Lab422 meeting_20200602/p_ADivcoef_Ampd.png",
+       dpi = 600, width = 36, height = 42, units = "cm")
+
+###############################################################################################
+##### mean AMPD -> HNFq1_Bacq1 R2  ############################################################
+###############################################################################################
+
+
 
 ############################## Supplementary analyses ##################################################################
 ###############################################################################################
@@ -480,30 +591,29 @@ ggsave(p_Bacq1_HNFSelect_HNFq1, file = "D:/Manuscripts/PdPy_Div_MS/ms_Figs/Fig5_
 ###############################################################################################
 St_sECS = read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/raw/St_Location.csv", 
                      header = T, fill = T, sep = ",")
-library(ggmap)
+#library(ggmap)
 if (!require(maps)) {
   install.packages("maps", dependencies=TRUE, repos = 'http://cran.us.r-project.org')
   library(maps)
 }else{library(maps)}
 
-
-
-bbox <- ggmap::make_bbox(Lon, Lat, St_sECS, f = 0.1)
-map <- get_map(
-  location = bbox #c(lon=-85, lat=44) # google search string
-  #, zoom = 7 # larger is closer
-  #, maptype = "terrian" # map type
-  , source = "google"
-)
-
-map = ggmap(map) + 
-  geom_point(data = St_sECS[1:6,], aes(x = Lon, y = Lat), size = 4) + 
-  labs(x="Longitude", y="Latitude") + 
-  geom_text(data = St_sECS[1:6,], aes(x = Lon, y = Lat, label = Station), hjust = -0.4, vjust = -0.3, size = 6) + 
-  theme(axis.title = element_text(size = 20),
-        axis.text = element_text(size = 16))
+world <- map_data("world")
+map <- ggplot() +
+  geom_polygon(data = world, aes(x = long, y = lat, group = group)) +
+  geom_point(data = St_sECS[1:6,], aes(x = Lon, y = Lat), size = 5) + 
+  coord_fixed(1, xlim = c(119.5, 122.75), ylim = c(24.5, 27.5)) + 
+  annotate("text", x = 121.35, y = 24.75, label = "Taiwan", color = "white", size = 7) + 
+  geom_text(data = St_sECS[1:5,], aes(x = Lon, y = Lat, label = Station), hjust = -0.3, vjust = -0.2, size = 7) + 
+  geom_text(data = St_sECS[6,], aes(x = Lon, y = Lat, label = Station), hjust = 0.4, vjust = 1.7, size = 7) + 
+  labs(x = expression("Longitude"),
+       y = expression("Latitude")) + 
+  theme(
+    panel.background = element_blank(),
+    axis.line = element_line(colour = "black"),
+    axis.title = element_text(size = 20),
+    axis.text = element_text(size = 16))
 map
-ggsave(map, file = "D:/Research/PdPy_Div_Results/Figs/PR2_3/Fig2_map.png", dpi = 600) 
+ggsave(map, file = "D:/Manuscripts/PdPy_Div_MS/ms_Figs/Fig2_map.png", dpi = 600) 
 ###############################################################################################
 ##### sampling maps ###########################################################################
 ###############################################################################################
