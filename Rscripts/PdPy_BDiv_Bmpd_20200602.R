@@ -318,6 +318,13 @@ gam1 <- gam(HNF_chao ~ s(Bac_chao), data = BDiv)
 anova(gam0, gam1, test = "F")
 summary(gam0)
 
+HNFchao_Bacchao.0 <- lm(Bac_chao ~ HNF_chao, data = BDiv)
+HNFchao_Bacchao.St <- lme(Bac_chao ~ HNF_chao, random = ~ 1 | Station, data = BDiv, method = "ML")
+HNFchao_Bacchao.Cr <- lme(Bac_chao ~ HNF_chao, random = ~ 1 | Cruise, data = BDiv, method = "ML")
+HNFchao_Bacchao.Season <- lme(Bac_chao ~ HNF_chao, random = ~ 1 | Season, data = BDiv, method = "ML")
+AIC(HNFchao_Bacchao.0, HNFchao_Bacchao.St, HNFchao_Bacchao.Cr, HNFchao_Bacchao.Season)
+summary(HNFchao_Bacchao.Cr)
+
 # plotting linear association between HNF and Bac chao diversity
 p_HNFchao_Bacchao <- BDiv %>% 
   select(Bac_chao, HNF_chao, Bac_Bmpti, HNF_Bmpti, Cruise) %>%
@@ -348,16 +355,18 @@ ggsave(p_HNFchao_Bacchao, file = "D:/Research/PdPy_Div_Results/Figs/Lab422 meeti
 ##### HNFq1 -> Bac selection -> Bacq1 ##########
 ### linear model testing
 BacS_HNFchao.0 <- lm(Bac_Bmpti ~ HNF_chao + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, data = BDiv)
+BacS_HNFchao.St <- lme(Bac_Bmpti ~ HNF_chao + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, random = ~ 1 | Station, data = BDiv, method = "ML")
 BacS_HNFchao.Cr <- lme(Bac_Bmpti ~ HNF_chao + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, random = ~ 1 | Cruise, data = BDiv, method = "ML")
 BacS_HNFchao.Season <- lme(Bac_Bmpti ~ HNF_chao + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, random = ~ 1 | Season, data = BDiv, method = "ML")
-AIC(BacS_HNFchao.0, BacS_HNFchao.Cr, BacS_HNFchao.Season)
+AIC(BacS_HNFchao.0, BacS_HNFchao.St, BacS_HNFchao.Cr, BacS_HNFchao.Season)
 summary(BacS_HNFchao.Cr)
 summary(gam(Bac_Bmpti ~ s(HNF_chao, bs = "ts"), data = BDiv))
 
 Bacchao_BacS.0 <- lm(Bac_chao ~ Bac_Bmpti + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, data = BDiv)
+Bacchao_BacS.St <- lme(Bac_chao ~ Bac_Bmpti + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, random = ~ 1 | Station, data = BDiv, method = "ML")
 Bacchao_BacS.Cr <- lme(Bac_chao ~ Bac_Bmpti + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, random = ~ 1 | Cruise, data = BDiv, method = "ML")
 Bacchao_BacS.Season <- lme(Bac_chao ~ Bac_Bmpti + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, random = ~ 1 | Season, data = BDiv, method = "ML")
-AIC(Bacchao_BacS.0, Bacchao_BacS.Cr, Bacchao_BacS.Season)
+AIC(Bacchao_BacS.0, Bacchao_BacS.St, Bacchao_BacS.Cr, Bacchao_BacS.Season)
 summary(Bacchao_BacS.Cr)
 summary(gam(Bac_chao ~ s(Bac_Bmpti, bs = "ts"), data = BDiv))
 
@@ -411,16 +420,18 @@ ggsave(p_HNFchao_BacBmpti_Bacchao, file = "D:/Research/PdPy_Div_Results/Figs/Lab
 ##### Bacq1 -> HNF selection -> HNFq1 ##########
 ### linear model testing
 HNFBmpti_Bacchao.0 <- lm(HNF_Bmpti ~ Bac_chao + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, data = BDiv)
+HNFBmpti_Bacchao.St <- lme(HNF_Bmpti ~ Bac_chao + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, random = ~ 1 | Station, data = BDiv, method = "ML")
 HNFBmpti_Bacchao.Cr <- lme(HNF_Bmpti ~ Bac_chao + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, random = ~ 1 | Cruise, data = BDiv, method = "ML")
 HNFBmpti_Bacchao.Season <- lme(HNF_Bmpti ~ Bac_chao + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, random = ~ 1 | Season, data = BDiv, method = "ML")
-AIC(HNFBmpti_Bacchao.0, HNFBmpti_Bacchao.Cr, HNFBmpti_Bacchao.Season)
+AIC(HNFBmpti_Bacchao.0, HNFBmpti_Bacchao.St, HNFBmpti_Bacchao.Cr, HNFBmpti_Bacchao.Season)
 summary(HNFBmpti_Bacchao.Cr)
 summary(gam(HNF_Bmpti ~ s(Bac_chao, bs = "ts"), data = BDiv))
 
 HNFchao_HNFBmpti.0 <- lm(HNF_chao ~ HNF_Bmpti + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, data = BDiv)
+HNFchao_HNFBmpti.St <- lme(HNF_chao ~ HNF_Bmpti + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, random = ~ 1 | Station, data = BDiv, method = "ML")
 HNFchao_HNFBmpti.Cr <- lme(HNF_chao ~ HNF_Bmpti + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, random = ~ 1 | Cruise, data = BDiv, method = "ML")
 HNFchao_HNFBmpti.Season <- lme(HNF_chao ~ HNF_Bmpti + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, random = ~ 1 | Season, data = BDiv, method = "ML")
-AIC(HNFchao_HNFBmpti.0, HNFchao_HNFBmpti.Cr, HNFchao_HNFBmpti.Season)
+AIC(HNFchao_HNFBmpti.0, HNFchao_HNFBmpti.St, HNFchao_HNFBmpti.Cr, HNFchao_HNFBmpti.Season)
 summary(HNFchao_HNFBmpti.Cr)
 summary(gam(HNF_chao ~ s(HNF_Bmpti, bs = "ts"), data = BDiv))
 
@@ -472,6 +483,119 @@ ggsave(p_Bacchao_HNFBmpti_HNFchao, file = "D:/Research/PdPy_Div_Results/Figs/Lab
 
 ###############################################################################################
 ##### Testing hypothesis: HNFq0 -> Bac selection -> Bacq0 & Bacq0 -> Bac selection ->  HNFq0 ##
+###############################################################################################
+
+###############################################################################################
+##### Ampti-> HNFq1_Bacq1 association  ########################################################
+###############################################################################################
+### statistical test
+BDiv <- BDiv %>%
+  group_by(Cruise) %>%
+  mutate(
+    R2 = summary(lm(HNF_chao ~ Bac_chao))$r.squared,
+    coef = summary(lm(HNF_chao ~ Bac_chao))$coefficients[2, 1]
+  ) 
+BDiv_Cr <- BDiv %>%
+  summarize(
+    meanBac_Bmpti = mean(Bac_Bmpti),
+    meanHNF_Bmpti = mean(HNF_Bmpti),
+    R2 = mean(R2),
+    coef = mean(coef)
+  )
+
+# Mod_R2_BacAmpti <- glm(R2 ~ Bac_Ampti, data = HNF_Bac_A)
+# Mod_R2_HNFAmpti <- glm(R2 ~ HNF_Ampti, data = HNF_Bac_A)
+# summary(Mod_R2_BacAmpti)
+# summary(Mod_R2_HNFAmpti)
+
+Mod_R2_meanBacBmpti <- glm(R2 ~ meanBac_Bmpti, data = BDiv_Cr)
+Mod_R2_meanHNFBmpti <- glm(R2 ~ meanHNF_Bmpti, data = BDiv_Cr)
+summary(Mod_R2_meanBacBmpti)
+summary(Mod_R2_meanHNFBmpti)
+
+# Mod_coef_BacAmpti <- glm(coef ~ Bac_Ampti, data = HNF_Bac_A[which(HNF_Bac_A$coef > -1), ])
+# Mod_coef_HNFAmpti <- glm(coef ~ HNF_Ampti, data = HNF_Bac_A[which(HNF_Bac_A$coef > -1), ])
+# summary(Mod_coef_BacAmpti)
+# summary(Mod_coef_HNFAmpti)
+
+Mod_coef_meanBacBmpti <- glm(coef ~ meanBac_Bmpti, data = BDiv_Cr)
+Mod_coef_meanHNFBmpti <- glm(coef ~ meanHNF_Bmpti, data = BDiv_Cr)
+summary(Mod_coef_meanBacBmpti)
+summary(Mod_coef_meanHNFBmpti)
+
+### visualization
+p_BDivR2_BacBmpti <- ggplot(data = BDiv_Cr, aes(x = meanBac_Bmpti, y = R2)) + 
+  geom_point(size = 4) +    
+  #geom_point(data = BDiv, aes(x = Bac_Bmpti, y = R2), size = 2, color = "grey") +
+  geom_smooth(formula = y ~ x, method = "lm", se = TRUE, linetype = "dashed") + 
+  labs(x = expression(atop("Deterministic assembly processes (\U03B2MPTI)", "of Bacteria community")),
+       y = bquote("R"^2~ "of diversity association")) + 
+  theme(
+    panel.background = element_blank(),
+    axis.line = element_line(colour = "black"),
+    strip.text.x = element_text(size = 20, face = "bold"),
+    axis.title = element_text(size = 24),
+    axis.text = element_text(size = 16),
+    legend.title = element_text(size = 20),
+    legend.text = element_text(size = 20)
+  )
+p_BDivR2_HNFBmpti <- ggplot(data = BDiv_Cr, aes(x = meanHNF_Bmpti, y = R2)) + 
+  geom_point(size = 4) +  
+  #geom_point(data = BDiv, aes(x = HNF_Bmpti, y = R2), size = 2, color = "grey") + 
+  geom_smooth(formula = y ~ x, method = "lm", se = TRUE, linetype = "solid") + 
+  labs(x = expression(atop("Deterministic assembly processes (\U03B2MPTI)", "of HNF community")),
+       y = bquote("R"^2~ "of diversity association")) + 
+  theme(
+    panel.background = element_blank(),
+    axis.line = element_line(colour = "black"),
+    strip.text.x = element_text(size = 20, face = "bold"),
+    axis.title = element_text(size = 24),
+    axis.text = element_text(size = 16),
+    legend.title = element_text(size = 20),
+    legend.text = element_text(size = 20)
+  )
+p_BDivR2_Bmpti <- plot_grid(p_BDivR2_BacBmpti, p_BDivR2_HNFBmpti, ncol = 1, labels = "AUTO", hjust = 0)
+p_BDivR2_Bmpti
+ggsave(p_BDivR2_HNFBmpti, file = "D:/Research/PdPy_Div_Results/Figs/Lab422 meeting_20200602/p_BDivR2_Bmpti.png",
+       dpi = 600, width = 36, height = 42, units = "cm")
+
+p_BDivcoef_BacBmpti <- ggplot(data = BDiv_Cr, aes(x = meanBac_Bmpti, y = coef)) + #[which(Adiv_cr$coef > -1), ]
+  geom_point(size = 4) + 
+  #geom_point(data = BDiv, aes(x = Bac_Bmpti, y = coef), size = 2, color = "grey") + 
+  geom_smooth(formula = y ~ x, method = "lm", se = TRUE, linetype = "dashed") + 
+  labs(x = expression(atop("Deterministic assembly processes (\U03B2MPTI)", "of Bacteria community")),
+       y = bquote(atop("Regression coefficient", "of diversity association"))) + 
+  theme(
+    panel.background = element_blank(),
+    axis.line = element_line(colour = "black"),
+    strip.text.x = element_text(size = 20, face = "bold"),
+    axis.title = element_text(size = 24),
+    axis.text = element_text(size = 16),
+    legend.title = element_text(size = 20),
+    legend.text = element_text(size = 20)
+  )
+p_BDivcoef_HNFBmpti <- ggplot(data = BDiv_Cr, aes(x = meanHNF_Bmpti, y = coef)) + #[which(ADiv_Cr$coef > -1), ]
+  geom_point(size = 4) +
+  #geom_point(data = BDiv, aes(x = HNF_Bmpti, y = coef), size = 2, color = "grey") + 
+  geom_smooth(formula = y ~ x, method = "lm", se = TRUE, linetype = "dashed") + 
+  labs(x = expression(atop("Deterministic assembly processes (\U03B2MPTI)", "of HNF community")),
+       y = bquote(atop("Regression coefficient", "of diversity association"))) + 
+  theme(
+    panel.background = element_blank(),
+    axis.line = element_line(colour = "black"),
+    strip.text.x = element_text(size = 20, face = "bold"),
+    axis.title = element_text(size = 24),
+    axis.text = element_text(size = 16),
+    legend.title = element_text(size = 20),
+    legend.text = element_text(size = 20)
+  )
+p_BDivcoef_Bmpti <- plot_grid(p_BDivcoef_BacBmpti, p_BDivcoef_HNFBmpti, ncol = 1, labels = "AUTO", hjust = 0)
+p_BDivcoef_Bmpti
+ggsave(p_BDivcoef_Bmpti, file = "D:/Research/PdPy_Div_Results/Figs/Lab422 meeting_20200602/p_BDivcoef_Bmpti.png",
+       dpi = 600, width = 36, height = 42, units = "cm")
+
+###############################################################################################
+##### Ampti-> HNFq1_Bacq1 association  ########################################################
 ###############################################################################################
 
 ############################## Supplementary analyses ##################################################################
