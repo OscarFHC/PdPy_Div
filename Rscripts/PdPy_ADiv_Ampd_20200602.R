@@ -299,12 +299,195 @@ head(HNF_Bac_A)
 ###############################################################################################
 
 ###############################################################################################
+##### Simple HNF and Bac alppha diversity relationship  #######################################
+###############################################################################################
+
+# Check non-linear correlation between HNF and Bac Shannon diversity
+gam0 <- gam(ln.HNF_q1 ~ ln.Bac_q1, data = HNF_Bac_A)
+gam1 <- gam(ln.HNF_q1 ~ s(ln.Bac_q1), data = HNF_Bac_A)
+anova(gam0, gam1, test = "F")
+summary(gam0)
+
+# plotting correlation between HNF and Bac Shannon diversity
+p_HNFq1_Bacq1 <- HNF_Bac_A %>% 
+  select(ln.Bac_q1, ln.HNF_q1, Bac_Ampd_select, HNF_Ampd_select, Cruise) %>%
+  ggplot(aes(x = ln.Bac_q1, y = ln.HNF_q1)) + 
+    geom_point(size = 3, aes(color = Cruise)) + 
+    geom_smooth(formula = y ~ x, method = "lm", se = TRUE) + 
+    scale_colour_viridis(alpha = 0.7, discrete=TRUE) +
+    # geom_smooth(method = mgcv::gam, formula = y ~ s(x), se = TRUE, color = "red", linetype = "dotted") + 
+    labs(x = expression("Log[ Bacteria Shannon diversity ]"),
+         y = expression("Log[ HNF Shannon diversity ]")) + 
+    #theme_classic() + 
+    theme(
+      panel.background = element_blank(),
+      axis.line = element_line(colour = "black"),
+      strip.text.x = element_text(size = 20, face = "bold"),
+      axis.title = element_text(size = 24),
+      axis.text = element_text(size = 16),
+      legend.title = element_text(size = 20),
+      legend.text = element_text(size = 20)
+    )
+p_HNFq1_Bacq1
+ggsave(p_HNFq1_Bacq1, file = "D:/Manuscripts/PdPy_Div_MS/ms_Figs/Fig3_HNFq1_Bacq1.png",
+       dpi = 600, width = 34, height = 28, units = "cm")
+###############################################################################################
+##### Simple HNF and Bac alppha diversity relationship  #######################################
+###############################################################################################
+
+###############################################################################################
+##### Testing hypothesis: HNFq0 -> Bac selection -> Bacq0 & Bacq0 -> Bac selection ->  HNFq0 ##
+###############################################################################################
+##### HNFq1 -> Bac selection -> Bacq1 ##########
+### linear model testing
+BacS_HNFq1.0 <- lm(Bac_Ampd_select ~ ln.HNF_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, data = HNF_Bac_A)
+BacS_HNFq1.Cr <- lme(Bac_Ampd_select ~ ln.HNF_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
+BacS_HNFq1.Season <- lme(Bac_Ampd_select ~ ln.HNF_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, random = ~ 1 | Season, data = HNF_Bac_A, method = "ML")
+AIC(BacS_HNFq1.0, BacS_HNFq1.Cr, BacS_HNFq1.Season)
+summary(BacS_HNFq1.Cr)
+
+Bacq1_BacS.0 <- lm(ln.Bac_q1 ~ Bac_Ampd_select + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, data = HNF_Bac_A)
+Bacq1_BacS.Cr <- lme(ln.Bac_q1 ~ Bac_Ampd_select + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
+Bacq1_BacS.Season <- lme(ln.Bac_q1 ~ Bac_Ampd_select + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, random = ~ 1 | Season, data = HNF_Bac_A, method = "ML")
+AIC(Bacq1_BacS.0, Bacq1_BacS.Cr, Bacq1_BacS.Season)
+summary(Bacq1_BacS.Cr)
+
+### plotting
+p_BacSelect_Bacq1 <- HNF_Bac_A %>% 
+  select(ln.Bac_q1, ln.HNF_q1, Bac_Ampd_select, HNF_Ampd_select, Cruise) %>%
+  ggplot(aes(x = Bac_Ampd_select, y = ln.Bac_q1)) + 
+    geom_point(aes(color = Cruise), size = 3) + 
+    geom_smooth(formula = y ~ x, method = "lm", se = TRUE, linetype = "solid") + 
+    #geom_smooth(method = mgcv::gam, formula = y ~ s(x), se = TRUE, color = "red", linetype = "dotted") + 
+    scale_colour_viridis(alpha = 0.7, discrete=TRUE) + 
+    labs(x = expression("Deterministic assembly processes (\U03B1MPTI) of Bacteria community "),
+         y = expression(atop("Log[ Bacterial Shannon diversity ]"))) + 
+    theme(
+      panel.background = element_blank(),
+      axis.line = element_line(colour = "black"),
+      strip.text.x = element_text(size = 20, face = "bold"),
+      axis.title = element_text(size = 24),
+      axis.text = element_text(size = 16),
+      legend.title = element_text(size = 20),
+      legend.text = element_text(size = 20)
+    )
+
+p_HNFq1_BacSelect <- HNF_Bac_A %>% 
+  select(ln.Bac_q1, ln.HNF_q1, Bac_Ampd_select, HNF_Ampd_select, Cruise) %>%
+  ggplot(aes(x = ln.HNF_q1, y = Bac_Ampd_select)) + 
+    geom_point(aes(color = Cruise), size = 3) + 
+    geom_smooth(formula = y ~ x, method = "lm", se = TRUE, linetype = "solid") + 
+    #geom_smooth(method = mgcv::gam, formula = y ~ s(x), se = TRUE, color = "red", linetype = "solid") + 
+    scale_colour_viridis(alpha = 0.7, discrete=TRUE) + 
+    labs(x = expression("Log[ HNF Shannon diversity ]"),
+         y = expression(atop("Deterministic assembly processes (\U03B1MPTI)", "of Bacteria community"))) + 
+    theme(
+      panel.background = element_blank(),
+      axis.line = element_line(colour = "black"),
+      strip.text.x = element_text(size = 20, face = "bold"),
+      axis.title = element_text(size = 24),
+      axis.text = element_text(size = 16),
+      legend.title = element_text(size = 20),
+      legend.text = element_text(size = 20)
+    )
+
+legend <- get_legend(
+  p_HNFq1_BacSelect + theme(legend.box.margin = margin(0, 0, 0, 12))
+)
+p_HNFq1_BacSelect_Bacq1 <- plot_grid(
+  plot_grid(p_BacSelect_Bacq1 + theme(legend.position = "none"),
+            p_HNFq1_BacSelect + theme(legend.position = "none"),
+            ncol = 1, labels = "AUTO", hjust = 0),
+  legend, rel_widths = c(3, .4))
+p_HNFq1_BacSelect_Bacq1
+ggsave(p_HNFq1_BacSelect_Bacq1, file = "D:/Manuscripts/PdPy_Div_MS/ms_Figs/Fig4_HNFq1_BacAmpd_Bacq1.png",
+       dpi = 600, width = 36, height = 42, units = "cm")
+##### HNFq1 -> Bac selection -> Bacq1 ##########
+
+##### Bacq1 -> HNF selection -> HNFq1 ##########
+### linear model testing
+HNFS_Bacq1.0 <- lm(HNF_Ampd_select ~ ln.Bac_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, data = HNF_Bac_A)
+HNFS_Bacq1.Cr <- lme(HNF_Ampd_select ~ ln.Bac_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
+HNFS_Bacq1.Season <- lme(HNF_Ampd_select ~ ln.Bac_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, random = ~ 1 | Season, data = HNF_Bac_A, method = "ML")
+AIC(HNFS_Bacq1.0, HNFS_Bacq1.Cr, HNFS_Bacq1.Season)
+summary(HNFS_Bacq1.Cr)
+
+HNFq1_HNFS.0 <- lm(ln.HNF_q1 ~ HNF_Ampd_select + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, data = HNF_Bac_A)
+HNFq1_HNFS.Cr <- lme(ln.HNF_q1 ~ HNF_Ampd_select + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
+HNFq1_HNFS.Season <- lme(ln.HNF_q1 ~ HNF_Ampd_select + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, random = ~ 1 | Season, data = HNF_Bac_A, method = "ML")
+AIC(HNFq1_HNFS.0, HNFq1_HNFS.Cr, HNFq1_HNFS.Season)
+summary(HNFq1_HNFS.Cr)
+
+### plotting
+p_HNFSelect_HNFq1 <- HNF_Bac_A %>% 
+  select(ln.Bac_q1, ln.HNF_q1, Bac_Ampd_select, HNF_Ampd_select, Cruise) %>%
+  ggplot(aes(x = HNF_Ampd_select, y = ln.HNF_q1)) + 
+    geom_point(aes(color = Cruise), size = 3) + 
+    geom_smooth(formula = y ~ x, method = "lm", se = TRUE, linetype = "dashed") + 
+    #geom_smooth(method = mgcv::gam, formula = y ~ s(x), se = TRUE, color = "red", linetype = "dotted") + 
+    scale_colour_viridis(alpha = 0.7, discrete=TRUE) + 
+    labs(x = expression("Deterministic assembly processes (\U03B1MPTI) of HNF community "),
+         y = expression(atop("Log[ HNF Shannon diversity ]"))) + 
+    theme(
+      panel.background = element_blank(),
+      axis.line = element_line(colour = "black"),
+      strip.text.x = element_text(size = 20, face = "bold"),
+      axis.title = element_text(size = 24),
+      axis.text = element_text(size = 16),
+      legend.title = element_text(size = 20),
+      legend.text = element_text(size = 20)
+    )
+
+p_Bacq1_HNFSelect <- HNF_Bac_A %>% 
+  select(ln.Bac_q1, ln.HNF_q1, Bac_Ampd_select, HNF_Ampd_select, Cruise) %>%
+  ggplot(aes(x = ln.Bac_q1, y = HNF_Ampd_select)) + 
+  geom_point(aes(color = Cruise), size = 3) + 
+  geom_smooth(formula = y ~ x, method = "lm", se = TRUE, linetype = "dashed") + 
+  #geom_smooth(method = mgcv::gam, formula = y ~ s(x), se = TRUE, color = "red", linetype = "dotted") + 
+  scale_colour_viridis(alpha = 0.7, discrete=TRUE) + 
+  labs(x = expression("Log[ Bacterial Shannon diversity ]"),
+       y = expression(atop("Deterministic assembly processes (\U03B1MPTI)", "of HNF community "))) + 
+  theme(
+    panel.background = element_blank(),
+    axis.line = element_line(colour = "black"),
+    strip.text.x = element_text(size = 20, face = "bold"),
+    axis.title = element_text(size = 24),
+    axis.text = element_text(size = 16),
+    legend.title = element_text(size = 20),
+    legend.text = element_text(size = 20)
+  )
+legend <- get_legend(
+  p_Bacq1_HNFSelect + theme(legend.box.margin = margin(0, 0, 0, 12))
+)
+p_Bacq1_HNFSelect_HNFq1 <- plot_grid(
+  plot_grid(p_HNFSelect_HNFq1 + theme(legend.position = "none"),
+            p_Bacq1_HNFSelect + theme(legend.position = "none"),
+            ncol = 1, labels = "AUTO", hjust = 0),
+  legend, rel_widths = c(3, .4))
+p_Bacq1_HNFSelect_HNFq1
+ggsave(p_Bacq1_HNFSelect_HNFq1, file = "D:/Manuscripts/PdPy_Div_MS/ms_Figs/Fig5_Bacq1_HNFAmpd_HNFq1.png",
+       dpi = 600, width = 36, height = 42, units = "cm")
+##### Bacq1 -> HNF selection -> HNFq1 ##########
+
+###############################################################################################
+##### Testing hypothesis: HNFq0 -> Bac selection -> Bacq0 & Bacq0 -> Bac selection ->  HNFq0 ##
+###############################################################################################
+
+
+############################## Supplementary analyses ##################################################################
+###############################################################################################
 ##### sampling maps ###########################################################################
 ###############################################################################################
 St_sECS = read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/raw/St_Location.csv", 
                      header = T, fill = T, sep = ",")
 library(ggmap)
-library(mapproj)
+if (!require(maps)) {
+  install.packages("maps", dependencies=TRUE, repos = 'http://cran.us.r-project.org')
+  library(maps)
+}else{library(maps)}
+
+
+
 bbox <- ggmap::make_bbox(Lon, Lat, St_sECS, f = 0.1)
 map <- get_map(
   location = bbox #c(lon=-85, lat=44) # google search string
@@ -319,6 +502,7 @@ map = ggmap(map) +
   geom_text(data = St_sECS[1:6,], aes(x = Lon, y = Lat, label = Station), hjust = -0.4, vjust = -0.3, size = 6) + 
   theme(axis.title = element_text(size = 20),
         axis.text = element_text(size = 16))
+map
 ggsave(map, file = "D:/Research/PdPy_Div_Results/Figs/PR2_3/Fig2_map.png", dpi = 600) 
 ###############################################################################################
 ##### sampling maps ###########################################################################
@@ -486,21 +670,21 @@ HNF_PhySig_p <- as.data.frame(HNF_PhySig$mantel.res) %>%
   filter(PrCorrected != "NA") %>%
   mutate(sig = ifelse(PrCorrected < 0.1, "significant", "non-signifant")) %>%
   ggplot() + 
-    geom_point(aes(x = class.index, y = Mantel.cor, color = as.factor(sig)), size = 3) + 
-    geom_hline(yintercept = 0, color = "red") + 
-    scale_colour_manual(values = c("grey", "grey32"), 
-                        labels = c(expression(atop("non-", "significant")), expression(atop("marginal", "significant")))) + 
-    labs(x = expression("Phylogenetic distance"),
-         y = expression("Mantel correlation")
-         ) + 
-    theme_classic() + 
-    theme(
-      strip.text.x = element_text(size = 20, face = "bold"),
-      axis.title = element_text(size = 24),
-      axis.text = element_text(size = 16),
-      legend.text = element_text(size = 20),
-      legend.title = element_blank()
-    )
+  geom_point(aes(x = class.index, y = Mantel.cor, color = as.factor(sig)), size = 3) + 
+  geom_hline(yintercept = 0, color = "red") + 
+  scale_colour_manual(values = c("grey", "grey32"), 
+                      labels = c(expression(atop("non-", "significant")), expression(atop("marginal", "significant")))) + 
+  labs(x = expression("Phylogenetic distance"),
+       y = expression("Mantel correlation")
+  ) + 
+  theme_classic() + 
+  theme(
+    strip.text.x = element_text(size = 20, face = "bold"),
+    axis.title = element_text(size = 24),
+    axis.text = element_text(size = 16),
+    legend.text = element_text(size = 20),
+    legend.title = element_blank()
+  )
 
 legend <- get_legend(
   HNF_PhySig_p + theme(legend.box.margin = margin(0, 0, 0, 12))
@@ -529,12 +713,12 @@ p_force <- HNF_Bac_A %>%
   select(Bac_Ampd_select, HNF_Ampd_select) %>%
   gather(key = "force", value = "strength") %>%
   ggplot(aes(strength)) + 
-    geom_histogram(aes(y =..density..),
-                   col = "red", 
-                   fill = "green", 
-                   alpha = 0.2) + 
-    geom_density(col = 2) +
-    facet_wrap(~ force, ncol = 2, dir = "v", labeller = labeller(force = force.labs)) +  
+  geom_histogram(aes(y =..density..),
+                 col = "red", 
+                 fill = "green", 
+                 alpha = 0.2) + 
+  geom_density(col = 2) +
+  facet_wrap(~ force, ncol = 2, dir = "v", labeller = labeller(force = force.labs)) +  
   theme(
     strip.text.x = element_text(size = 12, face = "bold"),
     axis.title = element_text(size = 20),
@@ -546,196 +730,4 @@ ggsave(p_force, file = "D:/Research/PdPy_Div_Results/Figs/PR2_new/p_force.png",
 
 ###############################################################################################
 ##### Assemnbly processes force visualization  ################################################
-###############################################################################################
-
-###############################################################################################
-##### Simple HNF and Bac alppha diversity relationship  #######################################
-###############################################################################################
-# Correlation between HNF and Bac Shannon diversity
-cor.test(HNF_Bac_A$ln.HNF_q1, HNF_Bac_A$ln.Bac_q1)
-
-# Check non-linear correlation between HNF and Bac Shannon diversity
-gam0 <- gam(ln.HNF_q1 ~ ln.Bac_q1, data = HNF_Bac_A)
-gam1 <- gam(ln.HNF_q1 ~ s(ln.Bac_q1), data = HNF_Bac_A)
-anova(gam0, gam1, test = "F")
-summary(gam0)
-
-# check alpha diversity correlation against null distribution generated from the neutral model
-rank(ADivCorr_null[,1])[1]/1000
-rank(ADivCorr_null[,2])[1]/1000
-rank(ADivCorr_null[,3])[1]/1000
-
-# Visualization
-ADivCorr_null %>% 
-  ggplot() + 
-  geom_histogram(aes(q1coef), binwidth = 0.05) +
-  geom_vline(xintercept = ADivCorr_null[1, 2], color = "red") + 
-  labs(x = expression("Linear regression coefficient"),
-       y = expression("Frequency")) + 
-  theme(
-    strip.text.x = element_text(size = 20, face = "bold"),
-    axis.title = element_text(size = 20),
-    axis.text = element_text(size = 16),
-    legend.title = element_text(size = 20),
-    legend.text = element_text(size = 16)
-  ) + 
-  theme_classic()
-
-# plotting correlation between HNF and Bac Shannon diversity
-p_HNFq1_Bacq1 <- HNF_Bac_A %>% 
-  select(ln.Bac_q1, ln.HNF_q1, Bac_Ampd_select, HNF_Ampd_select, Cruise) %>%
-  ggplot(aes(x = ln.Bac_q1, y = ln.HNF_q1)) + 
-    geom_point(size = 3, aes(color = Cruise)) + 
-    geom_smooth(formula = y ~ x, method = "lm", se = TRUE) + 
-    scale_colour_viridis(alpha = 0.7, discrete=TRUE) +
-    # geom_smooth(method = mgcv::gam, formula = y ~ s(x), se = TRUE, color = "red", linetype = "dotted") + 
-    labs(x = expression("Log[ Bacteria Shannon diversity ]"),
-         y = expression("Log[ HNF Shannon diversity ]")) + 
-    theme(
-      strip.text.x = element_text(size = 20, face = "bold"),
-      axis.title = element_text(size = 24),
-      axis.text = element_text(size = 16),
-      legend.title = element_text(size = 20),
-      legend.text = element_text(size = 20)
-    )
-p_HNFq1_Bacq1
-ggsave(p_HNFq1_Bacq1, file = "D:/Manuscripts/PdPy_Div_MS/ms_Figs/Fig3_ADivCor.png",
-       dpi = 600, width = 34, height = 28, units = "cm")
-###############################################################################################
-##### Simple HNF and Bac alppha diversity relationship  #######################################
-###############################################################################################
-
-###############################################################################################
-##### Testing hypothesis: HNFq0 -> Bac selection -> Bacq0 & Bacq0 -> Bac selection ->  HNFq0 ##
-###############################################################################################
-##### HNFq1 -> Bac selection -> Bacq1 ##########
-### linear model testing
-BacS_HNFq1.0 <- lm(Bac_Ampd_select ~ ln.HNF_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, data = HNF_Bac_A)
-BacS_HNFq1.Cr <- lme(Bac_Ampd_select ~ ln.HNF_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
-BacS_HNFq1.Season <- lme(Bac_Ampd_select ~ ln.HNF_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, random = ~ 1 | Season, data = HNF_Bac_A, method = "ML")
-AIC(BacS_HNFq1.0, BacS_HNFq1.Cr, BacS_HNFq1.Season)
-summary(BacS_HNFq1.Cr)
-summary(gam(Bac_Amntd_select ~ s(ln.HNF_q2, bs = "ts"), data = HNF_Bac_A))
-
-Bacq1_BacS.0 <- lm(ln.Bac_q1 ~ Bac_Ampd_select + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, data = HNF_Bac_A)
-Bacq1_BacS.Cr <- lme(ln.Bac_q1 ~ Bac_Ampd_select + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
-Bacq1_BacS.Season <- lme(ln.Bac_q1 ~ Bac_Ampd_select + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, random = ~ 1 | Season, data = HNF_Bac_A, method = "ML")
-AIC(Bacq1_BacS.0, Bacq1_BacS.Cr, Bacq1_BacS.Season)
-summary(Bacq1_BacS.Cr)
-summary(gam(ln.Bac_q1 ~ s(Bac_Ampd_select, bs = "ts"), data = HNF_Bac_A))
-
-### plotting
-p_BacSelect_Bacq1 <- HNF_Bac_A %>% 
-  select(ln.Bac_q1, ln.HNF_q1, Bac_Ampd_select, HNF_Ampd_select, Cruise) %>%
-  ggplot(aes(x = Bac_Ampd_select, y = ln.Bac_q1)) + 
-    geom_point(aes(color = Cruise), size = 3) + 
-    geom_smooth(formula = y ~ x, method = "lm", se = TRUE, linetype = "solid") + 
-    #geom_smooth(method = mgcv::gam, formula = y ~ s(x), se = TRUE, color = "red", linetype = "dotted") + 
-    scale_colour_viridis(alpha = 0.7, discrete=TRUE) + 
-    labs(x = expression("Deterministic assembly processes (\U03B1MPTI) of Bacteria community "),
-         y = expression(atop("Log[ Bacterial Shannon diversity ]"))) + 
-    theme(
-      strip.text.x = element_text(size = 20, face = "bold"),
-      axis.title = element_text(size = 24),
-      axis.text = element_text(size = 16),
-      legend.title = element_text(size = 20),
-      legend.text = element_text(size = 20)
-    )
-
-p_HNFq1_BacSelect <- HNF_Bac_A %>% 
-  select(ln.Bac_q1, ln.HNF_q1, Bac_Ampd_select, HNF_Ampd_select, Cruise) %>%
-  ggplot(aes(x = ln.HNF_q1, y = Bac_Ampd_select)) + 
-    geom_point(aes(color = Cruise), size = 3) + 
-    geom_smooth(formula = y ~ x, method = "lm", se = TRUE, linetype = "solid") + 
-    #geom_smooth(method = mgcv::gam, formula = y ~ s(x), se = TRUE, color = "red", linetype = "solid") + 
-    scale_colour_viridis(alpha = 0.7, discrete=TRUE) + 
-    labs(x = expression("Log[ HNF Shannon diversity ]"),
-         y = expression(atop("Deterministic assembly processes (\U03B1MPTI)", "of Bacteria community"))) + 
-    theme(
-      strip.text.x = element_text(size = 20, face = "bold"),
-      axis.title = element_text(size = 24),
-      axis.text = element_text(size = 16),
-      legend.title = element_text(size = 20),
-      legend.text = element_text(size = 20)
-    )
-
-legend <- get_legend(
-  p_HNFq1_BacSelect + theme(legend.box.margin = margin(0, 0, 0, 12))
-)
-p_HNFq1_BacSelect_Bacq1 <- plot_grid(
-  plot_grid(p_BacSelect_Bacq1 + theme(legend.position = "none"),
-            p_HNFq1_BacSelect + theme(legend.position = "none"),
-            ncol = 1, labels = "AUTO", hjust = 0),
-  legend, rel_widths = c(3, .4))
-p_HNFq1_BacSelect_Bacq1
-ggsave(p_HNFq1_BacSelect_Bacq1, file = "D:/Manuscripts/PdPy_Div_MS/ms_Figs/Fig4_HNFq1_BacAmpd_Bacq1.png",
-       dpi = 600, width = 36, height = 42, units = "cm")
-##### HNFq1 -> Bac selection -> Bacq1 ##########
-
-##### Bacq1 -> HNF selection -> HNFq1 ##########
-### linear model testing
-HNFS_Bacq1.0 <- lm(HNF_Ampd_select ~ ln.Bac_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, data = HNF_Bac_A)
-HNFS_Bacq1.Cr <- lme(HNF_Ampd_select ~ ln.Bac_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
-HNFS_Bacq1.Season <- lme(HNF_Ampd_select ~ ln.Bac_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, random = ~ 1 | Season, data = HNF_Bac_A, method = "ML")
-AIC(HNFS_Bacq1.0, HNFS_Bacq1.Cr, HNFS_Bacq1.Season)
-summary(HNFS_Bacq1.Cr)
-summary(gam(HNF_Ampd_select ~ s(ln.Bac_q1, bs = "ts"), data = HNF_Bac_A))
-
-HNFq1_HNFS.0 <- lm(ln.HNF_q1 ~ HNF_Ampd_select + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, data = HNF_Bac_A)
-HNFq1_HNFS.Cr <- lme(ln.HNF_q1 ~ HNF_Ampd_select + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
-HNFq1_HNFS.Season <- lme(ln.HNF_q1 ~ HNF_Ampd_select + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, random = ~ 1 | Season, data = HNF_Bac_A, method = "ML")
-AIC(HNFq1_HNFS.0, HNFq1_HNFS.Cr, HNFq1_HNFS.Season)
-summary(HNFq1_HNFS.Cr)
-summary(gam(ln.HNF_q1 ~ s(HNF_Ampd_select, bs = "ts"), data = HNF_Bac_A))
-anova(HNFq1_HNFS.Cr, gam(ln.HNF_q1 ~ s(HNF_Ampd_select, bs = "ts"), data = HNF_Bac_A))
-
-### plotting
-p_HNFSelect_HNFq1 <- HNF_Bac_A %>% 
-  select(ln.Bac_q1, ln.HNF_q1, Bac_Ampd_select, HNF_Ampd_select, Cruise) %>%
-  ggplot(aes(x = HNF_Ampd_select, y = ln.HNF_q1)) + 
-    geom_point(aes(color = Cruise), size = 3) + 
-    geom_smooth(formula = y ~ x, method = "lm", se = TRUE, linetype = "solid") + 
-    #geom_smooth(method = mgcv::gam, formula = y ~ s(x), se = TRUE, color = "red", linetype = "dotted") + 
-    scale_colour_viridis(alpha = 0.7, discrete=TRUE) + 
-    labs(x = expression("Deterministic assembly processes (\U03B1MPTI) of HNF community "),
-         y = expression(atop("Log[ HNF Shannon diversity ]"))) + 
-    theme(
-      strip.text.x = element_text(size = 20, face = "bold"),
-      axis.title = element_text(size = 24),
-      axis.text = element_text(size = 16),
-      legend.title = element_text(size = 20),
-      legend.text = element_text(size = 20)
-    )
-
-p_Bacq1_HNFSelect <- HNF_Bac_A %>% 
-  select(ln.Bac_q1, ln.HNF_q1, Bac_Ampd_select, HNF_Ampd_select, Cruise) %>%
-  ggplot(aes(x = ln.Bac_q1, y = HNF_Ampd_select)) + 
-  geom_point(aes(color = Cruise), size = 3) + 
-  geom_smooth(formula = y ~ x, method = "lm", se = TRUE, linetype = "dashed") + 
-  #geom_smooth(method = mgcv::gam, formula = y ~ s(x), se = TRUE, color = "red", linetype = "dotted") + 
-  scale_colour_viridis(alpha = 0.7, discrete=TRUE) + 
-  labs(x = expression("Log[ Bacterial Shannon diversity ]"),
-       y = expression(atop("Deterministic assembly processes (\U03B1MPTI)", "of HNF community "))) + 
-  theme(
-    strip.text.x = element_text(size = 20, face = "bold"),
-    axis.title = element_text(size = 24),
-    axis.text = element_text(size = 16),
-    legend.title = element_text(size = 20),
-    legend.text = element_text(size = 20)
-  )
-legend <- get_legend(
-  p_Bacq1_HNFSelect + theme(legend.box.margin = margin(0, 0, 0, 12))
-)
-p_Bacq1_HNFSelect_HNFq1 <- plot_grid(
-  plot_grid(p_HNFSelect_HNFq1 + theme(legend.position = "none"),
-            p_Bacq1_HNFSelect + theme(legend.position = "none"),
-            ncol = 1, labels = "AUTO", hjust = 0),
-  legend, rel_widths = c(3, .4))
-p_Bacq1_HNFSelect_HNFq1
-ggsave(p_Bacq1_HNFSelect_HNFq1, file = "D:/Manuscripts/PdPy_Div_MS/ms_Figs/Fig5_Bacq1_HNFAmpd_HNFq1.png",
-       dpi = 600, width = 36, height = 42, units = "cm")
-##### Bacq1 -> HNF selection -> HNFq1 ##########
-
-###############################################################################################
-##### Testing hypothesis: HNFq0 -> Bac selection -> Bacq0 & Bacq0 -> Bac selection ->  HNFq0 ##
 ###############################################################################################
