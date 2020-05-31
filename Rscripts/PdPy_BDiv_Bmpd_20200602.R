@@ -295,17 +295,7 @@ BDiv <- Bac_B %>%
   select(c(Var1, Var2, Bac_chao, HNF_chao, Bac_Bmpti, HNF_Bmpti)) %>%
   inner_join(Vars, by = c("Var2" = "SampleID")) %>%
   filter(!is.na(NF_Biom)) %>%
-  mutate(ln.Bac_Biom = log(Bac_Biom),
-         ln.HNF_Biom = log(HNF_Biom),
-         ln.Temp = log(Temp),
-         ln.Sal = log(Sal),
-         ln.PAR = log(PAR),
-         ln.NO2 = log(NO2 + 0.0001),
-         ln.NO3 = log(NO3 + 0.0001),
-         ln.DIN = log(DIN + 0.0001),
-         ln.PO3 = log(PO3 + 0.0001), 
-         ln.Chla = log(Chla + 0.00001),
-         CruiseY = substr(Var1, 4, 9))
+  mutate(CruiseY = substr(Var1, 4, 9))
 BDiv <- as.data.frame(BDiv)
 
 BDiv_mean <- BDiv %>%

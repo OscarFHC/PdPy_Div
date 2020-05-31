@@ -1,10 +1,10 @@
 ---
-title: Why is the predator diversity and prey diversity correlated?
+title: Mechanisms underlying the predator prey diversity relationship in marine bacterioplankton
 subtitle: Implications from community assembly processes
 author: | 
   | Feng-Hsun Chang
   |
-  | @ National Taiwan Ocean University
+  | @ 422 lab
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
   slidy_presentation:
@@ -22,6 +22,11 @@ opts_chunk$set(echo = FALSE)
 ```
 
 ```{r, library loading, echo = FALSE, message = FALSE}
+if (!require(rmarkdown)) {
+  install.packages("rmarkdown", dependencies=TRUE, repos = 'http://cran.us.r-project.org')
+  library(rmarkdown)
+}else{library(rmarkdown)}
+
 if (!require(knitr)) {
   install.packages("knitr", dependencies=TRUE, repos = 'http://cran.us.r-project.org')
   library(knitr)
@@ -173,93 +178,71 @@ if (!require(cowplot)) {
 ```
 
 ```{r, read in data, echo = FALSE}
-Bac_comm <- as.data.frame(t(read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/16s_seqXst.csv",
-                                       sep = ",", header = TRUE, row.names = 1, stringsAsFactors = FALSE, fill = TRUE)))
+Bac_comm <- as.data.frame(t(read.table(
+  file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/sECS_4/sECS_Bac_seqXst_PR2_4.csv", 
+  sep = ",", header = TRUE, row.names = 1, stringsAsFactors = FALSE, fill = TRUE)))
 Bac_ra_comm <- Bac_comm / rowSums(Bac_comm)
-Bac_phylo<- read.tree(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/treeNJ_16s.tree")
+Bac_phylo<- read.tree(
+  file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/sECS_4/sECS_Bac_treeNJ_PR2_4.tree")
 
-NF_comm <- as.data.frame(t(read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/prot_seqXst_PR2.csv", 
-                                      sep = ",", header = TRUE, row.names = 1, stringsAsFactors = FALSE, fill = TRUE)))
-NF_ra_comm <- NF_comm / rowSums(NF_comm)
-NF_phylo<- read.tree(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/prot_treeNJ_PR2.tree")
-
-HNF_comm <- as.data.frame(t(read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/HNF_seqXst_PR2.csv",
-                                       sep = ",", header = TRUE, row.names = 1, stringsAsFactors = FALSE, fill = TRUE)))
+HNF_comm <- as.data.frame(t(read.table(
+  file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/sECS_4/sECS_HNF_seqXst_PR2_4.csv", 
+  sep = ",", header = TRUE, row.names = 1, stringsAsFactors = FALSE, fill = TRUE)))
 HNF_ra_comm <- HNF_comm / rowSums(HNF_comm)
-HNF_phylo<- read.tree(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/HNF_treeNJ_PR2.tree")
+HNF_phylo<- read.tree(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/sECS_4/sECS_HNF_treeNJ_PR2_4.tree")
 
 Vars <- read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/sECS_Vars.csv", sep = ",", 
                    header = TRUE, stringsAsFactors = FALSE, fill = TRUE)
 ```
 
 ```{r, reading nulls, echo = FALSE}
-Bac_MNTD_null <- read.table(file = "D:/Research/PdPy_Div_Results/Bac_MNTD_null.csv", sep = ",", 
-                            header = TRUE, stringsAsFactors = FALSE, fill = TRUE)
-Bac_MNTD <- Bac_MNTD_null %>% 
+### Alpha level
+Bac_Ampd_null <- read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/Anulls_PR2_4/Bac_Ampd_null_4.csv", 
+                            sep = ",", header = TRUE, stringsAsFactors = FALSE, fill = TRUE)
+Bac_Ampd <- Bac_Ampd_null %>% 
+  select(c(obs, Site)) %>%
+  mutate(Ampd_null_mean = apply(Bac_Ampd_null[, !names(Bac_Ampd_null) %in% c("obs", "Site")], 1, mean),
+         Ampd_null_sd = apply(Bac_Ampd_null[, !names(Bac_Ampd_null) %in% c("obs", "Site")], 1, sd),
+         Bac_Ampti = (obs - Ampd_null_mean) / Ampd_null_sd,
+         Bac_Ampti_p = pnorm(-abs(Bac_Ampti), 0, 1))
+HNF_Ampd_null <- read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/Anulls_PR2_4/HNF_Ampd_null_4.csv", 
+                            sep = ",", header = TRUE, stringsAsFactors = FALSE, fill = TRUE)
+HNF_Ampd <- HNF_Ampd_null %>% 
+  select(c(obs, Site)) %>%
+  mutate(Ampd_null_mean = apply(HNF_Ampd_null[, !names(HNF_Ampd_null) %in% c("obs", "Site")], 1, mean),
+         Ampd_null_sd = apply(HNF_Ampd_null[, !names(HNF_Ampd_null) %in% c("obs", "Site")], 1, sd),
+         HNF_Ampti = (obs - Ampd_null_mean) / Ampd_null_sd,
+         HNF_Ampti_p = pnorm(-abs(HNF_Ampti), 0, 1))
+
+### Beta level
+Bac_Bmpd_null <- read.table(file = "D:/Research/PdPy_Div_Results/nulls_PR2_4/Bac_Bmpd_null_4.csv", 
+                            sep = ",", header = TRUE, stringsAsFactors = FALSE, fill = TRUE)
+Bac_Bmpd <- Bac_Bmpd_null %>% 
+  select(c(obs, Var1, Var2))  %>%
+  mutate(Bmpd_null_mean = apply(Bac_Bmpd_null[, !names(Bac_Bmpd_null) %in% c("obs", "Var1", "Var2")], 1, mean),
+         Bmpd_null_sd = apply(Bac_Bmpd_null[, !names(Bac_Bmpd_null) %in% c("obs", "Var1", "Var2")], 1, sd),
+         Bac_Bmpti = (obs - Bmpd_null_mean) / Bmpd_null_sd,
+         Bac_Bmpti_select_p = pnorm(-abs(Bac_Bmpti), 0, 1)) %>%
+  mutate(ind1 = rep(seq(1, nrow(Bac_comm)), nrow(Bac_comm)),
+         ind2 = rep(seq(1, nrow(Bac_comm)), each = nrow(Bac_comm))) %>%
+  filter(ind1 > ind2) %>%
+  select(-c(ind1, ind2))
+HNF_Bmpd_null <- read.table(file = "D:/Research/PdPy_Div_Results/nulls_PR2_4/HNF_Bmpd_null_4.csv", 
+                            sep = ",", header = TRUE, stringsAsFactors = FALSE, fill = TRUE)
+HNF_Bmpd <- HNF_Bmpd_null %>% 
   select(c(obs, Var1, Var2)) %>%
-  mutate(MNTD_null_mean = apply(Bac_MNTD_null[, !names(Bac_MNTD_null) %in% c("obs", "Var1", "Var2")], 1, mean),
-         MNTD_null_sd = apply(Bac_MNTD_null[, !names(Bac_MNTD_null) %in% c("obs", "Var1", "Var2")], 1, sd),
-         Bac_select_strength = (obs - MNTD_null_mean) / MNTD_null_sd,
-         Bac_select_p = pnorm(-abs(Bac_select_strength), 0, 1))
-
-Bac_Chao_null <- read.table(file = "D:/Research/PdPy_Div_Results/Bac_Chao_null.csv", sep = ",", 
-                            header = TRUE, stringsAsFactors = FALSE, fill = TRUE)
-Bac_BDiv_Chao <- Bac_Chao_null %>% 
-  select(c(obs, Var1, Var2)) %>%
-  mutate(Chao_null_mean = apply(Bac_Chao_null[, !names(Bac_Chao_null) %in% c("obs", "Var1", "Var2")], 1, mean),
-         Chao_null_sd = apply(Bac_Chao_null[, !names(Bac_Chao_null) %in% c("obs", "Var1", "Var2")], 1, sd),
-         Bac_disp_strength = (obs - Chao_null_mean) / Chao_null_sd,
-         Bac_disp_p = pnorm(Bac_disp_strength, 0, 1))
-
-HNF_MNTD_null <- read.table(file = "D:/Research/PdPy_Div_Results/HNF_MNTD_null_PR2.csv", sep = ",", 
-                            header = TRUE, stringsAsFactors = FALSE, fill = TRUE)
-HNF_MNTD <- HNF_MNTD_null %>% select(c(obs, Var1, Var2)) %>%
-  mutate(MNTD_null_mean = apply(HNF_MNTD_null[, !names(HNF_MNTD_null) %in% c("obs", "Var1", "Var2")], 1, mean),
-         MNTD_null_sd = apply(HNF_MNTD_null[, !names(HNF_MNTD_null) %in% c("obs", "Var1", "Var2")], 1, sd),
-         HNF_select_strength = (obs - MNTD_null_mean) / MNTD_null_sd,
-         HNF_select_p = pnorm(-abs(HNF_select_strength), 0, 1))
-HNF_Chao_null <- read.table(file = "D:/Research/PdPy_Div_Results/HNF_Chao_null_PR2.csv", sep = ",", 
-                            header = TRUE, stringsAsFactors = FALSE, fill = TRUE)
-HNF_BDiv_Chao <- HNF_Chao_null %>% 
-  select(c(obs, Var1, Var2)) %>%
-  mutate(Chao_null_mean = apply(HNF_Chao_null[, !names(HNF_Chao_null) %in% c("obs", "Var1", "Var2")], 1, mean),
-         Chao_null_sd = apply(HNF_Chao_null[, !names(HNF_Chao_null) %in% c("obs", "Var1", "Var2")], 1, sd),
-         HNF_disp_strength = (obs - Chao_null_mean) / Chao_null_sd,
-         HNF_disp_p = pnorm(HNF_disp_strength, 0, 1))
-```
-
-```{r, reading functions, echo = FALSE}
-cor_fun <- function(data, mapping, method="pearson", ndp=2, sz=5, stars=TRUE, ...){
-  
-  x <- eval_data_col(data, mapping$x)
-  y <- eval_data_col(data, mapping$y)
-  
-  corr <- cor.test(x, y, method = method)
-  est <- corr$estimate
-  lb.size <- 6#sz* abs(est) 
-  
-  if(stars){
-    stars <- c("***", "**", "*", "")[findInterval(corr$p.value, c(0, 0.001, 0.01, 0.05, 1))]
-    lbl <- paste0(round(est, ndp), stars)
-  }else{
-    lbl <- round(est, ndp)
-  }
-  
-  ggplot(data = data, mapping = mapping) + 
-    annotate("text", x = mean(x, na.rm = TRUE), y = mean(y, na.rm = TRUE), label = lbl, size = lb.size, ...)+
-    theme(panel.grid = element_blank())
-}
-
-fit_fun <- function(data, mapping, ...){
-  p <- ggplot(data = data, mapping = mapping) + 
-    geom_point() + 
-    geom_smooth(method = loess, fill = "red", color = "red", ...) +
-    geom_smooth(method = lm, fill = "blue", color = "blue", ...)
-  p
-}
+  mutate(Bmpd_null_mean = apply(HNF_Bmpd_null[, !names(HNF_Bmpd_null) %in% c("obs", "Var1", "Var2")], 1, mean),
+         Bmpd_null_sd = apply(HNF_Bmpd_null[, !names(HNF_Bmpd_null) %in% c("obs", "Var1", "Var2")], 1, sd),
+         HNF_Bmpti = (obs - Bmpd_null_mean) / Bmpd_null_sd,
+         HNF_Bmpti_select_p = pnorm(-abs(HNF_Bmpti), 0, 1)) %>%
+  mutate(ind1 = rep(seq(1, nrow(HNF_comm)), nrow(HNF_comm)),
+         ind2 = rep(seq(1, nrow(HNF_comm)), each = nrow(HNF_comm))) %>%
+  filter(ind1 > ind2) %>%
+  select(-c(ind1, ind2))
 ```
 
 ```{r, preping data, echo = FALSE}
+### Alpha level
 Bac_A <- iNEXT(t(Bac_comm), q = 0, datatype = "abundance", size = max(colSums(Bac_comm)) + 100000)$AsyEst %>% 
   select(Site, Diversity, Estimator) %>% 
   spread(Diversity, Estimator) %>%
@@ -272,28 +255,11 @@ HNF_A <- iNEXT(t(HNF_comm), q = 0, datatype = "abundance", size = max(colSums(HN
   rename(HNF_q0 = "Species richness", HNF_q1 = "Shannon diversity", HNF_q2 = "Simpson diversity") %>%
   mutate(Site = rownames(HNF_comm))
 
-Bac_selec <- Bac_MNTD %>%
-  mutate(Cr_V1 = substr(Var1, start = 1, stop = 9),
-         Cr_V2 = substr(Var2, start = 1, stop = 9)) %>%
-  filter(Cr_V1 == Cr_V2) %>%
-  #filter(Bac_select_p < 0.05) %>%
-  group_by(Var2) %>%
-  # group_by(St, Cr) %>%
-  summarize(Bac_select = mean(Bac_select_strength, na.rm = TRUE))
-
-HNF_selec <- HNF_MNTD %>%
-  mutate(Cr_V1 = substr(Var1, start = 1, stop = 9),
-         Cr_V2 = substr(Var2, start = 1, stop = 9)) %>%
-  filter(Cr_V1 == Cr_V2) %>%
-  #filter(HNF_select_p < 0.05) %>%
-  group_by(Var2) %>%
-  summarize(HNF_select = mean(HNF_select_strength, na.rm = TRUE))
-
-HNF_Bac_A <- Bac_selec %>%
-  inner_join(HNF_selec, by = c("Var2" = "Var2")) %>%
-  inner_join(Bac_A, by = c("Var2" = "Site")) %>%
-  inner_join(HNF_A, by = c("Var2" = "Site")) %>%
-  inner_join(Vars, by = c("Var2" = "SampleID")) %>%
+HNF_Bac_A <- Bac_A %>%
+  inner_join(Bac_Ampd, by = c("Site" = "Site")) %>%
+  inner_join(HNF_A, by = c("Site" = "Site")) %>%
+  inner_join(HNF_Ampd, by = c("Site" = "Site")) %>%
+  inner_join(Vars, by = c("Site" = "SampleID")) %>%
   filter(!is.na(NF_Biom)) %>%
   mutate(ln.Bac_q0 = log(Bac_q0),
          ln.HNF_q0 = log(HNF_q0),
@@ -303,8 +269,6 @@ HNF_Bac_A <- Bac_selec %>%
          ln.HNF_q2 = log(HNF_q2),
          ln.Bac_Biom = log(Bac_Biom),
          ln.HNF_Biom = log(HNF_Biom),
-         ln.Bac_select = log(Bac_select - min(Bac_select) + 0.1),
-         ln.HNF_select = log(HNF_select - min(HNF_select) + 0.1),
          ln.Temp = log(Temp),
          ln.Sal = log(Sal),
          ln.PAR = log(PAR),
@@ -314,6 +278,57 @@ HNF_Bac_A <- Bac_selec %>%
          ln.PO3 = log(PO3 + 0.0001), 
          ln.Chla = log(Chla + 0.00001))
 HNF_Bac_A <- as.data.frame(HNF_Bac_A)
+
+### Beta level
+Bac_B <- expand.grid(row.names(Bac_comm), row.names(Bac_comm)) %>%
+  mutate(ind1 = rep(seq(1, nrow(Bac_comm)), nrow(Bac_comm)),
+         ind2 = rep(seq(1, nrow(Bac_comm)), each = nrow(Bac_comm))) %>%
+  filter(ind1 > ind2) %>%
+  mutate(Bac_chao = matrix(vegdist(Bac_comm, method = "chao")),
+         Var1 = as.character(Var1),
+         Var2 = as.character(Var2)) %>%
+  select(-c(ind1, ind2))
+
+HNF_B <- expand.grid(row.names(HNF_comm), row.names(HNF_comm)) %>%
+  mutate(ind1 = rep(seq(1, nrow(HNF_comm)), nrow(HNF_comm)),
+         ind2 = rep(seq(1, nrow(HNF_comm)), each = nrow(HNF_comm))) %>%
+  filter(ind1 > ind2) %>%
+  mutate(HNF_chao = matrix(vegdist(HNF_comm, method = "chao")),
+         Var1 = as.character(Var1),
+         Var2 = as.character(Var2)) %>%
+  select(-c(ind1, ind2))
+  
+BDiv <- Bac_B %>%
+  inner_join(Bac_Bmpd, by = c("Var1" = "Var1", "Var2" = "Var2")) %>%
+  inner_join(HNF_B, by = c("Var1" = "Var1", "Var2" = "Var2")) %>%
+  inner_join(HNF_Bmpd, by = c("Var1" = "Var1", "Var2" = "Var2")) %>%
+  select(c(Var1, Var2, Bac_chao, HNF_chao, Bac_Bmpti, HNF_Bmpti)) %>%
+  inner_join(Vars, by = c("Var2" = "SampleID")) %>%
+  filter(!is.na(NF_Biom)) %>%
+  mutate(CruiseY = substr(Var1, 4, 9))
+BDiv <- as.data.frame(BDiv)
+
+BDiv_mean <- BDiv %>%
+  group_by(CruiseY, Station) %>%
+  summarize(Bac_chao_mean = mean(Bac_chao),
+            HNF_chao_mean = mean(HNF_chao),
+            Bac_Bmpti_mean = mean(Bac_Bmpti),
+            HNF_Bmpti_mean = mean(HNF_Bmpti)) %>%
+  mutate(SampleID = paste0("Or2", CruiseY, Station)) %>%
+  inner_join(Vars, by = c("SampleID" = "SampleID"))  %>%
+  filter(!is.na(NF_Biom)) %>%
+  mutate(ln.Bac_Biom = log(Bac_Biom),
+         ln.HNF_Biom = log(HNF_Biom),
+         ln.Temp = log(Temp),
+         ln.Sal = log(Sal),
+         ln.PAR = log(PAR),
+         ln.NO2 = log(NO2 + 0.0001),
+         ln.NO3 = log(NO3 + 0.0001),
+         ln.DIN = log(DIN + 0.0001),
+         ln.PO3 = log(PO3 + 0.0001), 
+         ln.Chla = log(Chla + 0.00001)) %>%
+  select(-c(Cruise, Station.y)) %>%
+  rename(Cruise = CruiseY, Station = Station.x)
 ```
 
 # 
@@ -322,9 +337,31 @@ HNF_Bac_A <- as.data.frame(HNF_Bac_A)
 }
 </style>
 
-```{r positiveBEF, fig.cap = "Cardinale et al. 2012 @ Nature", fig.align = 'center', out.width = "75%"}
-include_graphics("positiveBEF.png")
+```{r }
+p_HNFchao_Bacchao <- BDiv_mean %>% 
+  select(Bac_chao_mean, HNF_chao_mean, Bac_Bmpti_mean, HNF_Bmpti_mean, Cruise, Season) %>%
+  ggplot(aes(x = Bac_chao_mean, y = HNF_chao_mean)) + 
+    geom_point(size = 5, aes(color = Season)) + 
+    scale_colour_viridis(alpha = 1, discrete=TRUE) +
+    geom_smooth(formula = y ~ x, method = "lm", se = TRUE) + 
+    geom_smooth(method = mgcv::gam, formula = y ~ s(x), se = TRUE, color = "red", linetype = "solid") + 
+    #scale_x_continuous(expand = c(0, 0)) +
+    #scale_y_continuous(expand = c(0, 0)) +
+    labs(x = bquote("Bacteria Chao similarity"),
+         y = bquote("HNF Chao similarity")) + 
+    annotate("text", x = 0.18, y = 1, label = "paste( \"conditional \", italic(R) ^ 2, \" = 0.18\")", parse = TRUE, size = 6) + 
+    annotate("text", x = 0.18, y = 0.96, label = "paste( \"marginal \", italic(R) ^ 2, \" = 0.12\")", parse = TRUE, size = 6) + 
+    theme(
+      panel.background = element_blank(),
+      axis.line = element_line(colour = "black"),
+      axis.title = element_text(size = 24),
+      axis.text = element_text(size = 16),
+      legend.title = element_text(size = 20),
+      legend.text = element_text(size = 20)
+    )
+p_HNFchao_Bacchao
 ``` 
+
 
 #
 
@@ -512,6 +549,3 @@ include_graphics("SEM_q0_Select_q0.png")
 ```{r, fig.cap = "", fig.align = 'center', out.width = "75%"}
 include_graphics("Hypo_BDiv.png")
 ``` 
-
-
-

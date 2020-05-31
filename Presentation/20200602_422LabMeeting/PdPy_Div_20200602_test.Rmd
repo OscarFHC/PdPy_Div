@@ -1,0 +1,197 @@
+---
+title: Mechanisms underlying the predator prey diversity relationship in marine bacterioplankton
+subtitle: Implications from community assembly processes
+author: | 
+  | Feng-Hsun Chang
+  |
+  | @ 422 lab
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  slidy_presentation:
+    incremental: no
+    widescreen: yes
+    highlight: espresso
+fontsize: 16 pt
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r, global setup, include=FALSE}
+library(knitr)
+opts_chunk$set(echo = FALSE)
+```
+
+```{r, library loading, echo = FALSE, message = FALSE}
+if (!require(rmarkdown)) {
+  install.packages("rmarkdown", dependencies=TRUE, repos = 'http://cran.us.r-project.org')
+  library(rmarkdown)
+}else{library(rmarkdown)}
+
+if (!require(knitr)) {
+  install.packages("knitr", dependencies=TRUE, repos = 'http://cran.us.r-project.org')
+  library(knitr)
+}else{library(knitr)}
+
+if (!require(tidyverse)) {
+  install.packages("tidyverse", dependencies=TRUE, repos = 'http://cran.us.r-project.org')
+  library(tidyverse)
+}else{library(tidyverse)}
+
+if (!require(vegan)) {
+  install.packages("vegan", dependencies=TRUE, repos = 'http://cran.us.r-project.org')
+  library(vegan)
+}else{library(vegan)}
+
+if (!require(mgcv)) {
+  install.packages("mgcv", dependencies=TRUE, repos = 'http://cran.us.r-project.org')
+  library(mgcv)
+}else{library(mgcv)}
+
+if (!require(ape)) {
+  install.packages("ape", dependencies=TRUE, repos = 'http://cran.us.r-project.org')
+  library(ape)
+}else{library(ape)}
+
+if (!require(parallel)) {
+  install.packages("vegan", dependencies=TRUE, repos = 'http://cran.us.r-project.org')
+  library(parallel)
+}else{library(parallel)}
+
+if (!require(SpadeR)) {
+  install.packages("SpadeR", dependencies=TRUE, repos = 'http://cran.us.r-project.org')
+  library(SpadeR)
+}else{library(SpadeR)}
+
+if (!require(iNEXT)) {
+  install.packages("iNEXT", dependencies=TRUE, repos = 'http://cran.us.r-project.org')
+  library(iNEXT)
+}else{library(iNEXT)}
+
+if (!require(picante)) {
+  install.packages("picante", dependencies=TRUE, repos = 'http://cran.us.r-project.org')
+  library(picante)
+}else{library(picante)}
+
+if (!require(geiger)) {
+  install.packages("geiger", dependencies=TRUE, repos = 'http://cran.us.r-project.org')
+  library(geiger)
+}else{library(geiger)}
+
+if (!require(GUniFrac)) {
+  install.packages("GUniFrac", dependencies=TRUE, repos = 'http://cran.us.r-project.org')
+  library(GUniFrac)
+}else{library(GUniFrac)}
+
+if (!require(phytools)) {
+  install.packages("phytools", dependencies=TRUE, repos = 'http://cran.us.r-project.org')
+  library(phytools)
+}else{library(phytools)}
+
+if (!require(ecodist)) {
+  install.packages("ecodist", dependencies=TRUE, repos = 'http://cran.us.r-project.org')
+  library(ecodist)
+}else{library(ecodist)}
+
+if (!require(ade4)) {
+  install.packages("ade4", dependencies=TRUE, repos = 'http://cran.us.r-project.org')
+  library(ade4)
+}else{library(ade4)}
+
+if (!require(lavaan)) {
+  install.packages("lavaan", dependencies=TRUE, repos = 'http://cran.us.r-project.org')
+  library(lavaan)
+}else{library(lavaan)}
+
+if (!require(semTools)) {
+  install.packages("semTools", dependencies=TRUE, repos = 'http://cran.us.r-project.org')
+  library(semTools)
+}else{library(semTools)}
+
+if (!require(psych)) {
+  install.packages("psych", dependencies=TRUE, repos = 'http://cran.us.r-project.org')
+  library(psych)
+}else{library(psych)}
+
+if (!require(nlme)) {
+  install.packages("nlme", dependencies=TRUE, repos = 'http://cran.us.r-project.org')
+  library(nlme)
+}else{library(nlme)}
+
+if (!require(piecewiseSEM)) {
+  install.packages("piecewiseSEM", dependencies=TRUE, repos = 'http://cran.us.r-project.org')
+  library(piecewiseSEM)
+}else{library(piecewiseSEM)}
+
+if (!require(brms)) {
+  install.packages("brms", dependencies=TRUE, repos = 'http://cran.us.r-project.org')
+  library(brms)
+}else{library(brms)}
+
+if (!require(blavaan)) {
+  install.packages("blavaan", dependencies=TRUE, repos = 'http://cran.us.r-project.org')
+  library(blavaan)
+}else{library(blavaan)}
+
+if (!require(rstanarm)) {
+  install.packages("rstanarm", dependencies=TRUE, repos = 'http://cran.us.r-project.org')
+  library(rstanarm)
+}else{library(rstanarm)}
+
+library("rstan")
+options(mc.cores = parallel::detectCores())
+rstan_options(auto_write = TRUE)
+
+if (!require(loo)) {
+  install.packages("loo", dependencies=TRUE, repos = 'http://cran.us.r-project.org')
+  library(loo)
+}else{library(loo)}
+
+if (!require(lmodel2)) {
+  install.packages("lmodel2", dependencies=TRUE, repos = 'http://cran.us.r-project.org')
+  library(lmodel2)
+}else{library(lmodel2)}
+
+if (!require(abind)) {
+  install.packages("abind", dependencies=TRUE, repos = 'http://cran.us.r-project.org')
+  library(abind)
+}else{library(abind)}
+
+if (!require(ggplot2)) {
+  install.packages("ggplot2", dependencies=TRUE, repos = 'http://cran.us.r-project.org')
+  library(ggplot2)
+}else{library(ggplot2)}
+
+if (!require(viridis)) {
+  install.packages("viridis", dependencies=TRUE, repos = 'http://cran.us.r-project.org')
+  library(viridis)
+}else{library(viridis)}
+
+if (!require(GGally)) {
+  install.packages("GGally", dependencies=TRUE, repos = 'http://cran.us.r-project.org')
+  library(GGally)
+}else{library(GGally)}
+
+if (!require(cowplot)) {
+  install.packages("cowplot", dependencies=TRUE, repos = 'http://cran.us.r-project.org')
+  library(cowplot)
+}else{library(cowplot)}
+```
+
+```{r, read in data, echo = FALSE}
+Bac_comm <- as.data.frame(t(read.table(
+  file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/sECS_4/sECS_Bac_seqXst_PR2_4.csv", 
+  sep = ",", header = TRUE, row.names = 1, stringsAsFactors = FALSE, fill = TRUE)))
+Vars <- read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/sECS_Vars.csv", sep = ",", 
+                   header = TRUE, stringsAsFactors = FALSE, fill = TRUE)
+```
+
+```{r, preping data, echo = FALSE}
+### Alpha level
+Bac_A <- iNEXT(t(Bac_comm), q = 0, datatype = "abundance", size = max(colSums(Bac_comm)) + 100000)$AsyEst %>% 
+  select(Site, Diversity, Estimator) %>% 
+  spread(Diversity, Estimator) %>%
+  rename(Bac_q0 = "Species richness", Bac_q1 = "Shannon diversity", Bac_q2 = "Simpson diversity") %>%
+  mutate(Site = rownames(Bac_comm))
+
+head(Bac_A)
+```
