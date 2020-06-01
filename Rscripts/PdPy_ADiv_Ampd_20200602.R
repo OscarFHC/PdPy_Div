@@ -317,7 +317,7 @@ performance::r2(HNFq1_Bacq1.Cr)
 p_HNFq1_Bacq1 <- HNF_Bac_A %>% 
   select(ln.Bac_q1, ln.HNF_q1, Bac_Ampti, HNF_Ampti, Cruise) %>%
   ggplot(aes(x = ln.Bac_q1, y = ln.HNF_q1)) + 
-    geom_point(aes(color = Cruise), size = 5) + 
+    geom_point(aes(color = Cruise), size = 8) + 
     geom_smooth(formula = y ~ x, method = "lm", se = TRUE) + 
     scale_colour_viridis(alpha = 1, discrete=TRUE) +
     #geom_smooth(method = mgcv::gam, formula = y ~ s(x), se = TRUE, color = "red", linetype = "dotted") + 
@@ -328,10 +328,10 @@ p_HNFq1_Bacq1 <- HNF_Bac_A %>%
     theme(
       panel.background = element_blank(),
       axis.line = element_line(colour = "black"),
-      axis.title = element_text(size = 24),
-      axis.text = element_text(size = 16),
-      legend.title = element_text(size = 20),
-      legend.text = element_text(size = 20)
+      axis.title = element_text(size = 32),
+      axis.text = element_text(size = 24),
+      legend.title = element_text(size = 24),
+      legend.text = element_text(size = 24)
     )
 p_HNFq1_Bacq1
 ggsave(p_HNFq1_Bacq1, file = "D:/Research/PdPy_Div_Results/Figs/Lab422 meeting_20200602/Fig3_HNFq1_Bacq1.png",
@@ -363,49 +363,52 @@ performance::r2(Bacq1_BacS.Cr)
 p_BacSelect_Bacq1 <- HNF_Bac_A %>% 
   select(ln.Bac_q1, ln.HNF_q1, Bac_Ampti, HNF_Ampti, Cruise) %>%
   ggplot(aes(x = Bac_Ampti, y = ln.Bac_q1)) + 
-    geom_point(aes(color = Cruise), size = 5) + 
+    geom_point(aes(color = Cruise), size = 8) + 
     geom_smooth(formula = y ~ x, method = "lm", se = TRUE, linetype = "solid") + 
     #geom_smooth(method = mgcv::gam, formula = y ~ s(x), se = TRUE, color = "red", linetype = "dotted") + 
     scale_colour_viridis(alpha = 1, discrete=TRUE) + 
-    labs(x = expression("Deterministic assembly processes (\U03B1MPTI) of Bacteria community "),
-         y = expression(atop("Log[ Bacterial Shannon diversity ]"))) + 
+    labs(x = expression(atop("Deterministic assembly processes", "(\U03B1MPTI) of Bacteria community ")),
+         y = expression("Log[ Bacterial Shannon diversity ]")) + 
     annotate("text", x = -4.3, y = 4.6, label = "paste( \"conditional \", italic(R) ^ 2, \" = 0.2\")", parse = TRUE, size = 6) + 
     annotate("text", x = -4.3, y = 4.5, label = "paste( \"marginal \", italic(R) ^ 2, \" = 0.16\")", parse = TRUE, size = 6) + 
     theme(
+      plot.margin = margin(t = 2, l = 1, r = 0.5, unit = "cm"),
       panel.background = element_blank(),
       axis.line = element_line(colour = "black"),
-      axis.title = element_text(size = 24),
-      axis.text = element_text(size = 16),
-      legend.title = element_text(size = 20),
-      legend.text = element_text(size = 20)
+      axis.title.x = element_text(size = 40),
+      axis.title.y = element_text(size = 40),
+      axis.text = element_text(size = 28),
+      legend.title = element_text(size = 28),
+      legend.text = element_text(size = 28)
     )
 p_HNFq1_BacSelect <- HNF_Bac_A %>% 
   select(ln.Bac_q1, ln.HNF_q1, Bac_Ampti, HNF_Ampti, Cruise) %>%
   ggplot(aes(x = ln.HNF_q1, y = Bac_Ampti)) + 
-    geom_point(aes(color = Cruise), size = 5) + 
+    geom_point(aes(color = Cruise), size = 8) + 
     geom_smooth(formula = y ~ x, method = "lm", se = TRUE, linetype = "solid") + 
     #geom_smooth(method = mgcv::gam, formula = y ~ s(x), se = TRUE, color = "red", linetype = "solid") + 
     scale_colour_viridis(alpha = 1, discrete=TRUE) + 
-    labs(x = expression("Log[ HNF Shannon diversity ]"),
-         y = expression(atop("Deterministic assembly processes (\U03B1MPTI)", "of Bacteria community"))) + 
+    labs(x = expression(atop("Log[ HNF Shannon diversity ]", " ")),
+         y = expression(atop("Deterministic assembly processes", "(\U03B1MPTI) of Bacteria community"))) + 
     annotate("text", x = 0.7, y = 0.25, label = "paste( \"conditional \", italic(R) ^ 2, \" = 0.54\")", parse = TRUE, size = 6) + 
     annotate("text", x = 0.7, y = 0.03, label = "paste( \"marginal \", italic(R) ^ 2, \" = 0.18\")", parse = TRUE, size = 6) + 
     theme(
+      plot.margin = margin(t = 2, l = 1, r = 0.5, unit = "cm"),
       panel.background = element_blank(),
       axis.line = element_line(colour = "black"),
-      strip.text.x = element_text(size = 20, face = "bold"),
-      axis.title = element_text(size = 24),
-      axis.text = element_text(size = 16),
-      legend.title = element_text(size = 20),
-      legend.text = element_text(size = 20)
+      axis.title.x = element_text(size = 40),
+      axis.title.y = element_text(size = 40),
+      axis.text = element_text(size = 28),
+      legend.title = element_text(size = 28),
+      legend.text = element_text(size = 28)
     )
 legend <- get_legend(
   p_HNFq1_BacSelect + theme(legend.box.margin = margin(0, 0, 0, 12))
 )
 p_HNFq1_BacSelect_Bacq1 <- plot_grid(
-  plot_grid(p_BacSelect_Bacq1 + theme(legend.position = "none"),
-            p_HNFq1_BacSelect + theme(legend.position = "none"),
-            ncol = 2, labels = "AUTO", hjust = 0),
+  plot_grid(p_HNFq1_BacSelect + theme(legend.position = "none"),
+            p_BacSelect_Bacq1 + theme(legend.position = "none"),
+            ncol = 2, labels = "AUTO", label_size = 24),
   legend, rel_widths = c(3, .4))
 p_HNFq1_BacSelect_Bacq1
 ggsave(p_HNFq1_BacSelect_Bacq1, file = "D:/Research/PdPy_Div_Results/Figs/Lab422 meeting_20200602/Fig4_HNFq1_BacAmpd_Bacq1.png",
@@ -430,46 +433,48 @@ summary(HNFq1_HNFS.Cr)
 p_HNFSelect_HNFq1 <- HNF_Bac_A %>% 
   select(ln.Bac_q1, ln.HNF_q1, Bac_Ampti, HNF_Ampti, Cruise) %>%
   ggplot(aes(x = HNF_Ampti, y = ln.HNF_q1)) + 
-    geom_point(aes(color = Cruise), size = 5) + 
+    geom_point(aes(color = Cruise), size = 8) + 
     geom_smooth(formula = y ~ x, method = "lm", se = TRUE, linetype = "dashed") + 
     #geom_smooth(method = mgcv::gam, formula = y ~ s(x), se = TRUE, color = "red", linetype = "dotted") + 
     scale_colour_viridis(alpha = 1, discrete=TRUE) + 
-    labs(x = expression("Deterministic assembly processes (\U03B1MPTI) of HNF community "),
-         y = expression(atop("Log[ HNF Shannon diversity ]"))) + 
+    labs(x = bquote(atop("Deterministic assembly processes", "(\U03B1MPTI) of HNF community ")),
+         y = bquote("Log[ HNF Shannon diversity ]")) + 
     theme(
+      plot.margin = margin(t = 2, l = 1, r = 0.5, unit = "cm"),
       panel.background = element_blank(),
       axis.line = element_line(colour = "black"),
-      strip.text.x = element_text(size = 20, face = "bold"),
-      axis.title = element_text(size = 24),
-      axis.text = element_text(size = 16),
-      legend.title = element_text(size = 20),
-      legend.text = element_text(size = 20)
+      axis.title.x = element_text(size = 40),
+      axis.title.y = element_text(size = 40),
+      axis.text = element_text(size = 28),
+      legend.title = element_text(size = 28),
+      legend.text = element_text(size = 28)
     )
 p_Bacq1_HNFSelect <- HNF_Bac_A %>% 
   select(ln.Bac_q1, ln.HNF_q1, Bac_Ampti, HNF_Ampti, Cruise) %>%
   ggplot(aes(x = ln.Bac_q1, y = HNF_Ampti)) + 
-  geom_point(aes(color = Cruise), size = 5) + 
+  geom_point(aes(color = Cruise), size = 8) + 
   geom_smooth(formula = y ~ x, method = "lm", se = TRUE, linetype = "dashed") + 
   #geom_smooth(method = mgcv::gam, formula = y ~ s(x), se = TRUE, color = "red", linetype = "dotted") + 
   scale_colour_viridis(alpha = 1, discrete=TRUE) + 
-  labs(x = expression("Log[ Bacterial Shannon diversity ]"),
-       y = expression(atop("Deterministic assembly processes (\U03B1MPTI)", "of HNF community "))) + 
+  labs(x = expression(atop("Log[ Bacterial Shannon diversity ]", " ")),
+       y = expression(atop("Deterministic assembly processes", "(\U03B1MPTI) of HNF community "))) + 
   theme(
+    plot.margin = margin(t = 2, l = 1, r = 0.5, unit = "cm"),
     panel.background = element_blank(),
     axis.line = element_line(colour = "black"),
-    strip.text.x = element_text(size = 20, face = "bold"),
-    axis.title = element_text(size = 24),
-    axis.text = element_text(size = 16),
-    legend.title = element_text(size = 20),
-    legend.text = element_text(size = 20)
+    axis.title.x = element_text(size = 40),
+    axis.title.y = element_text(size = 40),
+    axis.text = element_text(size = 28),
+    legend.title = element_text(size = 28),
+    legend.text = element_text(size = 28)
   )
 legend <- get_legend(
   p_Bacq1_HNFSelect + theme(legend.box.margin = margin(0, 0, 0, 12))
 )
 p_Bacq1_HNFSelect_HNFq1 <- plot_grid(
-  plot_grid(p_HNFSelect_HNFq1 + theme(legend.position = "none"),
-            p_Bacq1_HNFSelect + theme(legend.position = "none"),
-            ncol = 2, labels = "AUTO", hjust = 0),
+  plot_grid(p_Bacq1_HNFSelect + theme(legend.position = "none"),
+            p_HNFSelect_HNFq1 + theme(legend.position = "none"),
+            ncol = 2, labels = "AUTO", label_size = 24),
   legend, rel_widths = c(3, .4))
 p_Bacq1_HNFSelect_HNFq1
 ggsave(p_Bacq1_HNFSelect_HNFq1, file = "D:/Research/PdPy_Div_Results/Figs/Lab422 meeting_20200602/Fig5_Bacq1_HNFAmpd_HNFq1.png",
@@ -508,32 +513,36 @@ summary(Mod_R2_meanBacAmpti)
 summary(Mod_R2_meanHNFAmpti)
 
 p_ADivR2_BacAmpd <- ggplot(data = ADiv_associ, aes(x = meanBac_Ampti, y = R2)) + 
-  geom_point(aes(color = Season), size = 5) +    
+  geom_point(aes(color = Season), size = 8) +    
   geom_smooth(formula = y ~ x, method = "lm", se = TRUE, linetype = "dashed") + 
   scale_colour_viridis(alpha = 1, discrete = TRUE) + 
-  labs(x = expression(atop("Deterministic assembly processes (\U03B1MPTI)", "of Bacteria community")),
+  labs(x = expression(atop("Deterministic assembly processes", "(\U03B1MPTI) of Bacteria community")),
        y = bquote("R"^2~ "of diversity association")) + 
   theme(
+    plot.margin = margin(t = 2, l = 1, r = 0.5, unit = "cm"),
     panel.background = element_blank(),
     axis.line = element_line(colour = "black"),
-    axis.title = element_text(size = 24),
-    axis.text = element_text(size = 16),
-    legend.title = element_text(size = 20),
-    legend.text = element_text(size = 20)
+    axis.title.x = element_text(size = 40),
+    axis.title.y = element_text(size = 40),
+    axis.text = element_text(size = 28),
+    legend.title = element_text(size = 28),
+    legend.text = element_text(size = 28)
   )
 p_ADivR2_HNFAmpd <- ggplot(data = ADiv_associ, aes(x = meanHNF_Ampti, y = R2)) + 
-  geom_point(aes(color = Season), size = 5) +  
+  geom_point(aes(color = Season), size = 8) +  
   geom_smooth(formula = y ~ x, method = "lm", se = TRUE, linetype = "dashed") + 
   scale_colour_viridis(alpha = 1, discrete = TRUE) + 
-  labs(x = expression(atop("Deterministic assembly processes (\U03B1MPTI)", "of HNF community")),
+  labs(x = expression(atop("Deterministic assembly processes", "(\U03B1MPTI) of HNF community")),
        y = bquote("R"^2~ "of diversity association")) + 
   theme(
+    plot.margin = margin(t = 2, l = 1, r = 0.5, unit = "cm"),
     panel.background = element_blank(),
     axis.line = element_line(colour = "black"),
-    axis.title = element_text(size = 24),
-    axis.text = element_text(size = 16),
-    legend.title = element_text(size = 20),
-    legend.text = element_text(size = 20)
+    axis.title.x = element_text(size = 40),
+    axis.title.y = element_text(size = 40),
+    axis.text = element_text(size = 28),
+    legend.title = element_text(size = 28),
+    legend.text = element_text(size = 28)
   )
 legend <- get_legend(
   p_ADivR2_BacAmpd + theme(legend.box.margin = margin(0, 0, 0, 12))
@@ -559,32 +568,36 @@ summary(Mod_coef_meanBacAmpti)
 summary(Mod_coef_meanHNFAmpti)
 
 p_ADivcoef_BacAmpd <- ggplot(data = ADiv_associ, aes(x = meanBac_Ampti, y = coef)) + #[which(Adiv_cr$coef > -1), ]
-    geom_point(aes(color = Season), size = 5) + 
+    geom_point(aes(color = Season), size = 8) + 
     geom_smooth(formula = y ~ x, method = "lm", se = TRUE, linetype = "dashed") + 
     scale_colour_viridis(alpha = 1, discrete = TRUE) + 
-    labs(x = expression(atop("Deterministic assembly processes (\U03B1MPTI)", "of Bacteria community")),
+    labs(x = expression(atop("Deterministic assembly processes", "(\U03B1MPTI) of Bacteria community")),
          y = bquote(atop("Regression coefficient", "of diversity association"))) + 
     theme(
+      plot.margin = margin(t = 2, l = 1, r = 0.5, unit = "cm"),
       panel.background = element_blank(),
       axis.line = element_line(colour = "black"),
-      axis.title = element_text(size = 24),
-      axis.text = element_text(size = 16),
-      legend.title = element_text(size = 20),
-      legend.text = element_text(size = 20)
+      axis.title.x = element_text(size = 40),
+      axis.title.y = element_text(size = 40),
+      axis.text = element_text(size = 28),
+      legend.title = element_text(size = 28),
+      legend.text = element_text(size = 28)
     )
 p_ADivcoef_HNFAmpd <- ggplot(data = ADiv_associ, aes(x = meanHNF_Ampti, y = coef)) + #[which(ADiv_Cr$coef > -1), ]
-    geom_point(aes(color = Season), size = 5) +
+    geom_point(aes(color = Season), size = 8) +
     geom_smooth(formula = y ~ x, method = "lm", se = TRUE, linetype = "dashed") + 
     scale_colour_viridis(alpha = 1, discrete = TRUE) + 
-    labs(x = expression(atop("Deterministic assembly processes (\U03B1MPTI)", "of HNF community")),
+    labs(x = expression(atop("Deterministic assembly processes", "(\U03B1MPTI) of HNF community")),
          y = bquote(atop("Regression coefficient", "of diversity association"))) + 
     theme(
+      plot.margin = margin(t = 2, l = 1, r = 0.5, unit = "cm"),
       panel.background = element_blank(),
       axis.line = element_line(colour = "black"),
-      axis.title = element_text(size = 24),
-      axis.text = element_text(size = 16),
-      legend.title = element_text(size = 20),
-      legend.text = element_text(size = 20)
+      axis.title.x = element_text(size = 40),
+      axis.title.y = element_text(size = 40),
+      axis.text = element_text(size = 28),
+      legend.title = element_text(size = 28),
+      legend.text = element_text(size = 28)
     )
 legend <- get_legend(
   p_ADivcoef_BacAmpd + theme(legend.box.margin = margin(0, 0, 0, 12))
