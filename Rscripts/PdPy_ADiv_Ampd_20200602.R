@@ -1,16 +1,6 @@
 ###############################################################################################
 ##### Loading packages ########################################################################
 ###############################################################################################
-if (!require(rmarkdown)) {
-  install.packages("rmarkdown", dependencies=TRUE, repos = 'http://cran.us.r-project.org')
-  library(rmarkdown)
-}else{library(rmarkdown)}
-
-if (!require(knitr)) {
-  install.packages("knitr", dependencies=TRUE, repos = 'http://cran.us.r-project.org')
-  library(knitr)
-}else{library(knitr)}
-
 if (!require(tidyverse)) {
   install.packages("tidyverse", dependencies=TRUE, repos = 'http://cran.us.r-project.org')
   library(tidyverse)
