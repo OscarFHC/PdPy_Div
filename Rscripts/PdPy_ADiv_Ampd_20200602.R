@@ -303,6 +303,9 @@ AIC(HNFq1_Bacq1.0, HNFq1_Bacq1.St, HNFq1_Bacq1.Cr, HNFq1_Bacq1.Season)
 summary(HNFq1_Bacq1.Cr)
 performance::r2(HNFq1_Bacq1.Cr)
 
+Hq1_Bq1.Cr <- lme(ln.HNF_q1 ~ ln.Bac_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
+summary(Hq1_Bq1.Cr)
+
 # plotting correlation between HNF and Bac Shannon diversity
 p_HNFq1_Bacq1 <- HNF_Bac_A %>% 
   select(ln.Bac_q1, ln.HNF_q1, Bac_Ampti, HNF_Ampti, Cruise) %>%
@@ -314,7 +317,7 @@ p_HNFq1_Bacq1 <- HNF_Bac_A %>%
     labs(x = expression("Log[ Bacteria Shannon diversity ]"),
          y = expression("Log[ HNF Shannon diversity ]")) + 
     annotate("text", x = 2.5, y = 3.8, label = "paste( \"conditional \", italic(R) ^ 2, \" = 0.32\")", parse = TRUE, size = 6) + 
-    annotate("text", x = 2.5, y = 3.6, label = "paste( \"marginal \", italic(R) ^ 2, \" = 0.1\")", parse = TRUE, size = 6) + 
+    annotate("text", x = 2.5, y = 3.6, label = "paste( italic(P), \" = 0.01\")", parse = TRUE, size = 12) +
     theme(
       panel.background = element_blank(),
       axis.line = element_line(colour = "black"),
@@ -324,7 +327,7 @@ p_HNFq1_Bacq1 <- HNF_Bac_A %>%
       legend.text = element_text(size = 24)
     )
 p_HNFq1_Bacq1
-ggsave(p_HNFq1_Bacq1, file = "D:/Research/PdPy_Div_Results/Figs/Lab422 meeting_20200602/Fig3_HNFq1_Bacq1.png",
+ggsave(p_HNFq1_Bacq1, file = "D:/Manuscripts/PdPy_Div_MS/ms_Figs/Fig2_HNFq1_Bacq1.png",
        dpi = 600, width = 34, height = 28, units = "cm")
 ###############################################################################################
 ##### Simple HNF and Bac alppha diversity relationship  #######################################
