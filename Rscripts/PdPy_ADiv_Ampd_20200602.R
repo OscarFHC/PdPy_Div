@@ -431,46 +431,46 @@ performance::r2(HNFq1_HNFS.Cr)
 p_Bacq1_HNFSelect <- HNF_Bac_A %>% 
   select(ln.Bac_q1, ln.HNF_q1, Bac_Ampti, HNF_Ampti, Cruise) %>%
   ggplot(aes(x = ln.Bac_q1, y = HNF_Ampti)) + 
-    geom_point(aes(color = Cruise), size = 8) + 
-    geom_smooth(formula = y ~ x, method = "lm", se = TRUE, linetype = "dashed") + 
-    #geom_smooth(method = mgcv::gam, formula = y ~ s(x), se = TRUE, color = "red", linetype = "dotted") + 
-    scale_colour_viridis(alpha = 1, discrete=TRUE) + 
-    labs(x = expression(atop("Log[ Bacterial Shannon diversity ]", " ")),
-         y = expression(atop("Deterministic assembly processes", "(\U03B1MPTI) of HNF community "))) + 
-    annotate("text", x = 2.61, y = -6.4, label = "paste( \"conditional \", italic(R) ^ 2, \" = 0.36\")", parse = TRUE, size = 12) + 
-    annotate("text", x = 2.61, y = -6, label = "paste( italic(P), \" = 0.4\")", parse = TRUE, size = 12) + 
-    theme(
-      plot.margin = margin(t = 2, l = 1.2, r = 0.5, unit = "cm"),
-      panel.background = element_blank(),
-      axis.line = element_line(colour = "black"),
-      axis.title.x = element_text(size = 40),
-      axis.title.y = element_text(size = 40),
-      axis.text = element_text(size = 28),
-      legend.title = element_text(size = 32),
-      legend.text = element_text(size = 32)
-    )
+  geom_point(aes(color = Cruise), size = 8) + 
+  geom_smooth(formula = y ~ x, method = "lm", se = TRUE, linetype = "dashed") + 
+  #geom_smooth(method = mgcv::gam, formula = y ~ s(x), se = TRUE, color = "red", linetype = "dotted") + 
+  scale_colour_viridis(alpha = 1, discrete=TRUE) + 
+  labs(x = expression(atop("Log[ Bacterial Shannon diversity ]", " ")),
+       y = expression(atop("Deterministic assembly processes", "(\U03B1MPTI) of HNF community "))) + 
+  annotate("text", x = 2.61, y = -6.4, label = "paste( \"conditional \", italic(R) ^ 2, \" = 0.36\")", parse = TRUE, size = 12) + 
+  annotate("text", x = 2.61, y = -6, label = "paste( italic(P), \" = 0.4\")", parse = TRUE, size = 12) + 
+  theme(
+    plot.margin = margin(t = 2, l = 1.2, r = 0.5, unit = "cm"),
+    panel.background = element_blank(),
+    axis.line = element_line(colour = "black"),
+    axis.title.x = element_text(size = 40),
+    axis.title.y = element_text(size = 40),
+    axis.text = element_text(size = 28),
+    legend.title = element_text(size = 32),
+    legend.text = element_text(size = 32)
+  )
 p_HNFSelect_HNFq1 <- HNF_Bac_A %>% 
   select(ln.Bac_q1, ln.HNF_q1, Bac_Ampti, HNF_Ampti, Cruise) %>%
   ggplot(aes(x = HNF_Ampti, y = ln.HNF_q1)) + 
-    geom_point(aes(color = Cruise), size = 8) + 
-    geom_smooth(formula = y ~ x, method = "lm", se = TRUE, linetype = "dashed") + 
-    #geom_smooth(method = mgcv::gam, formula = y ~ s(x), se = TRUE, color = "red", linetype = "dotted") + 
-    scale_colour_viridis(alpha = 1, discrete=TRUE) + 
-    scale_x_reverse() + 
-    labs(x = bquote(atop("Deterministic assembly processes", "(\U03B1MPTI) of HNF community ")),
-         y = bquote(atop("Log[ HNF Shannon diversity ]", " " ))) + 
-    annotate("text", x = -0.93, y = 0.42, label = "paste( \"conditional \", italic(R) ^ 2, \" = 0.42\")", parse = TRUE, size = 12) + 
-    annotate("text", x = -0.93, y = 0.62, label = "paste( italic(P), \" = 0.06\")", parse = TRUE, size = 12) + 
-    theme(
-      plot.margin = margin(t = 2, l = 1.6, r = 0.5, unit = "cm"),
-      panel.background = element_blank(),
-      axis.line = element_line(colour = "black"),
-      axis.title.x = element_text(size = 40),
-      axis.title.y = element_text(size = 40),
-      axis.text = element_text(size = 28),
-      legend.title = element_text(size = 32),
-      legend.text = element_text(size = 32)
-    )
+  geom_point(aes(color = Cruise), size = 8) + 
+  geom_smooth(formula = y ~ x, method = "lm", se = TRUE, linetype = "dashed") + 
+  #geom_smooth(method = mgcv::gam, formula = y ~ s(x), se = TRUE, color = "red", linetype = "dotted") + 
+  scale_colour_viridis(alpha = 1, discrete=TRUE) + 
+  scale_x_reverse() + 
+  labs(x = bquote(atop("Deterministic assembly processes", "(\U03B1MPTI) of HNF community ")),
+       y = bquote(atop("Log[ HNF Shannon diversity ]", " " ))) + 
+  annotate("text", x = -0.93, y = 0.42, label = "paste( \"conditional \", italic(R) ^ 2, \" = 0.42\")", parse = TRUE, size = 12) + 
+  annotate("text", x = -0.93, y = 0.62, label = "paste( italic(P), \" = 0.06\")", parse = TRUE, size = 12) + 
+  theme(
+    plot.margin = margin(t = 2, l = 1.6, r = 0.5, unit = "cm"),
+    panel.background = element_blank(),
+    axis.line = element_line(colour = "black"),
+    axis.title.x = element_text(size = 40),
+    axis.title.y = element_text(size = 40),
+    axis.text = element_text(size = 28),
+    legend.title = element_text(size = 32),
+    legend.text = element_text(size = 32)
+  )
 
 legend <- get_legend(
   p_Bacq1_HNFSelect + theme(legend.box.margin = margin(0, 0, 0, 12))
