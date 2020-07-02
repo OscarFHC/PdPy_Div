@@ -316,8 +316,8 @@ p_HNFq1_Bacq1 <- HNF_Bac_A %>%
     #geom_smooth(method = mgcv::gam, formula = y ~ s(x), se = TRUE, color = "red", linetype = "dotted") + 
     labs(x = expression("Log[ Bacteria Shannon diversity ]"),
          y = expression("Log[ HNF Shannon diversity ]")) + 
-    annotate("text", x = 2.5, y = 3.8, label = "paste( \"conditional \", italic(R) ^ 2, \" = 0.32\")", parse = TRUE, size = 6) + 
-    annotate("text", x = 2.5, y = 3.6, label = "paste( italic(P), \" = 0.01\")", parse = TRUE, size = 12) +
+    annotate("text", x = 2.5, y = 3.6, label = "paste( \"conditional \", italic(R) ^ 2, \" = 0.32\")", parse = TRUE, size = 6) + 
+    annotate("text", x = 2.5, y = 3.8, label = "paste( italic(P), \" = 0.01\")", parse = TRUE, size = 6) +
     theme(
       panel.background = element_blank(),
       axis.line = element_line(colour = "black"),
