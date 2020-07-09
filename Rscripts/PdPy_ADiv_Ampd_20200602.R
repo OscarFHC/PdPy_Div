@@ -316,8 +316,8 @@ p_HNFq1_Bacq1 <- HNF_Bac_A %>%
     #geom_smooth(method = mgcv::gam, formula = y ~ s(x), se = TRUE, color = "red", linetype = "dotted") + 
     labs(x = expression("Log[ Bacteria Shannon diversity ]"),
          y = expression("Log[ HNF Shannon diversity ]")) + 
-    annotate("text", x = 2.5, y = 3.6, label = "paste( \"conditional \", italic(R) ^ 2, \" = 0.32\")", parse = TRUE, size = 6) + 
-    annotate("text", x = 2.5, y = 3.8, label = "paste( italic(P), \" = 0.01\")", parse = TRUE, size = 6) +
+    annotate("text", x = 2.5, y = 3.6, label = "paste( \"conditional \", italic(R) ^ 2, \" = 0.44\")", parse = TRUE, size = 6) + 
+    annotate("text", x = 2.5, y = 3.8, label = "paste( italic(P), \" = 0.006\")", parse = TRUE, size = 6) +
     theme(
       panel.background = element_blank(),
       axis.line = element_line(colour = "black"),
@@ -338,19 +338,44 @@ ggsave(p_HNFq1_Bacq1, file = "D:/Manuscripts/PdPy_Div_MS/ms_Figs/Fig2_HNFq1_Bacq
 ###############################################################################################
 ##### HNFq1 -> Bac selection -> Bacq1 ##########
 ### linear model testing
-BacS_HNFq1.0 <- lm(Bac_Ampti ~ ln.HNF_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, data = HNF_Bac_A)
-BacS_HNFq1.Cr <- lme(Bac_Ampti ~ ln.HNF_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
-BacS_HNFq1.Season <- lme(Bac_Ampti ~ ln.HNF_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, random = ~ 1 | Season, data = HNF_Bac_A, method = "ML")
+BacS_HNFq1.0 <- lm(Bac_Ampti ~ ln.HNF_q1, data = HNF_Bac_A)
+BacS_HNFq1.Cr <- lme(Bac_Ampti ~ ln.HNF_q1, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
+BacS_HNFq1.Season <- lme(Bac_Ampti ~ ln.HNF_q1, random = ~ 1 | Season, data = HNF_Bac_A, method = "ML")
 AIC(BacS_HNFq1.0, BacS_HNFq1.Cr, BacS_HNFq1.Season)
 summary(BacS_HNFq1.Cr)
 performance::r2(BacS_HNFq1.Cr)
 
-Bacq1_BacS.0 <- lm(ln.Bac_q1 ~ Bac_Ampti + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, data = HNF_Bac_A)
-Bacq1_BacS.Cr <- lme(ln.Bac_q1 ~ Bac_Ampti + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
-Bacq1_BacS.Season <- lme(ln.Bac_q1 ~ Bac_Ampti + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, random = ~ 1 | Season, data = HNF_Bac_A, method = "ML")
+Bacq1_BacS.0 <- lm(ln.Bac_q1 ~ Bac_Ampti, data = HNF_Bac_A)
+Bacq1_BacS.Cr <- lme(ln.Bac_q1 ~ Bac_Ampti, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
+Bacq1_BacS.Season <- lme(ln.Bac_q1 ~ Bac_Ampti, random = ~ 1 | Season, data = HNF_Bac_A, method = "ML")
 AIC(Bacq1_BacS.0, Bacq1_BacS.Cr, Bacq1_BacS.Season)
 summary(Bacq1_BacS.Cr)
 performance::r2(Bacq1_BacS.Cr)
+
+### Backward selection
+BacS_HNFq1.Cr <- lme(Bac_Ampti ~ ln.HNF_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
+summary(BacS_HNFq1.Cr)
+BacS_HNFq1.Cr_1 <- lme(Bac_Ampti ~ ln.HNF_q1 + ln.Temp + ln.PAR + ln.DIN + ln.PO3, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
+summary(BacS_HNFq1.Cr_1)
+BacS_HNFq1.Cr_2 <- lme(Bac_Ampti ~ ln.HNF_q1 + ln.Temp + ln.PAR + ln.PO3, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
+summary(BacS_HNFq1.Cr_2)
+BacS_HNFq1.Cr_3 <- lme(Bac_Ampti ~ ln.HNF_q1 + ln.Temp + ln.PAR, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
+summary(BacS_HNFq1.Cr_3)
+BacS_HNFq1.Cr_4 <- lme(Bac_Ampti ~ ln.HNF_q1 + ln.Temp, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
+summary(BacS_HNFq1.Cr_4)
+BacS_HNFq1.Cr_5 <- lme(Bac_Ampti ~ ln.HNF_q1, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
+summary(BacS_HNFq1.Cr_5)
+
+Bacq1_BacS.Cr <- lme(ln.Bac_q1 ~ Bac_Ampti + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
+summary(Bacq1_BacS.Cr)
+Bacq1_BacS.Cr_1 <- lme(ln.Bac_q1 ~ Bac_Ampti + ln.Temp + ln.Sal + ln.PAR + ln.DIN, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
+summary(Bacq1_BacS.Cr_1)
+Bacq1_BacS.Cr_2 <- lme(ln.Bac_q1 ~ Bac_Ampti + ln.Sal + ln.PAR + ln.DIN, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
+summary(Bacq1_BacS.Cr_2)
+Bacq1_BacS.Cr_3 <- lme(ln.Bac_q1 ~ Bac_Ampti + ln.Sal + ln.DIN, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
+summary(Bacq1_BacS.Cr_3)
+Bacq1_BacS.Cr_4 <- lme(ln.Bac_q1 ~ Bac_Ampti + ln.Sal, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
+summary(Bacq1_BacS.Cr_4)
 
 ### plotting
 p_HNFq1_BacSelect <- HNF_Bac_A %>% 
@@ -363,8 +388,8 @@ p_HNFq1_BacSelect <- HNF_Bac_A %>%
     scale_y_reverse() + 
     labs(x = expression(atop("Log[ HNF Shannon diversity ]", " ")),
          y = expression(atop("Deterministic assembly processes", "(\U03B1MPTI) of Bacteria community"))) + 
-    annotate("text", x = 0.8, y = 0.25, label = "paste( \"conditional \", italic(R) ^ 2, \" = 0.54\")", parse = TRUE, size = 12) + 
-    annotate("text", x = 0.8, y = -0.06, label = "paste( italic(P), \" = 0.03\")", parse = TRUE, size = 12) + 
+    annotate("text", x = 0.8, y = 0.25, label = "paste( \"conditional \", italic(R) ^ 2, \" = 0.16\")", parse = TRUE, size = 12) + 
+    annotate("text", x = 0.8, y = -0.06, label = "paste( italic(P), \" = 0.01\")", parse = TRUE, size = 12) + 
     theme(
       plot.margin = margin(t = 2, l = 1.2, r = 0.5, unit = "cm"),
       panel.background = element_blank(),
@@ -385,8 +410,8 @@ p_BacSelect_Bacq1 <- HNF_Bac_A %>%
     scale_x_reverse() + 
     labs(x = expression(atop("Deterministic assembly processes", "(\U03B1MPTI) of Bacteria community ")),
          y = expression(atop("Log[ Bacterial Shannon diversity ]", "" ))) + 
-    annotate("text", x = -0.33, y = 2.35, label = "paste( \"conditional \", italic(R) ^ 2, \" = 0.2\")", parse = TRUE, size = 12) + 
-    annotate("text", x = -0.33, y = 2.5, label = "paste( italic(P), \" = 0.0002\")", parse = TRUE, size = 12)  + 
+    annotate("text", x = -0.33, y = 2.35, label = "paste( \"conditional \", italic(R) ^ 2, \" = 0.51\")", parse = TRUE, size = 12) + 
+    annotate("text", x = -0.33, y = 2.5, label = "paste( italic(P), \" = 0.0001\")", parse = TRUE, size = 12)  + 
     theme(
       plot.margin = margin(t = 2, l = 1.6, r = 0.5, unit = "cm"),
       panel.background = element_blank(),
@@ -413,19 +438,49 @@ ggsave(p_HNFq1_BacSelect_Bacq1, file = "D:/Manuscripts/PdPy_Div_MS/ms_Figs/Fig3_
 
 ##### Bacq1 -> HNF selection -> HNFq1 ##########
 ### linear model testing
-HNFS_Bacq1.0 <- lm(HNF_Ampti ~ ln.Bac_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, data = HNF_Bac_A)
-HNFS_Bacq1.Cr <- lme(HNF_Ampti ~ ln.Bac_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
-HNFS_Bacq1.Season <- lme(HNF_Ampti ~ ln.Bac_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, random = ~ 1 | Season, data = HNF_Bac_A, method = "ML")
+HNFS_Bacq1.0 <- lm(HNF_Ampti ~ ln.Bac_q1, data = HNF_Bac_A)
+HNFS_Bacq1.Cr <- lme(HNF_Ampti ~ ln.Bac_q1, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
+HNFS_Bacq1.Season <- lme(HNF_Ampti ~ ln.Bac_q1, random = ~ 1 | Season, data = HNF_Bac_A, method = "ML")
 AIC(HNFS_Bacq1.0, HNFS_Bacq1.Cr, HNFS_Bacq1.Season)
 summary(HNFS_Bacq1.Cr)
 performance::r2(HNFS_Bacq1.Cr)
 
-HNFq1_HNFS.0 <- lm(ln.HNF_q1 ~ HNF_Ampti + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, data = HNF_Bac_A)
-HNFq1_HNFS.Cr <- lme(ln.HNF_q1 ~ HNF_Ampti + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
-HNFq1_HNFS.Season <- lme(ln.HNF_q1 ~ HNF_Ampti + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, random = ~ 1 | Season, data = HNF_Bac_A, method = "ML")
+HNFq1_HNFS.0 <- lm(ln.HNF_q1 ~ HNF_Ampti, data = HNF_Bac_A)
+HNFq1_HNFS.Cr <- lme(ln.HNF_q1 ~ HNF_Ampti, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
+HNFq1_HNFS.Season <- lme(ln.HNF_q1 ~ HNF_Ampti, random = ~ 1 | Season, data = HNF_Bac_A, method = "ML")
 AIC(HNFq1_HNFS.0, HNFq1_HNFS.Cr, HNFq1_HNFS.Season)
 summary(HNFq1_HNFS.Cr)
 performance::r2(HNFq1_HNFS.Cr)
+
+### Backward selection
+HNFS_Bacq1.Cr <- lme(HNF_Ampti ~ ln.Bac_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
+summary(HNFS_Bacq1.Cr)
+HNFS_Bacq1.Cr_1 <- lme(HNF_Ampti ~ ln.Bac_q1 + ln.Temp + ln.PAR + ln.DIN + ln.PO3, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
+summary(HNFS_Bacq1.Cr_1)
+HNFS_Bacq1.Cr_2 <- lme(HNF_Ampti ~ ln.Bac_q1 + ln.Temp + ln.DIN + ln.PO3, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
+summary(HNFS_Bacq1.Cr_2)
+HNFS_Bacq1.Cr_3 <- lme(HNF_Ampti ~ ln.Bac_q1 + ln.DIN + ln.PO3, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
+summary(HNFS_Bacq1.Cr_3)
+HNFS_Bacq1.Cr_4 <- lme(HNF_Ampti ~ ln.Bac_q1 + ln.PO3, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
+summary(HNFS_Bacq1.Cr_4)
+HNFS_Bacq1.Cr_5 <- lme(HNF_Ampti ~ ln.Bac_q1, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
+summary(HNFS_Bacq1.Cr_5)
+
+
+HNFq1_HNFS.Cr <- lme(ln.HNF_q1 ~ HNF_Ampti + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
+summary(HNFq1_HNFS.Cr)
+HNFq1_HNFS.Cr_1 <- lme(ln.HNF_q1 ~ HNF_Ampti + ln.Sal + ln.PAR + ln.DIN + ln.PO3, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
+summary(HNFq1_HNFS.Cr_1)
+HNFq1_HNFS.Cr_2 <- lme(ln.HNF_q1 ~ HNF_Ampti + ln.Sal + ln.PAR + ln.DIN, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
+summary(HNFq1_HNFS.Cr_2)
+HNFq1_HNFS.Cr_3 <- lme(ln.HNF_q1 ~ HNF_Ampti + ln.Sal + ln.PAR, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
+summary(HNFq1_HNFS.Cr_3)
+HNFq1_HNFS.Cr_4 <- lme(ln.HNF_q1 ~ HNF_Ampti + ln.PAR, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
+summary(HNFq1_HNFS.Cr_4)
+HNFq1_HNFS.Cr_5 <- lme(ln.HNF_q1 ~ HNF_Ampti, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
+summary(HNFq1_HNFS.Cr_5)
+
+
 
 ### plotting
 p_Bacq1_HNFSelect <- HNF_Bac_A %>% 
@@ -437,8 +492,8 @@ p_Bacq1_HNFSelect <- HNF_Bac_A %>%
   scale_colour_viridis(alpha = 1, discrete=TRUE) + 
   labs(x = expression(atop("Log[ Bacterial Shannon diversity ]", " ")),
        y = expression(atop("Deterministic assembly processes", "(\U03B1MPTI) of HNF community "))) + 
-  annotate("text", x = 2.61, y = -6.4, label = "paste( \"conditional \", italic(R) ^ 2, \" = 0.36\")", parse = TRUE, size = 12) + 
-  annotate("text", x = 2.61, y = -6, label = "paste( italic(P), \" = 0.4\")", parse = TRUE, size = 12) + 
+  annotate("text", x = 2.61, y = -6.4, label = "paste( \"conditional \", italic(R) ^ 2, \" = 0.25\")", parse = TRUE, size = 12) + 
+  annotate("text", x = 2.61, y = -6, label = "paste( italic(P), \" = 0.29\")", parse = TRUE, size = 12) + 
   theme(
     plot.margin = margin(t = 2, l = 1.2, r = 0.5, unit = "cm"),
     panel.background = element_blank(),
@@ -459,8 +514,8 @@ p_HNFSelect_HNFq1 <- HNF_Bac_A %>%
   scale_x_reverse() + 
   labs(x = bquote(atop("Deterministic assembly processes", "(\U03B1MPTI) of HNF community ")),
        y = bquote(atop("Log[ HNF Shannon diversity ]", " " ))) + 
-  annotate("text", x = -0.93, y = 0.42, label = "paste( \"conditional \", italic(R) ^ 2, \" = 0.42\")", parse = TRUE, size = 12) + 
-  annotate("text", x = -0.93, y = 0.62, label = "paste( italic(P), \" = 0.06\")", parse = TRUE, size = 12) + 
+  annotate("text", x = -0.93, y = 0.42, label = "paste( \"conditional \", italic(R) ^ 2, \" = 0.33\")", parse = TRUE, size = 12) + 
+  annotate("text", x = -0.93, y = 0.62, label = "paste( italic(P), \" = 0.09\")", parse = TRUE, size = 12) + 
   theme(
     plot.margin = margin(t = 2, l = 1.6, r = 0.5, unit = "cm"),
     panel.background = element_blank(),
