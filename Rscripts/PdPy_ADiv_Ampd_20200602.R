@@ -251,7 +251,7 @@ Bac_A <- iNEXT(t(Bac_comm), q = 0, datatype = "abundance", size = max(colSums(Ba
   rename(Bac_q0 = "Species richness", Bac_q1 = "Shannon diversity", Bac_q2 = "Simpson diversity") %>%
   mutate(Site = rownames(Bac_comm))
 
-HNF_A <- iNEXT(t(HNF_comm), q = 0, datatype = "abundance", size = max(colSums(HNF_comm)) + 100000)$AsyEst %>% 
+HNF_A <- iNEXT(t(HNF_comm), q = 0, datatype = "abundance", size = max(colSums(HNF_comm)))$AsyEst %>% 
   select(Site, Diversity, Estimator) %>% 
   spread(Diversity, Estimator) %>%
   rename(HNF_q0 = "Species richness", HNF_q1 = "Shannon diversity", HNF_q2 = "Simpson diversity") %>%
@@ -300,7 +300,7 @@ HNFq1_Bacq1.St <- lme(ln.HNF_q1 ~ ln.Bac_q1, random = ~ 1 | Station, data = HNF_
 HNFq1_Bacq1.Cr <- lme(ln.HNF_q1 ~ ln.Bac_q1, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
 HNFq1_Bacq1.Season <- lme(ln.HNF_q1 ~ ln.Bac_q1, random = ~ 1 | Season, data = HNF_Bac_A, method = "ML")
 AIC(HNFq1_Bacq1.0, HNFq1_Bacq1.St, HNFq1_Bacq1.Cr, HNFq1_Bacq1.Season)
-summary(HNFq1_Bacq1.Cr)
+summary(HNFq1_Bacq1.0)
 performance::r2(HNFq1_Bacq1.Cr)
 
 Hq1_Bq1.Cr <- lme(ln.HNF_q1 ~ ln.Bac_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
@@ -327,7 +327,7 @@ p_HNFq1_Bacq1 <- HNF_Bac_A %>%
       legend.text = element_text(size = 24)
     )
 p_HNFq1_Bacq1
-ggsave(p_HNFq1_Bacq1, file = "D:/Manuscripts/PdPy_Div_MS/ms_Figs/Fig2_HNFq1_Bacq1.png",
+ggsave(p_HNFq1_Bacq1, file = "D:GDrive/Manuscript/PdPy_Div_MS/ms_Figs/Fig2_HNFq1_Bacq1_1.png",
        dpi = 600, width = 34, height = 28, units = "cm")
 ###############################################################################################
 ##### Simple HNF and Bac alppha diversity relationship  #######################################
