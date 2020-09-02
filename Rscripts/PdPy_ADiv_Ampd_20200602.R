@@ -200,11 +200,12 @@ fit_fun <- function(data, mapping, ...){
 ##### Loading data ############################################################################
 ###############################################################################################
 Bac_comm <- as.data.frame(t(read.table(
-  file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/sECS_4/sECS_Bac_seqXst_PR2_4.csv", 
+  #file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/sECS_4/sECS_Bac_seqXst_PR2_4.csv", 
+  file = "D:/GDrive/Research/PdPy_Div/data/sECS_4/sECS_Bac_seqXst_PR2_4_1.csv", 
   sep = ",", header = TRUE, row.names = 1, stringsAsFactors = FALSE, fill = TRUE)))
 Bac_ra_comm <- Bac_comm / rowSums(Bac_comm)
 Bac_phylo<- read.tree(
-  file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/sECS_4/sECS_Bac_treeNJ_PR2_4.tree")
+  file = "D:/GDrive/Research/PdPy_Div/data/sECS_4/sECS_Bac_treeNJ_PR2_4_1.tree")
 
 HNF_comm <- as.data.frame(t(read.table(
   file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/sECS_4/sECS_HNF_seqXst_PR2_4.csv", 
@@ -221,7 +222,8 @@ Vars <- read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/m
 ###############################################################################################
 ##### Loading nulls ###########################################################################
 ###############################################################################################
-Bac_Ampd_null <- read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/Anulls_PR2_4/Bac_Ampd_null_4.csv", 
+Bac_Ampd_null <- read.table(file = "D:/GDrive/Research/PdPy_Div/Anulls_PR2_4/Bac_Ampd_null_4_1.csv",
+                            #file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/Anulls_PR2_4/Bac_Ampd_null_4.csv", 
                             sep = ",", header = TRUE, stringsAsFactors = FALSE, fill = TRUE)
 Bac_Ampd <- Bac_Ampd_null %>% 
   select(c(obs, Site)) %>%
@@ -316,8 +318,8 @@ p_HNFq1_Bacq1 <- HNF_Bac_A %>%
     #geom_smooth(method = mgcv::gam, formula = y ~ s(x), se = TRUE, color = "red", linetype = "dotted") + 
     labs(x = expression("Log[ Bacteria Shannon diversity ]"),
          y = expression("Log[ HNF Shannon diversity ]")) + 
-    annotate("text", x = 2.5, y = 3.6, label = "paste( \"conditional \", italic(R) ^ 2, \" = 0.44\")", parse = TRUE, size = 6) + 
-    annotate("text", x = 2.5, y = 3.8, label = "paste( italic(P), \" = 0.006\")", parse = TRUE, size = 6) +
+    annotate("text", x = 2.8, y = 3.6, label = "paste( \"conditional \", italic(R) ^ 2, \" = 0.27\")", parse = TRUE, size = 6) + 
+    annotate("text", x = 2.8, y = 3.8, label = "paste( italic(P), \" = 0.02\")", parse = TRUE, size = 6) +
     theme(
       panel.background = element_blank(),
       axis.line = element_line(colour = "black"),
@@ -327,7 +329,7 @@ p_HNFq1_Bacq1 <- HNF_Bac_A %>%
       legend.text = element_text(size = 24)
     )
 p_HNFq1_Bacq1
-ggsave(p_HNFq1_Bacq1, file = "D:GDrive/Manuscript/PdPy_Div_MS/ms_Figs/Fig2_HNFq1_Bacq1_1.png",
+ggsave(p_HNFq1_Bacq1, file = "D:GDrive/Manuscript/PdPy_Div_MS/ms_Figs/Fig2_HNFq1_Bacq1.png",
        dpi = 600, width = 34, height = 28, units = "cm")
 ###############################################################################################
 ##### Simple HNF and Bac alppha diversity relationship  #######################################
@@ -355,24 +357,24 @@ performance::r2(Bacq1_BacS.Cr)
 ### Backward selection
 BacS_HNFq1.Cr <- lme(Bac_Ampti ~ ln.HNF_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
 summary(BacS_HNFq1.Cr)
-BacS_HNFq1.Cr_1 <- lme(Bac_Ampti ~ ln.HNF_q1 + ln.Temp + ln.PAR + ln.DIN + ln.PO3, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
+BacS_HNFq1.Cr_1 <- lme(Bac_Ampti ~ ln.HNF_q1 + ln.Sal + ln.PAR + ln.DIN + ln.PO3, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
 summary(BacS_HNFq1.Cr_1)
-BacS_HNFq1.Cr_2 <- lme(Bac_Ampti ~ ln.HNF_q1 + ln.Temp + ln.PAR + ln.PO3, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
+BacS_HNFq1.Cr_2 <- lme(Bac_Ampti ~ ln.HNF_q1 + ln.PAR + ln.DIN + ln.PO3, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
 summary(BacS_HNFq1.Cr_2)
-BacS_HNFq1.Cr_3 <- lme(Bac_Ampti ~ ln.HNF_q1 + ln.Temp + ln.PAR, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
+BacS_HNFq1.Cr_3 <- lme(Bac_Ampti ~ ln.HNF_q1 + ln.PAR + ln.PO3, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
 summary(BacS_HNFq1.Cr_3)
-BacS_HNFq1.Cr_4 <- lme(Bac_Ampti ~ ln.HNF_q1 + ln.Temp, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
+BacS_HNFq1.Cr_4 <- lme(Bac_Ampti ~ ln.HNF_q1 + ln.PAR, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
 summary(BacS_HNFq1.Cr_4)
-BacS_HNFq1.Cr_5 <- lme(Bac_Ampti ~ ln.HNF_q1, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
-summary(BacS_HNFq1.Cr_5)
+BacS_HNFq1.Cr_4 <- lme(Bac_Ampti ~ ln.PAR, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
+summary(BacS_HNFq1.Cr_4)
 
 Bacq1_BacS.Cr <- lme(ln.Bac_q1 ~ Bac_Ampti + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
 summary(Bacq1_BacS.Cr)
-Bacq1_BacS.Cr_1 <- lme(ln.Bac_q1 ~ Bac_Ampti + ln.Temp + ln.Sal + ln.PAR + ln.DIN, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
+Bacq1_BacS.Cr_1 <- lme(ln.Bac_q1 ~ Bac_Ampti + ln.Temp + ln.Sal + ln.DIN + ln.PO3, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
 summary(Bacq1_BacS.Cr_1)
-Bacq1_BacS.Cr_2 <- lme(ln.Bac_q1 ~ Bac_Ampti + ln.Sal + ln.PAR + ln.DIN, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
+Bacq1_BacS.Cr_2 <- lme(ln.Bac_q1 ~ Bac_Ampti + ln.Temp + ln.Sal + ln.PO3, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
 summary(Bacq1_BacS.Cr_2)
-Bacq1_BacS.Cr_3 <- lme(ln.Bac_q1 ~ Bac_Ampti + ln.Sal + ln.DIN, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
+Bacq1_BacS.Cr_3 <- lme(ln.Bac_q1 ~ Bac_Ampti + ln.Temp + ln.Sal, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
 summary(Bacq1_BacS.Cr_3)
 Bacq1_BacS.Cr_4 <- lme(ln.Bac_q1 ~ Bac_Ampti + ln.Sal, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
 summary(Bacq1_BacS.Cr_4)
@@ -382,14 +384,14 @@ p_HNFq1_BacSelect <- HNF_Bac_A %>%
   select(ln.Bac_q1, ln.HNF_q1, Bac_Ampti, HNF_Ampti, Cruise) %>%
   ggplot(aes(x = ln.HNF_q1, y = Bac_Ampti)) + 
     geom_point(aes(color = Cruise), size = 8) + 
-    geom_smooth(formula = y ~ x, method = "lm", se = TRUE, linetype = "solid") + 
+    geom_smooth(formula = y ~ x, method = "lm", se = TRUE, linetype = "dashed") + 
     #geom_smooth(method = mgcv::gam, formula = y ~ s(x), se = TRUE, color = "red", linetype = "solid") + 
     scale_colour_viridis(alpha = 1, discrete=TRUE) + 
     scale_y_reverse() + 
     labs(x = expression(atop("Log[ HNF Shannon diversity ]", " ")),
          y = expression(atop("Deterministic assembly processes", "(\U03B1MPTI) of Bacteria community"))) + 
-    annotate("text", x = 0.8, y = 0.25, label = "paste( \"conditional \", italic(R) ^ 2, \" = 0.16\")", parse = TRUE, size = 12) + 
-    annotate("text", x = 0.8, y = -0.06, label = "paste( italic(P), \" = 0.01\")", parse = TRUE, size = 12) + 
+    annotate("text", x = 0.8, y = 2.2, label = "paste( \"conditional \", italic(R) ^ 2, \" = 0.14\")", parse = TRUE, size = 12) + 
+    annotate("text", x = 0.8, y = 1.85, label = "paste( italic(P), \" = 0.1\")", parse = TRUE, size = 12) + 
     theme(
       plot.margin = margin(t = 2, l = 1.2, r = 0.5, unit = "cm"),
       panel.background = element_blank(),
@@ -410,8 +412,8 @@ p_BacSelect_Bacq1 <- HNF_Bac_A %>%
     scale_x_reverse() + 
     labs(x = expression(atop("Deterministic assembly processes", "(\U03B1MPTI) of Bacteria community ")),
          y = expression(atop("Log[ Bacterial Shannon diversity ]", "" ))) + 
-    annotate("text", x = -0.33, y = 2.35, label = "paste( \"conditional \", italic(R) ^ 2, \" = 0.51\")", parse = TRUE, size = 12) + 
-    annotate("text", x = -0.33, y = 2.5, label = "paste( italic(P), \" = 0.0001\")", parse = TRUE, size = 12)  + 
+    annotate("text", x = 0.25, y = 2.6, label = "paste( \"conditional \", italic(R) ^ 2, \" = 0.51\")", parse = TRUE, size = 12) + 
+    annotate("text", x = 0.2, y = 2.75, label = "paste( italic(P), \" = 0.0001\")", parse = TRUE, size = 12)  + 
     theme(
       plot.margin = margin(t = 2, l = 1.6, r = 0.5, unit = "cm"),
       panel.background = element_blank(),
@@ -432,7 +434,7 @@ p_HNFq1_BacSelect_Bacq1 <- plot_grid(
             ncol = 1, labels = "AUTO", label_size = 24),
   legend, rel_widths = c(3, .4))
 p_HNFq1_BacSelect_Bacq1
-ggsave(p_HNFq1_BacSelect_Bacq1, file = "D:/Manuscripts/PdPy_Div_MS/ms_Figs/Fig3_HNFq1_BacAmpd_Bacq1.png",
+ggsave(p_HNFq1_BacSelect_Bacq1, file = "D:GDrive/Manuscript/PdPy_Div_MS/ms_Figs/Fig3_HNFq1_BacAmpd_Bacq1.png",
        dpi = 600, width = 50, height = 68, units = "cm")
 ##### HNFq1 -> Bac selection -> Bacq1 ##########
 

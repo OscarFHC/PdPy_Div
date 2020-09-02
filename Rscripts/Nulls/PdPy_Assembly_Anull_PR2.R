@@ -259,7 +259,7 @@ write.table(cbind(q0coef, q1coef, q2coef), file = "D:/Research/PdPy_Div/Anulls_P
 ini <- Sys.time()
 numCores <- detectCores()
 numCores
-cl <- makeCluster(numCores - 2)
+cl <- makeCluster(numCores - 4)
 
 clusterEvalQ(cl, {
   library(vegan)
@@ -286,7 +286,7 @@ Sys.time() - ini
 BacPhylo_null <- data.frame(matrix(unlist(test), ncol = length(test), byrow = FALSE)) %>%
   cbind(row.names(Bac_comm)) %>%
   rename(obs = X1000)
-write.table(BacPhylo_null, file = "/home/zac422/Desktop/OSCAR/Nulls/Bac_Ampd_null_4.csv", 
+write.table(BacPhylo_null, file = "D:/GDrive/Research/PdPy_Div/Anulls_PR2_4/Bac_Ampd_null_4_1.csv", 
             sep = ",", col.names = TRUE, row.names = FALSE)
 stopCluster(cl)
 ##### Bacteria phylogenetic turnover ################################################
