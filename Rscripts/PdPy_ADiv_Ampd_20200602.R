@@ -365,8 +365,6 @@ BacS_HNFq1.Cr_3 <- lme(Bac_Ampti ~ ln.HNF_q1 + ln.PAR + ln.PO3, random = ~ 1 | C
 summary(BacS_HNFq1.Cr_3)
 BacS_HNFq1.Cr_4 <- lme(Bac_Ampti ~ ln.HNF_q1 + ln.PAR, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
 summary(BacS_HNFq1.Cr_4)
-BacS_HNFq1.Cr_4 <- lme(Bac_Ampti ~ ln.PAR, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
-summary(BacS_HNFq1.Cr_4)
 
 Bacq1_BacS.Cr <- lme(ln.Bac_q1 ~ Bac_Ampti + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
 summary(Bacq1_BacS.Cr)
