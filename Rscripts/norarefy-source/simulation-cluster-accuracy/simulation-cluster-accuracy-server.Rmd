@@ -1,5 +1,3 @@
-`r opts_chunk$set(cache=FALSE, fig.width=10, message=FALSE, warning=FALSE)`
-<link href="http://joey711.github.com/phyloseq/markdown.css" rel="stylesheet"></link>
 
 
 Simulation by Random Subsampling, Comparison of Normalization
@@ -15,6 +13,12 @@ rm(list=ls())
 ```
 
 ```{r check-install-load-packages, warning=FALSE, message=FALSE}
+# To install packages developed by Bioconductor, like phyloseq, DESeq
+# if (!requireNamespace("BiocManager", quietly = TRUE))
+#     install.packages("BiocManager")
+# 
+# BiocManager::install("phyloseq")
+
 # The required package list:
 reqpkg = c("edgeR", "PoiClaClu", "phyloseq", "DESeq", 
            "foreach", "doParallel",
