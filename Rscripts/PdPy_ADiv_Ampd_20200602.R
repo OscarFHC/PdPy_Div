@@ -327,10 +327,8 @@ p_HNFq1_Bacq1 <- HNF_Bac_A %>%
       legend.title = element_text(size = 24),
       legend.text = element_text(size = 24)
     )
-pdf("D:Dropbox/Manuscripts/PdPy_Div_MS/ms_Figs/Fig2_HNFq1_Bacq1_1.pdf",
-    colormodel = "cmyk", width = 34/2.54, height = 28/2.54)
 p_HNFq1_Bacq1
-ggsave(p_HNFq1_Bacq1, file = "D:Dropbox/Manuscript/PdPy_Div_MS/ms_Figs/Fig2_HNFq1_Bacq1.tiff",
+ggsave(p_HNFq1_Bacq1, file = "D:Dropbox/Manuscripts/PdPy_Div_MS/ms_Figs/Fig2_HNFq1_Bacq1.png",
        dpi = 600, width = 34, height = 28, units = "cm")
 ###############################################################################################
 ##### Simple HNF and Bac alppha diversity relationship  #######################################
@@ -387,13 +385,15 @@ p_HNFq1_BacSelect <- HNF_Bac_A %>%
     #geom_smooth(method = mgcv::gam, formula = y ~ s(x), se = TRUE, color = "red", linetype = "solid") + 
     scale_colour_viridis(alpha = 1, discrete=TRUE) + 
     scale_y_reverse() + 
-    labs(x = expression(atop("Log[ HNF Shannon diversity ]", " ")),
+    labs(title = "Figure 3",
+         x = expression(atop("Log[ HNF Shannon diversity ]", " ")),
          y = expression(atop("Deterministic assembly processes", "(\U03B1MPTI) of Bacteria community"))) + 
     annotate("text", x = 0.8, y = 2.2, label = "paste( \"conditional \", italic(R) ^ 2, \" = 0.14\")", parse = TRUE, size = 12) + 
     annotate("text", x = 0.8, y = 1.85, label = "paste( italic(P), \" = 0.1\")", parse = TRUE, size = 12) + 
     theme(
       plot.margin = margin(t = 2, l = 1.2, r = 0.5, unit = "cm"),
       panel.background = element_blank(),
+      plot.title = element_text(size = 40),
       axis.line = element_line(colour = "black"),
       axis.title.x = element_text(size = 40),
       axis.title.y = element_text(size = 40),
@@ -433,7 +433,7 @@ p_HNFq1_BacSelect_Bacq1 <- plot_grid(
             ncol = 1, labels = "AUTO", label_size = 24),
   legend, rel_widths = c(3, .4))
 p_HNFq1_BacSelect_Bacq1
-ggsave(p_HNFq1_BacSelect_Bacq1, file = "D:GDrive/Manuscript/PdPy_Div_MS/ms_Figs/Fig3_HNFq1_BacAmpd_Bacq1.png",
+ggsave(p_HNFq1_BacSelect_Bacq1, file = "D:Dropbox/Manuscripts/PdPy_Div_MS/ms_Figs/Fig3_HNFq1_BacAmpd_Bacq1.tiff",
        dpi = 600, width = 50, height = 68, units = "cm")
 ##### HNFq1 -> Bac selection -> Bacq1 ##########
 
@@ -491,13 +491,15 @@ p_Bacq1_HNFSelect <- HNF_Bac_A %>%
   geom_smooth(formula = y ~ x, method = "lm", se = TRUE, linetype = "dashed") + 
   #geom_smooth(method = mgcv::gam, formula = y ~ s(x), se = TRUE, color = "red", linetype = "dotted") + 
   scale_colour_viridis(alpha = 1, discrete=TRUE) + 
-  labs(x = expression(atop("Log[ Bacterial Shannon diversity ]", " ")),
+  labs(title = "Figure 4",
+       x = expression(atop("Log[ Bacterial Shannon diversity ]", " ")),
        y = expression(atop("Deterministic assembly processes", "(\U03B1MPTI) of HNF community "))) + 
   annotate("text", x = 2.61, y = -6.4, label = "paste( \"conditional \", italic(R) ^ 2, \" = 0.25\")", parse = TRUE, size = 12) + 
   annotate("text", x = 2.61, y = -6, label = "paste( italic(P), \" = 0.29\")", parse = TRUE, size = 12) + 
   theme(
     plot.margin = margin(t = 2, l = 1.2, r = 0.5, unit = "cm"),
     panel.background = element_blank(),
+    plot.title = element_text(size = 40),
     axis.line = element_line(colour = "black"),
     axis.title.x = element_text(size = 40),
     axis.title.y = element_text(size = 40),
@@ -537,7 +539,7 @@ p_Bacq1_HNFSelect_HNFq1 <- plot_grid(
             ncol = 1, labels = "AUTO", label_size = 24),
   legend, rel_widths = c(3, .4))
 p_Bacq1_HNFSelect_HNFq1
-ggsave(p_Bacq1_HNFSelect_HNFq1, file = "D:/Manuscripts/PdPy_Div_MS/ms_Figs/Fig4_Bacq1_HNFAmpd_HNFq1.png",
+ggsave(p_Bacq1_HNFSelect_HNFq1, file = "D:Dropbox/Manuscripts/PdPy_Div_MS/ms_Figs/Fig4_Bacq1_HNFAmpd_HNFq1.tiff",
        dpi = 600, width = 50, height = 68, units = "cm")
 ##### Bacq1 -> HNF selection -> HNFq1 ##########
 
