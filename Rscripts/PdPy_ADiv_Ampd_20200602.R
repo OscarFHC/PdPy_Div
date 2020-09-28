@@ -200,12 +200,11 @@ fit_fun <- function(data, mapping, ...){
 ##### Loading data ############################################################################
 ###############################################################################################
 Bac_comm <- as.data.frame(t(read.table(
-  #file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/sECS_4/sECS_Bac_seqXst_PR2_4.csv", 
-  file = "D:/GDrive/Research/PdPy_Div/data/sECS_4/sECS_Bac_seqXst_PR2_4_1.csv", 
+  file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/sECS_4/sECS_Bac_seqXst_PR2_4.csv", 
   sep = ",", header = TRUE, row.names = 1, stringsAsFactors = FALSE, fill = TRUE)))
 Bac_ra_comm <- Bac_comm / rowSums(Bac_comm)
 Bac_phylo<- read.tree(
-  file = "D:/GDrive/Research/PdPy_Div/data/sECS_4/sECS_Bac_treeNJ_PR2_4_1.tree")
+  file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/sECS_4/sECS_Bac_treeNJ_PR2_4.tree")
 
 HNF_comm <- as.data.frame(t(read.table(
   file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/sECS_4/sECS_HNF_seqXst_PR2_4.csv", 
@@ -222,8 +221,8 @@ Vars <- read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/m
 ###############################################################################################
 ##### Loading nulls ###########################################################################
 ###############################################################################################
-Bac_Ampd_null <- read.table(file = "D:/GDrive/Research/PdPy_Div/Anulls_PR2_4/Bac_Ampd_null_4_1.csv",
-                            #file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/Anulls_PR2_4/Bac_Ampd_null_4.csv", 
+Bac_Ampd_null <- read.table(#file = "D:/GDrive/Research/PdPy_Div/Anulls_PR2_4/Bac_Ampd_null_4_1.csv",
+                            file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/Anulls_PR2_4/Bac_Ampd_null_4.csv", 
                             sep = ",", header = TRUE, stringsAsFactors = FALSE, fill = TRUE)
 Bac_Ampd <- Bac_Ampd_null %>% 
   select(c(obs, Site)) %>%
@@ -328,8 +327,10 @@ p_HNFq1_Bacq1 <- HNF_Bac_A %>%
       legend.title = element_text(size = 24),
       legend.text = element_text(size = 24)
     )
+pdf("D:Dropbox/Manuscripts/PdPy_Div_MS/ms_Figs/Fig2_HNFq1_Bacq1_1.pdf",
+    colormodel = "cmyk", width = 34/2.54, height = 28/2.54)
 p_HNFq1_Bacq1
-ggsave(p_HNFq1_Bacq1, file = "D:GDrive/Manuscript/PdPy_Div_MS/ms_Figs/Fig2_HNFq1_Bacq1.png",
+ggsave(p_HNFq1_Bacq1, file = "D:Dropbox/Manuscript/PdPy_Div_MS/ms_Figs/Fig2_HNFq1_Bacq1.tiff",
        dpi = 600, width = 34, height = 28, units = "cm")
 ###############################################################################################
 ##### Simple HNF and Bac alppha diversity relationship  #######################################
