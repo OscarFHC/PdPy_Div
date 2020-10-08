@@ -328,7 +328,7 @@ p_HNFq1_Bacq1 <- HNF_Bac_A %>%
       legend.text = element_text(size = 24)
     )
 p_HNFq1_Bacq1
-ggsave(p_HNFq1_Bacq1, file = "D:Dropbox/Manuscripts/PdPy_Div_MS/ms_Figs/Fig2_HNFq1_Bacq1.png",
+ggsave(p_HNFq1_Bacq1, file = "D:Dropbox/Manuscripts/PdPy_Div_MS/ms_Figs/Fig2_HNFq1_Bacq1.pdf",
        dpi = 600, width = 34, height = 28, units = "cm")
 ###############################################################################################
 ##### Simple HNF and Bac alppha diversity relationship  #######################################
