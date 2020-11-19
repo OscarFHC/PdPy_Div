@@ -1,0 +1,17 @@
+variable name, desctiption
+SampleID, cruise station ID of each community
+Cruise, Cruise ID of each community
+Station, Station ID of of each community
+Year, Year when each community is sampled,
+Month, Month when each community is sampled,
+Season, Season when each community is sampled,
+HNF_Biom, Community biomass of heterotrophic nanoflagellate
+Bac_Biom, Community biomass of bacteria
+Temp, Temperature in Celsus
+Sal, Salinaty (PSU; g/kg)
+PAR, Photosynthetic active radiation (W/m2)
+NO2, Nitrate concentration (uM)
+NO3, Nitrite concentration (uM)
+DIN, All dissolved nitrogen concentration (uM)
+PO3, All dissolved phosphorus concentration (uM)
+Chla, Chlorophyll a concentration (mg/m3)

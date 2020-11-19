@@ -1,0 +1,6 @@
+file name, desctiption
+sECS_Bac_seqXst_PR2_4.csv, Bacteria community matrix in south East China Sea in sequence by station form
+sECS_HNF_seqXst_PR2_4.csv, Heterotrophic nanoflagellate community matrix in south East China Sea in sequence by station form
+sECS_Bac_treeNJ_PR2_4.tree, Phylogeny of bacteria community matrix in south East China Sea
+sECS_HNF_treeNJ_PR2_4.tree, Phylogeny of Heterotrophic nanoflagellate community matrix in south East China Sea
+sECS_Vars.csv, Environmental variables of each cruise station
