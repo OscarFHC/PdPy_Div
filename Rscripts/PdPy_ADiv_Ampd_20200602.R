@@ -174,7 +174,7 @@ cor_fun <- function(data, mapping, method="pearson", ndp=2, sz=5, stars=TRUE, ..
   lb.size <- 6#sz* abs(est) 
   
   if(stars){
-    stars <- c("***", "**", "*", "")[findInterval(corr$p.value, c(0, 0.001, 0.01, 0.05, 1))]
+    stars <- c("*", "")[findInterval(corr$p.value, c(0, 0.1, 1))]
     lbl <- paste0(round(est, ndp), stars)
   }else{
     lbl <- round(est, ndp)
@@ -186,11 +186,21 @@ cor_fun <- function(data, mapping, method="pearson", ndp=2, sz=5, stars=TRUE, ..
 }
 
 fit_fun <- function(data, mapping, ...){
+  x <- eval_data_col(data, mapping$x)
+  y <- eval_data_col(data, mapping$y)
+  
   p <- ggplot(data = data, mapping = mapping) + 
-    geom_point() + 
-    geom_smooth(method = loess, fill = "red", color = "red", ...) +
-    geom_smooth(method = lm, fill = "blue", color = "blue", ...)
+    geom_point()
+  
+  if (cor.test(x, y, method = "pearson")$p.value < 0.1){
+    p <- p + 
+      geom_smooth(method = loess, fill = "red", color = "red", ...) +
+      geom_smooth(method = lm, fill = "blue", color = "blue", ...)
+    p
+  }
+  
   p
+  
 }
 ###############################################################################################
 ##### Loading functions #######################################################################
@@ -279,11 +289,257 @@ HNF_Bac_A <- Bac_A %>%
          ln.NO3 = log(NO3 + 0.0001),
          ln.DIN = log(DIN + 0.0001),
          ln.PO3 = log(PO3 + 0.0001), 
-         ln.Chla = log(Chla + 0.00001))
+         ln.Chla = log(Chla + 0.00001),
+         Month = as.character(Month))
 HNF_Bac_A <- as.data.frame(HNF_Bac_A)
 head(HNF_Bac_A)
+
+### Prepare spatial autocorrelation among stations
+
+### Build build Moran's Eigenvector Maps (MEM, Dray, Legendre, and Peres-Neto (2006)) 
+### that are orthogonal vectors maximizing the spatial autocorrelation (measured by Moran's coefficient)
+### Ref: https://cran.r-project.org/web/packages/adespatial/vignettes/tutorial.html#selection-of-swm-and-mem
+library(geodist)
+Bac.raw <- as.data.frame(t(read.table(
+  file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/sECS_4/sECS_Bac_seqXst_PR2_4.csv",
+  sep = ",", header = TRUE, row.names = 1, stringsAsFactors = FALSE, fill = TRUE)))
+Bac.comm <- Bac.raw %>%
+  mutate(Cruise = substr(row.names(Bac.raw), 4, 9),
+         Station = substr(row.names(Bac.raw), 10, 13))
+St_sECS = read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/raw/St_Location.csv",
+                     header = T, fill = T, sep = ",")[1:6, ] %>% select(-Station)
+row.names(St_sECS) <- unique(Vars$Station)
+geo <- as.matrix(geodist(St_sECS, measure = "geodesic")) / 1000 # geographical distance in kilo-meter
+diag(geo) <- NA
+
+Stxy <- as.matrix(St_sECS)
+ 
+Bac.avg <- matrix(0, length(unique(Bac.comm$Station)), ncol(Bac.raw))
+for (i in 1:length(unique(Bac.comm$Station))){
+  Bac.temp <- Bac.comm[Bac.comm$Station == unique(Bac.comm$Station)[i], -which(names(Bac.comm) %in% c("Cruise", "Station"))]
+  Bac.avg[i,] <- colMeans(Bac.temp)
+}
+# 
+# listw.cand <- listw.candidates(coord = coordinates(Stxy), style = "W", nb = "dnear", d1 = 0, d2 = max(geo[which(geo != "NA")]), 
+#                                weight = c("flin", "fup", "fdown"), y_fup = seq(0.1, 1, by = 0.01), y_fdown = seq(1, 10, by = 0.1))
+# listw.sel <- listw.select(Bac.avg, listw.cand, MEM.autocor = "all", method = "FWD", 
+#                           p.adjust = TRUE, nperm = 999)
+# listw.cand[which(listw.sel$candidates$R2Adj == max(listw.sel$candidates$R2Adj))]
+
+#listw.explore()
+
+library(adespatial);library(sp);library(spdep)
+nb <- chooseCN(coordinates(Stxy), type = 5, d1 = 0, d2 = max(geo[which(geo != "NA")]), plot.nb = FALSE)
+distnb <- nbdists(nb, coordinates(Stxy), longlat = TRUE)
+fdist <- lapply(distnb, function(x) 1 / x^0.22)
+lw <- nb2listw(nb, style = 'W', glist = fdist, zero.policy = TRUE)
+mem.select(Bac.avg, lw)
+mem.fup <- mem(lw)
+
+MEM <- data.frame(Spatial.corr = mem.fup$MEM1) %>%
+  mutate(Station = unique(Vars$Station))
+
+HNF_Bac_A <- HNF_Bac_A %>% 
+  left_join(MEM, by = c("Station" = "Station"))
+
 ###############################################################################################
 ##### Preping data ############################################################################
+###############################################################################################
+
+###############################################################################################
+##### Calculating coverage for each station ###################################################
+###############################################################################################
+# Bac.coverage <- read.table(file = "D:/Dropbox/Research/PdPy_Div/data/sECS_4/Bac_coverage_rare.csv", 
+#                            sep = ",", header = TRUE, stringsAsFactors = FALSE, fill = TRUE) %>%
+#   filter(Size == 13129) %>%
+#   mutate(coverage = 1 - (Richness/Size))
+# mean(Bac.coverage$coverage)
+# sd(Bac.coverage$coverage)
+#   
+# HNF.coverage <- read.table(file = "D:/Dropbox/Research/PdPy_Div/data/sECS_4/HNF_coverage_rare.csv", 
+#                            sep = ",", header = TRUE, stringsAsFactors = FALSE, fill = TRUE) %>%
+#   filter(Size == 331) %>%
+#   mutate(coverage = 1 - (Richness/Size))
+# mean(HNF.coverage$coverage)
+# sd(HNF.coverage$coverage)
+###############################################################################################
+##### Calculating coverage for each station ###################################################
+###############################################################################################
+
+
+###############################################################################################
+##### Simple descriptions of environmental variables ##########################################
+###############################################################################################
+Envi.labs <- as_labeller(c(Temp = "Temperature~(degree*C)", 
+                           Sal = "Salinity~(PSU)",
+                           PAR = "Photosynthetically~active~radiation~(W/m^2)",
+                           DIN = "Total~nitrogen~(mu*M)", 
+                           PO3 = "Total~phosphate~(mu*M)", 
+                           Chla = "Chlorophyll~a~concentration~(mg/m^3)",
+                           Bac_q1 = "Bacteria~Shannon~diversity", 
+                           HNF_q1 = "HNF~Shannon~diversity"),
+                           default = label_parsed)
+Envi.p <- HNF_Bac_A %>%
+  select(Season, Cruise, Station, Temp, Sal, PAR, DIN, PO3, Chla, Bac_q1, HNF_q1) %>%
+  gather(key = "Variable", value = "value", -c(Station, Cruise, Season)) %>%
+  mutate(Variable = factor(Variable, levels = c("Temp", "Sal", "DIN", "PO3", "Chla", "PAR", "Bac_q1", "HNF_q1")),
+         Season = factor(Season, levels = c("Spring", "Summer", "Autumn"))) %>%
+  ggplot(aes(x = Station)) + 
+  geom_boxplot(aes(y = value, fill = Season)) +
+  scale_fill_viridis(alpha = 0.8, discrete = TRUE) +
+  facet_wrap(~ Variable, nrow = 3, scales = "free_y",
+             labeller = Envi.labs) + 
+  scale_x_discrete(labels = c("St01" ="1", "St03" = "3", "St05" = "5", "St07" = "7", "St09" = "9", "St11" = "11")) + 
+  labs(y = expression("")) + 
+  theme(
+    panel.background = element_blank(),
+    axis.line = element_line(colour = "black"),
+    text = element_text(size = 20)
+  )
+
+Envi.p
+# ggsave(Envi.p, file = "D:Dropbox/Manuscripts/PdPy_Div_MS/ms_Figs/FigS_Vars.pdf",
+#        dpi = 600, width = 48, height = 32, units = "cm")
+
+summary(lme(Temp ~ Station, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML"))
+anova(lme(Temp ~ Station, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML"))
+
+summary(lme(Sal ~ Station, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML"))
+anova(lme(Sal ~ Station, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML"))
+
+summary(lme(PAR ~ Station, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML"))
+anova(lme(PAR ~ Station, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML"))
+
+summary(lme(DIN ~ Station, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML"))
+anova(lme(DIN ~ Station, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML"))
+
+summary(lme(PO3 ~ Station, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML"))
+anova(lme(PO3 ~ Station, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML"))
+
+summary(lme(Chla ~ Station, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML"))
+anova(lme(Chla ~ Station, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML"))
+
+summary(lme(Bac_q1 ~ Station, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML"))
+anova(lme(Bac_q1 ~ Station, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML"))
+
+summary(lme(HNF_q1 ~ Station, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML"))
+anova(lme(HNF_q1 ~ Station, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML"))
+
+summary(lme(ln.Bac_q1 ~ Station, random = ~ 1 | Cruise, data = HNF_Bac_A[which(HNF_Bac_A$Season == "Spring"),], method = "ML"))
+summary(lme(ln.Bac_q1 ~ Station, random = ~ 1 | Cruise, data = HNF_Bac_A[which(HNF_Bac_A$Season == "Summer"),], method = "ML"))
+summary(lme(ln.Bac_q1 ~ Station, random = ~ 1 | Cruise, data = HNF_Bac_A[which(HNF_Bac_A$Season == "Autumn"),], method = "ML"))
+anova(lme(ln.Bac_q1 ~ Station, random = ~ 1 | Cruise, data = HNF_Bac_A[which(HNF_Bac_A$Season == "Spring"),], method = "ML"))
+anova(lme(ln.Bac_q1 ~ Station, random = ~ 1 | Cruise, data = HNF_Bac_A[which(HNF_Bac_A$Season == "Summer"),], method = "ML"))
+anova(lme(ln.Bac_q1 ~ Station, random = ~ 1 | Cruise, data = HNF_Bac_A[which(HNF_Bac_A$Season == "Autumn"),], method = "ML"))
+
+summary(lme(HNF_q1 ~ Station, random = ~ 1 | Cruise, data = HNF_Bac_A[which(HNF_Bac_A$Season == "Spring"),], method = "ML"))
+summary(lme(HNF_q1 ~ Station, random = ~ 1 | Cruise, data = HNF_Bac_A[which(HNF_Bac_A$Season == "Summer"),], method = "ML"))
+summary(lme(HNF_q1 ~ Station, random = ~ 1 | Cruise, data = HNF_Bac_A[which(HNF_Bac_A$Season == "Autumn"),], method = "ML"))
+anova(lme(ln.HNF_q1 ~ Station, random = ~ 1 | Cruise, data = HNF_Bac_A[which(HNF_Bac_A$Season == "Spring"),], method = "ML"))
+anova(lme(ln.HNF_q1 ~ Station, random = ~ 1 | Cruise, data = HNF_Bac_A[which(HNF_Bac_A$Season == "Summer"),], method = "ML"))
+anova(lme(ln.HNF_q1 ~ Station, random = ~ 1 | Cruise, data = HNF_Bac_A[which(HNF_Bac_A$Season == "Autumn"),], method = "ML"))
+
+
+
+Bio.labs <- as_labeller(c(Bac_q1 = "Bacteria~Shannon~diversity", 
+                          Bac_Biom = "Bacteria~Biomass~(ngC)",
+                          HNF_q1 = "HNF~Shannon~diversity",
+                          HNF_Biom = "HNF~biomass~(ngC)"),
+                          default = label_parsed)
+Bio.p <- HNF_Bac_A %>%
+  select(Season, Station, Bac_q1, Bac_Biom, HNF_q1, HNF_Biom) %>%
+  gather(key = "Variable", value = "value", -c(Station, Season)) %>%
+  mutate(Variable = factor(Variable, levels = c("Bac_q1", "Bac_Biom", "HNF_q1", "HNF_Biom")),
+         Season = factor(Season, levels = c("Spring", "Summer", "Autumn"))) %>%
+  ggplot(aes(x = Station)) + 
+  geom_boxplot(aes(y = value, fill = Season)) +
+  scale_fill_viridis(alpha = 0.8, discrete = TRUE) +
+  facet_wrap(~ Variable, nrow = 2, scales = "free_y",
+             labeller = Bio.labs) + 
+  scale_x_discrete(labels = c("St01" ="1", "St03" = "3", "St05" = "5", "St07" = "7", "St09" = "9", "St11" = "11")) + 
+  labs(y = expression("")) + 
+  theme(
+    panel.background = element_blank(),
+    axis.line = element_line(colour = "black"),
+    text = element_text(size = 20)
+  )
+
+Bio.p
+
+summary(lme(ln.Bac_q1 ~ ln.Temp, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML"))$tTable[2, 5]
+summary(lme(ln.Bac_q1 ~ ln.Sal, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML"))$tTable[2, 5]
+summary(lme(ln.Bac_q1 ~ ln.DIN, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML"))$tTable[2, 5]
+summary(lme(ln.Bac_q1 ~ ln.PO3, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML"))$tTable[2, 5]
+summary(lme(ln.Bac_q1 ~ ln.Chla, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML"))$tTable[2, 5]
+summary(lme(ln.Bac_q1 ~ ln.PAR, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML"))$tTable[2, 5]
+performance::r2(lme(ln.Bac_q1 ~ ln.Sal, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML"))
+
+summary(lme(ln.HNF_q1 ~ ln.Temp, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML"))$tTable[2, 5]
+summary(lme(ln.HNF_q1 ~ ln.Sal, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML"))$tTable[2, 5]
+summary(lme(ln.HNF_q1 ~ ln.DIN, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML"))$tTable[2, 5]
+summary(lme(ln.HNF_q1 ~ ln.PO3, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML"))$tTable[2, 5]
+summary(lme(ln.HNF_q1 ~ ln.Chla, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML"))$tTable[2, 5]
+summary(lme(ln.HNF_q1 ~ ln.PAR, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML"))$tTable[2, 5]
+performance::r2(lme(ln.HNF_q1 ~ ln.Chla, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML"))
+
+Envi.labs <- c(`ln.Temp` = "Log(Temperature~(degree*C))",
+               `ln.Sal` = "Log(Salinity~(PSU))", 
+               `ln.PAR` = "Log(Photosynthetically~active~radiation~(W/m^2))",
+               `ln.DIN` = "Log(Total~nitrogen~(mu*M))", 
+               `ln.PO3` = "Log(Total~phosphate~(mu*M))", 
+               `ln.Chla` = "Log(Chlorophyll~a~concentration~(mg/m^3))")
+p.Bac.Envi <- HNF_Bac_A %>%
+  select(Season, Cruise, Station, ln.Temp, ln.Sal, ln.PAR, ln.DIN, ln.PO3, ln.Chla, ln.Bac_q1, ln.HNF_q1) %>%
+  gather(key = "Envi", value = "Vals", -c(Season, Cruise, Station, ln.Bac_q1, ln.HNF_q1)) %>%
+  group_by(Envi) %>%
+  mutate(lty = ifelse(Envi %in% c("ln.Sal"), "1", "0")) %>%
+  ggplot(aes(x = Vals, y = ln.Bac_q1)) +
+  geom_point(aes(color = Cruise)) +
+  scale_colour_viridis(alpha = 1, discrete = TRUE) + 
+  facet_wrap(~ Envi, scales = "free", ncol = 3,
+             labeller = labeller(Envi = as_labeller(Envi.labs, label_parsed))) + 
+  geom_smooth(formula = y ~ x, method = "lm", se = FALSE, aes(linetype = lty)) + 
+  scale_linetype_manual(values = c("blank", "solid")) + 
+  labs(x = "", y = "Log[Bacteria Shannon diversity]") +
+  guides(linetype = FALSE) + 
+  theme(
+    panel.background = element_blank(),
+    text = element_text(size = 20),
+    axis.line = element_line(colour = "black"),
+    legend.title = element_text(size = 20),
+    legend.text = element_text(size = 20)
+  )
+p.HNF.Envi <- HNF_Bac_A %>%
+  select(Season, Cruise, Station, ln.Temp, ln.Sal, ln.PAR, ln.DIN, ln.PO3, ln.Chla, ln.Bac_q1, ln.HNF_q1) %>%
+  gather(key = "Envi", value = "Vals", -c(Season, Cruise, Station, ln.Bac_q1, ln.HNF_q1)) %>%
+  group_by(Envi) %>%
+  mutate(lty = ifelse(Envi %in% c("ln.Chla"), "1", "0")) %>%
+  ggplot(aes(x = Vals, y = ln.HNF_q1)) +
+  geom_point(aes(color = Cruise)) +
+  scale_colour_viridis(alpha = 1, discrete = TRUE) +
+  facet_wrap(~ Envi, scales = "free", ncol = 3,
+             labeller = labeller(Envi = as_labeller(Envi.labs, label_parsed))) + 
+  geom_smooth(formula = y ~ x, method = "lm", se = FALSE, aes(linetype = lty)) + 
+  scale_linetype_manual(values = c("blank", "solid")) + 
+  labs(x = "", y = "HNF Shannon diversity") +
+  guides(linetype = FALSE) + 
+  theme(
+    panel.background = element_blank(),
+    text = element_text(size = 20),
+    axis.line = element_line(colour = "black"),
+    legend.title = element_text(size = 20),
+    legend.text = element_text(size = 20)
+  )
+legend <- get_legend(p.Bac.Envi)
+p.Div.Envi <- plot_grid(plot_grid(p.Bac.Envi + theme(legend.position = "none"), 
+                        p.HNF.Envi + theme(legend.position = "none"), 
+                        nrow = 2),
+                        legend, rel_widths = c(3, .4))
+ggsave(p.Div.Envi, file = "D:Dropbox/Manuscripts/PdPy_Div_MS/ms_Figs/FigS_DivEnvi.pdf",
+       dpi = 600, width = 48, height = 48, units = "cm")
+
+###############################################################################################
+##### Simple descriptions of environmental variables ##########################################
 ###############################################################################################
 
 ###############################################################################################
@@ -298,15 +554,19 @@ summary(gam0)
 
 HNFq1_Bacq1.0 <- lm(ln.HNF_q1 ~ ln.Bac_q1, data = HNF_Bac_A)
 HNFq1_Bacq1.St <- lme(ln.HNF_q1 ~ ln.Bac_q1, random = ~ 1 | Station, data = HNF_Bac_A, method = "ML")
+HNFq1_Bacq1.Mo <- lme(ln.HNF_q1 ~ ln.Bac_q1, random = ~ 1 | Month, data = HNF_Bac_A, method = "ML")
 HNFq1_Bacq1.Cr <- lme(ln.HNF_q1 ~ ln.Bac_q1, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
 HNFq1_Bacq1.Season <- lme(ln.HNF_q1 ~ ln.Bac_q1, random = ~ 1 | Season, data = HNF_Bac_A, method = "ML")
-AIC(HNFq1_Bacq1.0, HNFq1_Bacq1.St, HNFq1_Bacq1.Cr, HNFq1_Bacq1.Season)
-summary(HNFq1_Bacq1.0)
+AIC(HNFq1_Bacq1.0, HNFq1_Bacq1.St, HNFq1_Bacq1.Mo, HNFq1_Bacq1.Cr, HNFq1_Bacq1.Season)
+summary(HNFq1_Bacq1.St)
+summary(HNFq1_Bacq1.Mo)
+summary(HNFq1_Bacq1.Cr)
+summary(HNFq1_Bacq1.Season)
 performance::r2(HNFq1_Bacq1.Cr)
 
-Hq1_Bq1.Cr <- lme(ln.HNF_q1 ~ ln.Bac_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
-summary(Hq1_Bq1.Cr)
-
+HNFq1_Bacq1.CrSt <- lme(ln.HNF_q1 ~ ln.Bac_q1, random = ~ 1 | Cruise/Station, data = HNF_Bac_A, method = "ML")
+summary(HNFq1_Bacq1.CrSt)
+performance::r2(HNFq1_Bacq1.CrSt)
 # plotting correlation between HNF and Bac Shannon diversity
 p_HNFq1_Bacq1 <- HNF_Bac_A %>% 
   select(ln.Bac_q1, ln.HNF_q1, Bac_Ampti, HNF_Ampti, Cruise) %>%
@@ -328,7 +588,7 @@ p_HNFq1_Bacq1 <- HNF_Bac_A %>%
       legend.text = element_text(size = 24)
     )
 p_HNFq1_Bacq1
-ggsave(p_HNFq1_Bacq1, file = "D:Dropbox/Manuscripts/PdPy_Div_MS/ms_Figs/Fig2_HNFq1_Bacq1.pdf",
+ggsave(p_HNFq1_Bacq1, file = "D:Dropbox/Manuscripts/PdPy_Div_MS/ms_Figs/Fig2_HNFq1_Bacq1.jpeg",
        dpi = 600, width = 34, height = 28, units = "cm")
 ###############################################################################################
 ##### Simple HNF and Bac alppha diversity relationship  #######################################
@@ -354,42 +614,62 @@ summary(Bacq1_BacS.Cr)
 performance::r2(Bacq1_BacS.Cr)
 
 ### Backward selection
-BacS_HNFq1.Cr <- lme(Bac_Ampti ~ ln.HNF_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
+BacS_HNFq1.Cr <- lme(Bac_Ampti ~ ln.HNF_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + Spatial.corr, 
+                     random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
 summary(BacS_HNFq1.Cr)
-BacS_HNFq1.Cr_1 <- lme(Bac_Ampti ~ ln.HNF_q1 + ln.Sal + ln.PAR + ln.DIN + ln.PO3, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
+BacS_HNFq1.Cr_1 <- lme(Bac_Ampti ~ ln.HNF_q1 + ln.Temp + ln.Sal + ln.PAR + ln.PO3 + Spatial.corr,
+                       random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
 summary(BacS_HNFq1.Cr_1)
-BacS_HNFq1.Cr_2 <- lme(Bac_Ampti ~ ln.HNF_q1 + ln.PAR + ln.DIN + ln.PO3, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
+BacS_HNFq1.Cr_2 <- lme(Bac_Ampti ~ ln.HNF_q1 + ln.Sal + ln.PAR + ln.PO3 + Spatial.corr,
+                       random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
 summary(BacS_HNFq1.Cr_2)
-BacS_HNFq1.Cr_3 <- lme(Bac_Ampti ~ ln.HNF_q1 + ln.PAR + ln.PO3, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
+BacS_HNFq1.Cr_3 <- lme(Bac_Ampti ~ ln.HNF_q1 + ln.PAR + ln.PO3 + Spatial.corr,
+                       random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
 summary(BacS_HNFq1.Cr_3)
-BacS_HNFq1.Cr_4 <- lme(Bac_Ampti ~ ln.HNF_q1 + ln.PAR, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
+BacS_HNFq1.Cr_4 <- lme(Bac_Ampti ~ ln.HNF_q1 + ln.PAR + Spatial.corr, 
+                       random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
 summary(BacS_HNFq1.Cr_4)
+BacS_HNFq1.Cr_5 <- lme(Bac_Ampti ~ ln.HNF_q1 + ln.PAR, 
+                       random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
+summary(BacS_HNFq1.Cr_5)
 
-Bacq1_BacS.Cr <- lme(ln.Bac_q1 ~ Bac_Ampti + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
+
+Bacq1_BacS.Cr <- lme(ln.Bac_q1 ~ Bac_Ampti + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3 + Spatial.corr, 
+                     random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
 summary(Bacq1_BacS.Cr)
-Bacq1_BacS.Cr_1 <- lme(ln.Bac_q1 ~ Bac_Ampti + ln.Temp + ln.Sal + ln.DIN + ln.PO3, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
+Bacq1_BacS.Cr_1 <- lme(ln.Bac_q1 ~ Bac_Ampti + ln.Temp + ln.Sal + ln.DIN + ln.PO3 + Spatial.corr, 
+                       random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
 summary(Bacq1_BacS.Cr_1)
-Bacq1_BacS.Cr_2 <- lme(ln.Bac_q1 ~ Bac_Ampti + ln.Temp + ln.Sal + ln.PO3, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
+Bacq1_BacS.Cr_2 <- lme(ln.Bac_q1 ~ Bac_Ampti + ln.Temp + ln.Sal + ln.DIN + Spatial.corr, 
+                       random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
 summary(Bacq1_BacS.Cr_2)
-Bacq1_BacS.Cr_3 <- lme(ln.Bac_q1 ~ Bac_Ampti + ln.Temp + ln.Sal, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
+Bacq1_BacS.Cr_3 <- lme(ln.Bac_q1 ~ Bac_Ampti + ln.Temp + ln.Sal + Spatial.corr, 
+                       random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
 summary(Bacq1_BacS.Cr_3)
-Bacq1_BacS.Cr_4 <- lme(ln.Bac_q1 ~ Bac_Ampti + ln.Sal, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
+Bacq1_BacS.Cr_4 <- lme(ln.Bac_q1 ~ Bac_Ampti + ln.Sal + Spatial.corr, 
+                       random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
 summary(Bacq1_BacS.Cr_4)
+Bacq1_BacS.Cr_5 <- lme(ln.Bac_q1 ~ Bac_Ampti + Spatial.corr, 
+                       random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
+summary(Bacq1_BacS.Cr_5)
+Bacq1_BacS.Cr_6 <- lme(ln.Bac_q1 ~ Bac_Ampti, 
+                       random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
+summary(Bacq1_BacS.Cr_6)
 
 ### plotting
 p_HNFq1_BacSelect <- HNF_Bac_A %>% 
   select(ln.Bac_q1, ln.HNF_q1, Bac_Ampti, HNF_Ampti, Cruise) %>%
   ggplot(aes(x = ln.HNF_q1, y = Bac_Ampti)) + 
     geom_point(aes(color = Cruise), size = 8) + 
-    geom_smooth(formula = y ~ x, method = "lm", se = TRUE, linetype = "dashed") + 
+    geom_smooth(formula = y ~ x, method = "lm", se = TRUE, linetype = "solid") + 
     #geom_smooth(method = mgcv::gam, formula = y ~ s(x), se = TRUE, color = "red", linetype = "solid") + 
     scale_colour_viridis(alpha = 1, discrete=TRUE) + 
     scale_y_reverse() + 
-    labs(title = "Figure 3",
+    labs(title = "",
          x = expression(atop("Log[ HNF Shannon diversity ]", " ")),
          y = expression(atop("Deterministic assembly processes", "(\U03B1MPTI) of Bacteria community"))) + 
-    annotate("text", x = 0.8, y = 2.2, label = "paste( \"conditional \", italic(R) ^ 2, \" = 0.14\")", parse = TRUE, size = 12) + 
-    annotate("text", x = 0.8, y = 1.85, label = "paste( italic(P), \" = 0.1\")", parse = TRUE, size = 12) + 
+    #annotate("text", x = 0.8, y = 2.2, label = "paste( \"conditional \", italic(R) ^ 2, \" = 0.14\")", parse = TRUE, size = 12) + 
+    #annotate("text", x = 0.8, y = 1.85, label = "paste( italic(P), \" = 0.1\")", parse = TRUE, size = 12) + 
     theme(
       plot.margin = margin(t = 2, l = 1.2, r = 0.5, unit = "cm"),
       panel.background = element_blank(),
@@ -411,8 +691,8 @@ p_BacSelect_Bacq1 <- HNF_Bac_A %>%
     scale_x_reverse() + 
     labs(x = expression(atop("Deterministic assembly processes", "(\U03B1MPTI) of Bacteria community ")),
          y = expression(atop("Log[ Bacterial Shannon diversity ]", "" ))) + 
-    annotate("text", x = 0.25, y = 2.6, label = "paste( \"conditional \", italic(R) ^ 2, \" = 0.51\")", parse = TRUE, size = 12) + 
-    annotate("text", x = 0.2, y = 2.75, label = "paste( italic(P), \" = 0.0001\")", parse = TRUE, size = 12)  + 
+    #annotate("text", x = 0.25, y = 2.6, label = "paste( \"conditional \", italic(R) ^ 2, \" = 0.51\")", parse = TRUE, size = 12) + 
+    #annotate("text", x = 0.2, y = 2.75, label = "paste( italic(P), \" = 0.0001\")", parse = TRUE, size = 12)  + 
     theme(
       plot.margin = margin(t = 2, l = 1.6, r = 0.5, unit = "cm"),
       panel.background = element_blank(),
@@ -433,8 +713,8 @@ p_HNFq1_BacSelect_Bacq1 <- plot_grid(
             ncol = 1, labels = "AUTO", label_size = 24),
   legend, rel_widths = c(3, .4))
 p_HNFq1_BacSelect_Bacq1
-ggsave(p_HNFq1_BacSelect_Bacq1, file = "D:Dropbox/Manuscripts/PdPy_Div_MS/ms_Figs/Fig3_HNFq1_BacAmpd_Bacq1.tiff",
-       dpi = 600, width = 50, height = 68, units = "cm")
+ggsave(p_HNFq1_BacSelect_Bacq1, file = "D:/Dropbox/Manuscripts/PdPy_Div_MS/ms_Figs/Fig3_HNFq1_BacAmpd_Bacq1.png",
+       dpi = 600, width = 48, height = 64, units = "cm")
 ##### HNFq1 -> Bac selection -> Bacq1 ##########
 
 ##### Bacq1 -> HNF selection -> HNFq1 ##########
@@ -454,31 +734,43 @@ summary(HNFq1_HNFS.Cr)
 performance::r2(HNFq1_HNFS.Cr)
 
 ### Backward selection
-HNFS_Bacq1.Cr <- lme(HNF_Ampti ~ ln.Bac_q1 + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
+HNFS_Bacq1.Cr <- lme(HNF_Ampti ~ ln.Bac_q1 + Spatial.corr + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, 
+                     random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
 summary(HNFS_Bacq1.Cr)
-HNFS_Bacq1.Cr_1 <- lme(HNF_Ampti ~ ln.Bac_q1 + ln.Temp + ln.PAR + ln.DIN + ln.PO3, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
+HNFS_Bacq1.Cr_1 <- lme(HNF_Ampti ~ ln.Bac_q1 + Spatial.corr + ln.Sal + ln.PAR + ln.DIN + ln.PO3, 
+                       random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
 summary(HNFS_Bacq1.Cr_1)
-HNFS_Bacq1.Cr_2 <- lme(HNF_Ampti ~ ln.Bac_q1 + ln.Temp + ln.DIN + ln.PO3, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
+HNFS_Bacq1.Cr_2 <- lme(HNF_Ampti ~ ln.Bac_q1 + Spatial.corr + ln.PAR + ln.DIN + ln.PO3, 
+                       random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
 summary(HNFS_Bacq1.Cr_2)
-HNFS_Bacq1.Cr_3 <- lme(HNF_Ampti ~ ln.Bac_q1 + ln.DIN + ln.PO3, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
+HNFS_Bacq1.Cr_3 <- lme(HNF_Ampti ~ ln.Bac_q1 + Spatial.corr + ln.DIN + ln.PO3, 
+                       random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
 summary(HNFS_Bacq1.Cr_3)
-HNFS_Bacq1.Cr_4 <- lme(HNF_Ampti ~ ln.Bac_q1 + ln.PO3, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
+HNFS_Bacq1.Cr_4 <- lme(HNF_Ampti ~ ln.Bac_q1 + Spatial.corr + ln.DIN,
+                       random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
 summary(HNFS_Bacq1.Cr_4)
-HNFS_Bacq1.Cr_5 <- lme(HNF_Ampti ~ ln.Bac_q1, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
+HNFS_Bacq1.Cr_5 <- lme(HNF_Ampti ~ ln.Bac_q1 + Spatial.corr,
+                       random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
 summary(HNFS_Bacq1.Cr_5)
 
 
-HNFq1_HNFS.Cr <- lme(ln.HNF_q1 ~ HNF_Ampti + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
+HNFq1_HNFS.Cr <- lme(ln.HNF_q1 ~ HNF_Ampti + Spatial.corr + ln.Temp + ln.Sal + ln.PAR + ln.DIN + ln.PO3, 
+                     random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
 summary(HNFq1_HNFS.Cr)
-HNFq1_HNFS.Cr_1 <- lme(ln.HNF_q1 ~ HNF_Ampti + ln.Sal + ln.PAR + ln.DIN + ln.PO3, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
+HNFq1_HNFS.Cr_1 <- lme(ln.HNF_q1 ~ HNF_Ampti + Spatial.corr + ln.Sal + ln.PAR + ln.DIN + ln.PO3, 
+                       random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
 summary(HNFq1_HNFS.Cr_1)
-HNFq1_HNFS.Cr_2 <- lme(ln.HNF_q1 ~ HNF_Ampti + ln.Sal + ln.PAR + ln.DIN, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
+HNFq1_HNFS.Cr_2 <- lme(ln.HNF_q1 ~ HNF_Ampti + Spatial.corr + ln.Sal + ln.PAR + ln.DIN, 
+                       random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
 summary(HNFq1_HNFS.Cr_2)
-HNFq1_HNFS.Cr_3 <- lme(ln.HNF_q1 ~ HNF_Ampti + ln.Sal + ln.PAR, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
+HNFq1_HNFS.Cr_3 <- lme(ln.HNF_q1 ~ HNF_Ampti + Spatial.corr + ln.Sal + ln.PAR, 
+                       random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
 summary(HNFq1_HNFS.Cr_3)
-HNFq1_HNFS.Cr_4 <- lme(ln.HNF_q1 ~ HNF_Ampti + ln.PAR, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
+HNFq1_HNFS.Cr_4 <- lme(ln.HNF_q1 ~ HNF_Ampti + Spatial.corr + ln.PAR, 
+                       random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
 summary(HNFq1_HNFS.Cr_4)
-HNFq1_HNFS.Cr_5 <- lme(ln.HNF_q1 ~ HNF_Ampti, random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
+HNFq1_HNFS.Cr_5 <- lme(ln.HNF_q1 ~ HNF_Ampti + Spatial.corr, 
+                       random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
 summary(HNFq1_HNFS.Cr_5)
 
 
@@ -488,14 +780,15 @@ p_Bacq1_HNFSelect <- HNF_Bac_A %>%
   select(ln.Bac_q1, ln.HNF_q1, Bac_Ampti, HNF_Ampti, Cruise) %>%
   ggplot(aes(x = ln.Bac_q1, y = HNF_Ampti)) + 
   geom_point(aes(color = Cruise), size = 8) + 
-  geom_smooth(formula = y ~ x, method = "lm", se = TRUE, linetype = "dashed") + 
+  #geom_smooth(formula = y ~ x, method = "lm", se = TRUE, linetype = "dashed") + 
   #geom_smooth(method = mgcv::gam, formula = y ~ s(x), se = TRUE, color = "red", linetype = "dotted") + 
   scale_colour_viridis(alpha = 1, discrete=TRUE) + 
-  labs(title = "Figure 4",
+  scale_y_reverse() + 
+  labs(title = "",
        x = expression(atop("Log[ Bacterial Shannon diversity ]", " ")),
        y = expression(atop("Deterministic assembly processes", "(\U03B1MPTI) of HNF community "))) + 
-  annotate("text", x = 2.61, y = -6.4, label = "paste( \"conditional \", italic(R) ^ 2, \" = 0.25\")", parse = TRUE, size = 12) + 
-  annotate("text", x = 2.61, y = -6, label = "paste( italic(P), \" = 0.29\")", parse = TRUE, size = 12) + 
+  #annotate("text", x = 3.0, y = 0.4, label = "paste( \"conditional \", italic(R) ^ 2, \" = 0.25\")", parse = TRUE, size = 12) + 
+  #annotate("text", x = 3.0, y = 0, label = "paste( italic(P), \" = 0.29\")", parse = TRUE, size = 12) + 
   theme(
     plot.margin = margin(t = 2, l = 1.2, r = 0.5, unit = "cm"),
     panel.background = element_blank(),
@@ -511,14 +804,14 @@ p_HNFSelect_HNFq1 <- HNF_Bac_A %>%
   select(ln.Bac_q1, ln.HNF_q1, Bac_Ampti, HNF_Ampti, Cruise) %>%
   ggplot(aes(x = HNF_Ampti, y = ln.HNF_q1)) + 
   geom_point(aes(color = Cruise), size = 8) + 
-  geom_smooth(formula = y ~ x, method = "lm", se = TRUE, linetype = "dashed") + 
+  #geom_smooth(formula = y ~ x, method = "lm", se = TRUE, linetype = "dashed") + 
   #geom_smooth(method = mgcv::gam, formula = y ~ s(x), se = TRUE, color = "red", linetype = "dotted") + 
   scale_colour_viridis(alpha = 1, discrete=TRUE) + 
   scale_x_reverse() + 
   labs(x = bquote(atop("Deterministic assembly processes", "(\U03B1MPTI) of HNF community ")),
        y = bquote(atop("Log[ HNF Shannon diversity ]", " " ))) + 
-  annotate("text", x = -0.93, y = 0.42, label = "paste( \"conditional \", italic(R) ^ 2, \" = 0.33\")", parse = TRUE, size = 12) + 
-  annotate("text", x = -0.93, y = 0.62, label = "paste( italic(P), \" = 0.09\")", parse = TRUE, size = 12) + 
+  # annotate("text", x = -0.93, y = 0.42, label = "paste( \"conditional \", italic(R) ^ 2, \" = 0.33\")", parse = TRUE, size = 12) + 
+  # annotate("text", x = -0.93, y = 0.62, label = "paste( italic(P), \" = 0.09\")", parse = TRUE, size = 12) + 
   theme(
     plot.margin = margin(t = 2, l = 1.6, r = 0.5, unit = "cm"),
     panel.background = element_blank(),
@@ -539,8 +832,8 @@ p_Bacq1_HNFSelect_HNFq1 <- plot_grid(
             ncol = 1, labels = "AUTO", label_size = 24),
   legend, rel_widths = c(3, .4))
 p_Bacq1_HNFSelect_HNFq1
-ggsave(p_Bacq1_HNFSelect_HNFq1, file = "D:Dropbox/Manuscripts/PdPy_Div_MS/ms_Figs/Fig4_Bacq1_HNFAmpd_HNFq1.tiff",
-       dpi = 600, width = 50, height = 68, units = "cm")
+ggsave(p_Bacq1_HNFSelect_HNFq1, file = "D:/Dropbox/Manuscripts/PdPy_Div_MS/ms_Figs/Fig4_Bacq1_HNFAmpd_HNFq1.png",
+       dpi = 600, width = 48, height = 64, units = "cm")
 ##### Bacq1 -> HNF selection -> HNFq1 ##########
 
 ###############################################################################################

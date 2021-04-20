@@ -237,7 +237,7 @@ Vars <- read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/m
 ##### Loading nulls ###########################################################################
 ###############################################################################################
 ### Bacteria
-Bac_Bmpd_null <- read.table(file = "D:/Research/PdPy_Div_Results/nulls_PR2_4/Bac_Bmpd_null_4.csv", 
+Bac_Bmpd_null <- read.table(file = "D:/Dropbox/Research/PdPy_Div_Results/nulls_PR2_4/Bac_Bmpd_null_4.csv", 
                             sep = ",", header = TRUE, stringsAsFactors = FALSE, fill = TRUE)
 Bac_Bmpd <- Bac_Bmpd_null %>% 
   select(c(obs, Var1, Var2))  %>%
@@ -251,7 +251,7 @@ Bac_Bmpd <- Bac_Bmpd_null %>%
   select(-c(ind1, ind2))
 
 ### HNF
-HNF_Bmpd_null <- read.table(file = "D:/Research/PdPy_Div_Results/nulls_PR2_4/HNF_Bmpd_null_4.csv", 
+HNF_Bmpd_null <- read.table(file = "D:/Dropbox/Research/PdPy_Div_Results/nulls_PR2_4/HNF_Bmpd_null_4.csv", 
                             sep = ",", header = TRUE, stringsAsFactors = FALSE, fill = TRUE)
 HNF_Bmpd <- HNF_Bmpd_null %>% 
   select(c(obs, Var1, Var2)) %>%
@@ -336,27 +336,28 @@ gam1 <- gam(HNF_chao_mean ~ s(Bac_chao_mean), data = BDiv_mean)
 anova(gam0, gam1, test = "F")
 summary(gam0)
 
-HNFchao_Bacchao.0 <- lm(HNF_chao_mean ~ Bac_chao_mean, data = BDiv_mean)
-HNFchao_Bacchao.St <- lme(HNF_chao_mean ~ Bac_chao_mean, random = ~ 1 | Station, data = BDiv_mean, method = "ML")
+Bacchao_HNFchao.0 <- lm(Bac_chao_mean ~ HNF_chao_mean, data = BDiv_mean)
+Bacchao_HNFchao.St <- lme(Bac_chao_mean ~ HNF_chao_mean, random = ~ 1 | Station, data = BDiv_mean, method = "ML")
+Bacchao_HNFchao.Cr <- lme(Bac_chao_mean ~ HNF_chao_mean, random = ~ 1 | Cruise, data = BDiv_mean, method = "ML")
 #HNFchao_Bacchao.Cr <- lme(HNF_chao_mean ~ Bac_chao_mean, random = ~ 1 | Cruise, data = BDiv_mean, method = "ML")
-HNFchao_Bacchao.Season <- lme(HNF_chao_mean ~ Bac_chao_mean, random = ~ 1 | Season, data = BDiv_mean, method = "ML")
-AIC(HNFchao_Bacchao.0, HNFchao_Bacchao.St, HNFchao_Bacchao.Season) #, HNFchao_Bacchao.Cr
-summary(HNFchao_Bacchao.Season)
-performance::r2(HNFchao_Bacchao.Season)
+Bacchao_HNFchao.Season <- lme(Bac_chao_mean ~ HNF_chao_mean, random = ~ 1 | Season, data = BDiv_mean, method = "ML")
+AIC(Bacchao_HNFchao.0, Bacchao_HNFchao.St, Bacchao_HNFchao.Cr, Bacchao_HNFchao.Season) #, HNFchao_Bacchao.Cr
+summary(Bacchao_HNFchao.St)
+performance::r2(Bacchao_HNFchao.St)
   
-  p_HNFchao_Bacchao <- BDiv_mean %>% 
-    select(Bac_chao_mean, HNF_chao_mean, Bac_Bmpti_mean, HNF_Bmpti_mean, Cruise, Season) %>%
-    ggplot(aes(x = Bac_chao_mean, y = HNF_chao_mean)) + 
-      geom_point(size = 8, aes(color = Season)) + 
+  p_Bacchao_HNFchao <- BDiv_mean %>% 
+    select(Bac_chao_mean, HNF_chao_mean, Bac_Bmpti_mean, HNF_Bmpti_mean, Cruise, Season, Station) %>%
+    ggplot(aes(x = HNF_chao_mean, y = Bac_chao_mean)) + 
+      geom_point(size = 8) + #, aes(color = Station)
       scale_colour_viridis(alpha = 1, discrete=TRUE) +
       geom_smooth(formula = y ~ x, method = "lm", se = TRUE) + 
-      geom_smooth(method = mgcv::gam, formula = y ~ s(x), se = TRUE, color = "red", linetype = "solid") + 
-      #scale_x_continuous(expand = c(0, 0)) +
-      #scale_y_continuous(expand = c(0, 0)) +
-      labs(x = bquote("Bacteria Chao similarity"),
-           y = bquote("HNF Chao similarity")) + 
-      annotate("text", x = 0.18, y = 1, label = "paste( \"conditional \", italic(R) ^ 2, \" = 0.18\")", parse = TRUE, size = 6) + 
-      annotate("text", x = 0.18, y = 0.96, label = "paste( \"marginal \", italic(R) ^ 2, \" = 0.12\")", parse = TRUE, size = 6) + 
+      # geom_smooth(method = mgcv::gam, formula = y ~ s(x), se = TRUE, color = "red", linetype = "solid") + 
+      # scale_x_continuous(expand = c(0, 0)) +
+      # scale_y_continuous(expand = c(0, 0)) +
+      labs(x = expression(paste("HNF ", beta, " diversity")),
+           y = expression(paste("Bacteria ", beta, " diversity"))) + 
+      #annotate("text", x = 0.18, y = 1, label = "paste( \"conditional \", italic(R) ^ 2, \" = 0.18\")", parse = TRUE, size = 6) + 
+      #annotate("text", x = 0.18, y = 0.96, label = "paste( \"marginal \", italic(R) ^ 2, \" = 0.12\")", parse = TRUE, size = 6) + 
       theme(
         panel.background = element_blank(),
         axis.line = element_line(colour = "black"),
@@ -365,8 +366,8 @@ performance::r2(HNFchao_Bacchao.Season)
         legend.title = element_text(size = 24),
         legend.text = element_text(size = 24)
       )
-  p_HNFchao_Bacchao
-  ggsave(p_HNFchao_Bacchao, file = "D:/Research/PdPy_Div_Results/Figs/Lab422 meeting_20200602/BDivCor.png",
+  p_Bacchao_HNFchao
+  ggsave(p_Bacchao_HNFchao, file = "D:/Dropbox/Application/IONTU/JobTalk/BDiv.png",
          dpi = 600, width = 34, height = 28, units = "cm")
 ###############################################################################################
 ##### Simple HNF and Bac Chao dissimilarity relationship  #####################################
