@@ -498,7 +498,7 @@ p.Bac.Envi <- HNF_Bac_A %>%
   scale_colour_viridis(alpha = 1, discrete = TRUE) + 
   facet_wrap(~ Envi, scales = "free", ncol = 3,
              labeller = labeller(Envi = as_labeller(Envi.labs, label_parsed))) + 
-  geom_smooth(formula = y ~ x, method = "lm", se = FALSE, aes(linetype = lty)) + 
+  geom_smooth(formula = y ~ x, method = "lm", se = TRUE, aes(linetype = lty)) + 
   scale_linetype_manual(values = c("blank", "solid")) + 
   labs(x = "", y = "Log[Bacteria Shannon diversity]") +
   guides(linetype = FALSE) + 
@@ -519,7 +519,7 @@ p.HNF.Envi <- HNF_Bac_A %>%
   scale_colour_viridis(alpha = 1, discrete = TRUE) +
   facet_wrap(~ Envi, scales = "free", ncol = 3,
              labeller = labeller(Envi = as_labeller(Envi.labs, label_parsed))) + 
-  geom_smooth(formula = y ~ x, method = "lm", se = FALSE, aes(linetype = lty)) + 
+  geom_smooth(formula = y ~ x, method = "lm", se = TRUE, aes(linetype = lty)) + 
   scale_linetype_manual(values = c("blank", "solid")) + 
   labs(x = "", y = "HNF Shannon diversity") +
   guides(linetype = FALSE) + 
@@ -535,7 +535,7 @@ p.Div.Envi <- plot_grid(plot_grid(p.Bac.Envi + theme(legend.position = "none"),
                         p.HNF.Envi + theme(legend.position = "none"), 
                         nrow = 2),
                         legend, rel_widths = c(3, .4))
-ggsave(p.Div.Envi, file = "D:Dropbox/Manuscripts/PdPy_Div_MS/ms_Figs/FigS_DivEnvi.pdf",
+ggsave(p.Div.Envi, file = "D:Dropbox/Manuscripts/PdPy_Div_MS/ms_Figs/FigS_DivEnvi1.jpeg",
        dpi = 600, width = 48, height = 48, units = "cm")
 
 ###############################################################################################
@@ -772,6 +772,9 @@ summary(HNFq1_HNFS.Cr_4)
 HNFq1_HNFS.Cr_5 <- lme(ln.HNF_q1 ~ HNF_Ampti + Spatial.corr, 
                        random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
 summary(HNFq1_HNFS.Cr_5)
+HNFq1_HNFS.Cr_6 <- lme(ln.HNF_q1 ~ HNF_Ampti, 
+                       random = ~ 1 | Cruise, data = HNF_Bac_A, method = "ML")
+summary(HNFq1_HNFS.Cr_6)
 
 
 
