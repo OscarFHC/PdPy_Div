@@ -77,15 +77,15 @@ if (!require(mgcv)) {
 ###############################################################################################
 ##### Loading data ############################################################################
 ###############################################################################################
-Bac_comm <- as.data.frame(t(read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/sECS_4/sECS_Bac_seqXst_PR2_4.csv",
+Bac_comm <- as.data.frame(t(read.table(file = "D:/Dropbox/Research/KuroshioMicrobes/data/KuroBac_rareSeqXSt_pool.csv",
                                        sep = ",", header = TRUE, row.names = 1, stringsAsFactors = FALSE, fill = TRUE)))
 Bac_ra_comm <- Bac_comm / rowSums(Bac_comm)
-Bac_phylo<- read.tree(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/sECS_4/sECS_Bac_treeNJ_PR2_4.tree")
+Bac_phylo<- read.tree(file = "D:/Dropbox/Research/KuroshioMicrobes/data/KuroBac_treeNJ_pool.tree")
 
-HNF_comm <- as.data.frame(t(read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/sECS_4/sECS_HNF_seqXst_PR2_4.csv",
+HNF_comm <- as.data.frame(t(read.table(file = "D:/Dropbox/Research/KuroshioMicrobes/data/KuroHNF_rareSeqXSt_pool.csv",
                                        sep = ",", header = TRUE, row.names = 1, stringsAsFactors = FALSE, fill = TRUE)))
 HNF_ra_comm <- HNF_comm / rowSums(HNF_comm)
-HNF_phylo<- read.tree(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/sECS_4/sECS_HNF_treeNJ_PR2_4.tree")
+HNF_phylo<- read.tree(file = "D:/Dropbox/Research/KuroshioMicrobes/data/KuroHNF_treeNJ_pool.tree")
 
 ###############################################################################################
 ##### Loading data ############################################################################
@@ -106,9 +106,9 @@ clusterEvalQ(cl, {
   library(vegan)
   #library(tidyverse)
   library(picante)
-  Bac_comm <- as.data.frame(t(read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/sECS_4/sECS_Bac_seqXst_PR2_4.csv",
+  Bac_comm <- as.data.frame(t(read.table(file = "D:/Dropbox/Research/KuroshioMicrobes/data/KuroBac_rareSeqXSt_pool.csv",
                                          sep = ",", header = TRUE, row.names = 1, stringsAsFactors = FALSE, fill = TRUE)))
-  Bac_phylo<- read.tree(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/sECS_4/sECS_Bac_treeNJ_PR2_4.tree")
+  Bac_phylo<- read.tree(file = "D:/Dropbox/Research/KuroshioMicrobes/data/KuroBac_treeNJ_pool.tree")
   
 })
 
@@ -128,7 +128,7 @@ Sys.time() - ini
 BacPhylo_null <- data.frame(matrix(unlist(test), ncol = length(test), byrow = FALSE)) %>%
   cbind(expand.grid(row.names(Bac_comm), row.names(Bac_comm))) %>%
   rename(obs = X1000)
-write.table(BacPhylo_null, file = "D:/Research/PdPy_Div_Results/nulls_PR2_4/Bac_Bmpd_null_4_1.csv", 
+write.table(BacPhylo_null, file = "D:/Dropbox/Research/KuroshioMicrobes/data/nulls/KuroshioBac_Bmpd_null.csv", 
             sep = ",", col.names = TRUE, row.names = FALSE)
 stopCluster(cl)
 ##### Bacteria phylogenetic turnover ################################################
@@ -144,9 +144,9 @@ clusterEvalQ(cl, {
   library(vegan)
   library(tidyverse)
   library(picante)
-  HNF_comm <- as.data.frame(t(read.table(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/sECS_4/sECS_HNF_seqXst_PR2_4.csv",
+  HNF_comm <- as.data.frame(t(read.table(file = "D:/Dropbox/Research/KuroshioMicrobes/data/KuroHNF_rareSeqXSt_pool.csv",
                                          sep = ",", header = TRUE, row.names = 1, stringsAsFactors = FALSE, fill = TRUE)))
-  HNF_phylo<- read.tree(file = "https://raw.githubusercontent.com/OscarFHC/PdPy_Div/master/data/sECS_4/sECS_HNF_treeNJ_PR2_4.tree")
+  HNF_phylo<- read.tree(file = "D:/Dropbox/Research/KuroshioMicrobes/data/KuroBac_treeNJ_pool.tree")
 })
 
 HNFPhylo_null_func <- function(x){
